@@ -1,0 +1,14 @@
+# Variables de entorno
+.env
+.env.*
+
+# Dependencias
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración local del editor
+.vscode/
+.idea/
