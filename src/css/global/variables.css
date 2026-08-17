@@ -1,0 +1,103 @@
+:root {
+    /* ===== COLORES PRINCIPALES ===== */
+
+    --color-fondo-principal: #191c35;
+    --color-fondo-secundario: #21082f;
+    --color-superficie: #2d2346;
+    --color-superficie-hover: #382b56;
+
+    /* ===== COLORES DE IDENTIDAD ===== */
+
+    --color-cyan: #27d9ff;
+    --color-cyan-brillo: #00a8ff;
+
+    --color-morado: #8a2be2;
+    --color-magenta: #e10bd8;
+
+    --gradiente-principal:
+        linear-gradient(
+            90deg,
+            #e10bd8,
+            #8a2be2
+        );
+
+    --gradiente-fondo:
+        linear-gradient(
+            180deg,
+            #282d72 0%,
+            #21082f 55%,
+            #16051f 100%
+        );
+
+    /* ===== TEXTO ===== */
+
+    --color-texto-principal: #f4f4f8;
+    --color-texto-secundario: #a8a7b5;
+    --color-texto-apagado: #6f6c80;
+
+    /* ===== BORDES ===== */
+
+    --color-borde: rgba(255, 255, 255, 0.08);
+    --color-borde-cyan: rgba(39, 217, 255, 0.35);
+
+    /* ===== ESTADOS ===== */
+
+    --color-exito: #39e58c;
+    --color-error: #ff4d6d;
+    --color-advertencia: #ffc857;
+
+    /* ===== SOMBRAS Y BRILLOS ===== */
+
+    --sombra-suave:
+        0 8px 30px rgba(0, 0, 0, 0.25);
+
+    --sombra-profunda:
+        0 20px 60px rgba(0, 0, 0, 0.45);
+
+    --brillo-cyan:
+        0 0 15px rgba(39, 217, 255, 0.45),
+        0 0 30px rgba(39, 217, 255, 0.2);
+
+    --brillo-morado:
+        0 0 20px rgba(138, 43, 226, 0.35);
+
+    /* ===== BORDES REDONDEADOS ===== */
+
+    --radio-pequeno: 8px;
+    --radio-medio: 16px;
+    --radio-grande: 24px;
+    --radio-redondo: 50%;
+
+    /* ===== ESPACIADOS ===== */
+
+    --espacio-xs: 4px;
+    --espacio-sm: 8px;
+    --espacio-md: 16px;
+    --espacio-lg: 24px;
+    --espacio-xl: 32px;
+    --espacio-xxl: 48px;
+
+    /* ===== TIPOGRAFÍA ===== */
+
+    --fuente-principal: "Arial", sans-serif;
+
+    --texto-xs: 0.75rem;
+    --texto-sm: 0.875rem;
+    --texto-md: 1rem;
+    --texto-lg: 1.25rem;
+    --texto-xl: 1.5rem;
+    --texto-xxl: 2rem;
+    --texto-titulo: 3rem;
+
+    /* ===== TRANSICIONES ===== */
+
+    --transicion-rapida: 0.2s ease;
+    --transicion-normal: 0.3s ease;
+    --transicion-lenta: 0.5s ease;
+
+    /* ===== ESTRUCTURA WEB ===== */
+
+    --sidebar-ancho: 260px;
+    --navbar-altura: 70px;
+    --contenido-maximo: 1400px;
+}

@@ -1,0 +1,329 @@
+/* ===== LOGIN ===== */
+
+.login {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* =========================
+   PRESENTACIÓN
+========================= */
+
+.login-presentacion {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: clamp(2rem, 6vw, 5rem);
+
+    overflow: hidden;
+
+    border-right: 1px solid var(--color-borde);
+}
+
+.login-fondo {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgba(39, 217, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(138, 43, 226, 0.2),
+            transparent 35%
+        );
+}
+
+/* Contenido por encima del fondo */
+
+.login-brand,
+.login-mensaje {
+    position: relative;
+    z-index: 1;
+}
+
+/* Logo */
+
+.logo-lumi {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--espacio-lg);
+
+    border-radius: var(--radio-medio);
+
+    border: 1px solid var(--color-borde-cyan);
+
+    background: rgba(39, 217, 255, 0.06);
+
+    color: var(--color-cyan);
+
+    font-size: 2rem;
+    font-weight: 700;
+
+    box-shadow: var(--brillo-cyan);
+}
+
+.login-brand h1 {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+
+    letter-spacing: 10px;
+
+    margin-bottom: var(--espacio-md);
+}
+
+.login-eslogan {
+    max-width: 440px;
+
+    font-size: var(--texto-xl);
+
+    line-height: 1.6;
+}
+
+/* Mensaje inferior */
+
+.login-mensaje {
+    display: flex;
+    align-items: center;
+
+    gap: var(--espacio-md);
+
+    max-width: 450px;
+
+    padding: var(--espacio-lg);
+
+    border: 1px solid var(--color-borde);
+
+    border-radius: var(--radio-medio);
+
+    background: rgba(255, 255, 255, 0.03);
+
+    backdrop-filter: blur(10px);
+}
+
+.login-mensaje span {
+    font-size: 2rem;
+}
+
+.login-mensaje p {
+    font-size: var(--texto-sm);
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+
+.login-formulario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: var(--espacio-xl);
+}
+
+.formulario-contenedor {
+    width: min(100%, 460px);
+}
+
+.formulario-encabezado {
+    margin-bottom: var(--espacio-xl);
+}
+
+.formulario-etiqueta {
+    color: var(--color-cyan);
+
+    font-size: var(--texto-xs);
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    margin-bottom: var(--espacio-sm);
+}
+
+.formulario-encabezado h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+
+    margin-bottom: var(--espacio-sm);
+}
+
+
+/* =========================
+   CAMPOS
+========================= */
+
+.campo {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: var(--espacio-lg);
+}
+
+.campo label {
+    margin-bottom: var(--espacio-sm);
+
+    color: var(--color-texto-principal);
+
+    font-size: var(--texto-sm);
+    font-weight: 600;
+}
+
+.campo-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.campo input {
+    width: 100%;
+
+    padding: 16px;
+
+    border: 1px solid var(--color-borde);
+
+    border-radius: var(--radio-pequeno);
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--color-texto-principal);
+
+    transition:
+        border-color var(--transicion-normal),
+        box-shadow var(--transicion-normal);
+}
+
+.campo input::placeholder {
+    color: var(--color-texto-apagado);
+}
+
+.campo input:focus {
+    border-color: var(--color-cyan);
+
+    box-shadow: var(--brillo-cyan);
+}
+
+
+/* =========================
+   ENLACES
+========================= */
+
+.enlace-recuperar {
+    color: var(--color-cyan);
+
+    font-size: var(--texto-xs);
+
+    transition: opacity var(--transicion-rapida);
+}
+
+.enlace-recuperar:hover {
+    opacity: 0.75;
+}
+
+
+/* =========================
+   BOTÓN
+========================= */
+
+.boton-login {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 20px;
+
+    border-radius: var(--radio-pequeno);
+
+    background: var(--gradiente-principal);
+
+    color: white;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    transition:
+        transform var(--transicion-rapida),
+        box-shadow var(--transicion-rapida);
+}
+
+.boton-login:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 30px rgba(138, 43, 226, 0.35);
+}
+
+
+/* =========================
+   REGISTRO
+========================= */
+
+.login-registro {
+    margin-top: var(--espacio-xl);
+
+    text-align: center;
+}
+
+.login-registro a {
+    display: inline-block;
+
+    margin-top: var(--espacio-sm);
+
+    color: var(--color-cyan);
+
+    font-weight: 600;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 850px) {
+
+    .login {
+        grid-template-columns: 1fr;
+    }
+
+    .login-presentacion {
+        min-height: 300px;
+
+        padding: var(--espacio-xl);
+
+        justify-content: center;
+    }
+
+    .login-mensaje {
+        display: none;
+    }
+
+    .login-brand {
+        text-align: center;
+    }
+
+    .logo-lumi {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .login-eslogan {
+        margin: 0 auto;
+    }
+
+    .login-formulario {
+        padding: var(--espacio-xl) var(--espacio-md);
+    }
+}

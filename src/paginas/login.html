@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Inicia sesión en LUMI."
+    >
+
+    <title>Iniciar sesión | LUMI</title>
+
+    <!-- Estilos globales -->
+    <link rel="stylesheet" href="../css/global/reset.css">
+    <link rel="stylesheet" href="../css/global/variables.css">
+    <link rel="stylesheet" href="../css/global/global.css">
+
+    <!-- Estilos de la página -->
+    <link rel="stylesheet" href="../css/paginas/login.css">
+</head>
+
+<body>
+
+    <main class="login">
+
+        <!-- Parte visual -->
+        <section class="login-presentacion">
+
+            <div class="login-fondo"></div>
+
+            <div class="login-brand">
+
+                <div class="logo-lumi">
+                    <span>L</span>
+                </div>
+
+                <h1>LUMI</h1>
+
+                <p class="login-eslogan">
+                    Tu compañero inteligente para vencer
+                    la procrastinación.
+                </p>
+
+            </div>
+
+            <div class="login-mensaje">
+                <span>⚡</span>
+
+                <p>
+                    Organiza tus tareas, crea planes de estudio
+                    y empieza a avanzar.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- Formulario -->
+        <section class="login-formulario">
+
+            <div class="formulario-contenedor">
+
+                <div class="formulario-encabezado">
+
+                    <p class="formulario-etiqueta">
+                        BIENVENIDO DE NUEVO
+                    </p>
+
+                    <h2>Iniciar sesión</h2>
+
+                    <p>
+                        Ingresa tus datos para continuar en LUMI.
+                    </p>
+
+                </div>
+
+
+                <form id="formulario-login">
+
+                    <div class="campo">
+
+                        <label for="correo">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="correo@ejemplo.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <div class="campo-label">
+
+                            <label for="contrasena">
+                                Contraseña
+                            </label>
+
+                            <a href="#" class="enlace-recuperar">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+
+                        </div>
+
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            placeholder="Ingresa tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-login"
+                    >
+                        <span>INICIAR SESIÓN</span>
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+
+                <div class="login-registro">
+
+                    <p>
+                        ¿Todavía no tienes una cuenta?
+                    </p>
+
+                    <a href="./registro.html">
+                        Crear una cuenta
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script
+        type="module"
+        src="../js/paginas/login.js"
+    ></script>
+
+</body>
+</html>

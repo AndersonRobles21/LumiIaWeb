@@ -1,0 +1,293 @@
+/* ===== PANTALLA DE CARGA ===== */
+
+.pantalla-carga {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(35, 70, 110, 0.7) 0%,
+            rgba(25, 30, 55, 0.95) 45%,
+            #181b32 100%
+        );
+}
+
+/* ===== FONDO TECNOLÓGICO ===== */
+
+.fondo-tecnologico {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ===== PUNTOS ===== */
+
+.punto {
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: var(--color-cyan);
+    box-shadow: var(--brillo-cyan);
+
+    opacity: 0.6;
+}
+
+.punto-1 {
+    top: 10%;
+    left: 9%;
+}
+
+.punto-2 {
+    top: 24%;
+    left: 28%;
+}
+
+.punto-3 {
+    top: 12%;
+    right: 12%;
+}
+
+.punto-4 {
+    bottom: 28%;
+    left: 18%;
+}
+
+.punto-5 {
+    bottom: 16%;
+    right: 20%;
+}
+
+/* ===== LÍNEAS ===== */
+
+.linea {
+    position: absolute;
+
+    background: rgba(39, 217, 255, 0.08);
+}
+
+.linea-1 {
+    width: 280px;
+    height: 1px;
+
+    top: 16%;
+    left: 8%;
+}
+
+.linea-2 {
+    width: 1px;
+    height: 220px;
+
+    top: 20%;
+    left: 18%;
+}
+
+.linea-3 {
+    width: 250px;
+    height: 1px;
+
+    bottom: 30%;
+    right: 10%;
+}
+
+/* ===== CONTENIDO ===== */
+
+.carga-contenido {
+    position: relative;
+    z-index: 2;
+
+    width: min(90%, 650px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===== ÓRBITA DE LUMI ===== */
+
+.lumi-orbita {
+    width: 320px;
+    height: 320px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(39, 217, 255, 0.45);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(39, 217, 255, 0.08),
+            rgba(39, 217, 255, 0.01)
+        );
+
+    box-shadow:
+        inset 0 0 40px rgba(39, 217, 255, 0.05),
+        0 0 40px rgba(39, 217, 255, 0.08);
+}
+
+/* ===== ROBOT TEMPORAL ===== */
+
+.lumi-imagen {
+    width: 150px;
+    height: 150px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 5rem;
+
+    filter:
+        drop-shadow(
+            0 0 15px rgba(39, 217, 255, 0.5)
+        );
+
+    animation: flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+}
+
+/* ===== TEXTO ===== */
+
+.carga-texto {
+    margin-top: var(--espacio-lg);
+    text-align: center;
+}
+
+.carga-texto h1 {
+    font-size: clamp(3rem, 8vw, 4.5rem);
+
+    font-weight: 500;
+
+    letter-spacing: 12px;
+
+    text-shadow:
+        0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+.bienvenida {
+    margin-top: var(--espacio-lg);
+
+    font-size: var(--texto-sm);
+
+    letter-spacing: 5px;
+
+    color: var(--color-texto-secundario);
+}
+
+.subtitulo {
+    margin-top: var(--espacio-sm);
+
+    font-size: var(--texto-md);
+
+    letter-spacing: 4px;
+
+    color: var(--color-texto-secundario);
+}
+
+/* ===== BARRA DE CARGA ===== */
+
+.carga-progreso {
+    width: min(100%, 760px);
+
+    margin-top: var(--espacio-xl);
+
+    text-align: center;
+}
+
+.carga-progreso p {
+    margin-bottom: var(--espacio-sm);
+
+    font-size: var(--texto-sm);
+
+    letter-spacing: 4px;
+
+    color: var(--color-cyan);
+}
+
+.barra-carga {
+    width: 100%;
+    height: 4px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(80, 110, 160, 0.3);
+}
+
+.progreso-carga {
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #168dff,
+            #27d9ff
+        );
+
+    box-shadow: var(--brillo-cyan);
+
+    transition: width 0.1s linear;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+
+    .lumi-orbita {
+        width: 240px;
+        height: 240px;
+    }
+
+    .lumi-imagen {
+        width: 120px;
+        height: 120px;
+
+        font-size: 4rem;
+    }
+
+    .carga-texto h1 {
+        letter-spacing: 8px;
+    }
+
+    .bienvenida,
+    .subtitulo {
+        letter-spacing: 2px;
+        font-size: var(--texto-xs);
+    }
+
+    .linea-1,
+    .linea-3 {
+        width: 150px;
+    }
+}

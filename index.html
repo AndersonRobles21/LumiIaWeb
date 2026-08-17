@@ -4,19 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LUMI</title>
+    <meta
+        name="description"
+        content="LUMI - Tu compañero inteligente de estudio."
+    >
+
+    <title>LUMI | Cargando...</title>
 
     <link rel="stylesheet" href="./src/css/global/reset.css">
     <link rel="stylesheet" href="./src/css/global/variables.css">
     <link rel="stylesheet" href="./src/css/global/global.css">
+
+    <link rel="stylesheet" href="./src/css/paginas/carga.css">
 </head>
 
 <body>
 
-    <main>
-        <h1>LUMI</h1>
-        <p>Llamado a la acción: juntos vencemos la procrastinación.</p>
+    <main class="pantalla-carga">
+
+        <div class="fondo-tecnologico">
+
+            <span class="punto punto-1"></span>
+            <span class="punto punto-2"></span>
+            <span class="punto punto-3"></span>
+            <span class="punto punto-4"></span>
+            <span class="punto punto-5"></span>
+
+            <div class="linea linea-1"></div>
+            <div class="linea linea-2"></div>
+            <div class="linea linea-3"></div>
+
+        </div>
+
+        <section class="carga-contenido">
+
+            <div class="lumi-orbita">
+
+                <div class="lumi-imagen">
+                    <!-- Aquí después pondremos el robot de LUMI -->
+                    🤖
+                </div>
+
+            </div>
+
+            <div class="carga-texto">
+
+                <h1>LUMI</h1>
+
+                <p class="bienvenida">
+                    BIENVENIDO AL FUTURO
+                </p>
+
+                <p class="subtitulo">
+                    LA PROCRASTINACIÓN TERMINA AQUÍ
+                </p>
+
+            </div>
+
+            <div class="carga-progreso">
+
+                <p id="texto-carga">LOADING...</p>
+
+                <div class="barra-carga">
+                    <div
+                        class="progreso-carga"
+                        id="progreso-carga"
+                    ></div>
+                </div>
+
+            </div>
+
+        </section>
+
     </main>
+
+    <script type="module" src="./src/js/paginas/carga.js"></script>
 
 </body>
 </html>

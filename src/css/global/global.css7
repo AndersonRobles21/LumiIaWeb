@@ -1,0 +1,70 @@
+/* ===== ESTILOS GENERALES ===== */
+
+body {
+    font-family: var(--fuente-principal);
+    background: var(--gradiente-fondo);
+    background-attachment: fixed;
+    color: var(--color-texto-principal);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+.contenedor {
+    width: min(100% - 32px, var(--contenido-maximo));
+    margin: 0 auto;
+}
+
+/* ===== TÍTULOS ===== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-texto-principal);
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* ===== TEXTO ===== */
+
+p {
+    color: var(--color-texto-secundario);
+}
+
+/* ===== UTILIDADES ===== */
+
+.oculto {
+    display: none !important;
+}
+
+.contenido-principal {
+    min-height: 100vh;
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+:focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+}
+
+/* ===== SCROLLBAR ===== */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-fondo-principal);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-morado);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-magenta);
+}
