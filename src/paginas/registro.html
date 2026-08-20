@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Crea una cuenta en LUMI."
+    >
+
+    <title>Registro | LUMI</title>
+
+    <!-- Estilos globales -->
+    <link rel="stylesheet" href="../css/global/reset.css">
+    <link rel="stylesheet" href="../css/global/variables.css">
+    <link rel="stylesheet" href="../css/global/global.css">
+
+    <!-- Estilos de la página -->
+    <link rel="stylesheet" href="../css/paginas/registro.css">
+</head>
+
+<body>
+
+    <main class="registro">
+
+        <!-- PARTE VISUAL -->
+        <section class="registro-presentacion">
+
+            <div class="registro-fondo"></div>
+
+            <div class="registro-brand">
+
+                <div class="logo-lumi">
+                    <span>L</span>
+                </div>
+
+                <p class="registro-etiqueta">
+                    COMIENZA TU CAMBIO
+                </p>
+
+                <h1>
+                    Menos procrastinación.
+                    <span>Más progreso.</span>
+                </h1>
+
+                <p class="registro-eslogan">
+                    LUMI te ayuda a organizar tus tareas,
+                    crear mejores hábitos y avanzar hacia
+                    tus objetivos.
+                </p>
+
+            </div>
+
+            <div class="registro-pasos">
+
+                <div class="paso activo">
+                    <span>01</span>
+                    <p>Crea tu cuenta</p>
+                </div>
+
+                <div class="paso">
+                    <span>02</span>
+                    <p>Personaliza tu perfil</p>
+                </div>
+
+                <div class="paso">
+                    <span>03</span>
+                    <p>Comienza a avanzar</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FORMULARIO -->
+        <section class="registro-formulario">
+
+            <div class="formulario-contenedor">
+
+                <div class="formulario-encabezado">
+
+                    <p class="formulario-etiqueta">
+                        NUEVA CUENTA
+                    </p>
+
+                    <h2>Únete a LUMI</h2>
+
+                    <p>
+                        Crea tu cuenta y comienza a organizar
+                        mejor tu tiempo.
+                    </p>
+
+                </div>
+
+
+                <form id="formulario-registro">
+
+                    <div class="campo">
+
+                        <label for="nombre">
+                            Nombre
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Tu nombre"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="correo">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="correo@ejemplo.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="contrasena">
+                            Contraseña
+                        </label>
+
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            placeholder="Crea una contraseña"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="confirmar-contrasena">
+                            Confirmar contraseña
+                        </label>
+
+                        <input
+                            type="password"
+                            id="confirmar-contrasena"
+                            name="confirmar-contrasena"
+                            placeholder="Repite tu contraseña"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <label class="aceptar-terminos">
+
+                        <input
+                            type="checkbox"
+                            id="terminos"
+                            required
+                        >
+
+                        <span>
+                            Acepto los términos y condiciones
+                            y la política de privacidad.
+                        </span>
+
+                    </label>
+
+
+                    <button
+                        type="submit"
+                        class="boton-registro"
+                    >
+                        <span>CREAR CUENTA</span>
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+
+                <div class="registro-login">
+
+                    <p>
+                        ¿Ya tienes una cuenta?
+                    </p>
+
+                    <a href="./login.html">
+                        Iniciar sesión
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script
+        type="module"
+        src="../js/paginas/registro.js"
+    ></script>
+
+</body>
+</html>

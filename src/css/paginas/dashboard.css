@@ -1,0 +1,256 @@
+/* =========================
+   DASHBOARD - LUMI WEB
+========================= */
+
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-fondo-principal);
+  color: var(--color-texto-principal);
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+#sidebar-container {
+  width: 260px;
+  min-width: 260px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.9) 100%);
+  border-right: 1px solid var(--color-borde);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brillo sutil de fondo en el sidebar */
+#sidebar-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(39, 217, 255, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.12), transparent 45%);
+  pointer-events: none;
+}
+
+/* =========================
+   ZONA PRINCIPAL
+========================= */
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+#navbar-container {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--espacio-xl);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-borde);
+  position: relative;
+  z-index: 10;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+.dashboard-content {
+  flex: 1;
+  padding: var(--espacio-xl);
+  position: relative;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(39, 217, 255, 0.07), transparent 35%),
+    radial-gradient(circle at 15% 85%, rgba(138, 43, 226, 0.10), transparent 40%);
+}
+
+/* Título temporal */
+.dashboard-content h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  margin-bottom: var(--espacio-sm);
+  background: var(--gradiente-principal);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dashboard-content p {
+  color: var(--color-texto-secundario, #94a3b8);
+  font-size: var(--texto-lg);
+  max-width: 560px;
+  line-height: 1.6;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  #sidebar-container {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .dashboard-content {
+    padding: var(--espacio-lg);
+  }
+}
+
+@media (max-width: 600px) {
+  #navbar-container {
+    padding: 0 var(--espacio-md);
+  }
+
+  .dashboard-content {
+    padding: var(--espacio-md);
+  }
+}
+/* =========================
+   SALUDO
+========================= */
+.dashboard-saludo {
+  margin-bottom: var(--espacio-xl);
+}
+
+.dashboard-saludo h1 {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 700;
+  margin-bottom: var(--espacio-sm);
+  background: var(--gradiente-principal);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dashboard-saludo p {
+  color: var(--color-texto-secundario, #94a3b8);
+  font-size: var(--texto-lg);
+  max-width: 560px;
+}
+
+/* =========================
+   TARJETAS DE RESUMEN
+========================= */
+.dashboard-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espacio-md);
+  margin-bottom: var(--espacio-xl);
+}
+
+.tarjeta-resumen {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--radio-medio);
+  border: 1px solid var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all var(--transicion-rapida);
+}
+
+.tarjeta-resumen:hover {
+  border-color: var(--color-borde-cyan);
+  background: rgba(39, 217, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.tarjeta-icono {
+  font-size: 1.8rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radio-medio);
+  background: rgba(39, 217, 255, 0.08);
+  border: 1px solid var(--color-borde-cyan);
+}
+
+.tarjeta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tarjeta-numero {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-texto-principal);
+}
+
+.tarjeta-etiqueta {
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario, #94a3b8);
+}
+
+/* =========================
+   ACCIONES RÁPIDAS
+========================= */
+.dashboard-acciones h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: var(--espacio-md);
+  color: var(--color-texto-principal);
+}
+
+.acciones-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--espacio-md);
+}
+
+.accion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 16px;
+  border-radius: var(--radio-medio);
+  border: 1px solid var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: var(--color-texto-principal);
+  transition: all var(--transicion-rapida);
+}
+
+.accion-card:hover {
+  border-color: var(--color-borde-cyan);
+  background: rgba(39, 217, 255, 0.07);
+  transform: translateY(-3px);
+  box-shadow: var(--brillo-cyan);
+}
+
+.accion-icono {
+  font-size: 1.8rem;
+}
+
+.accion-texto {
+  font-size: var(--texto-sm);
+  font-weight: 500;
+}
+
+/* =========================
+   RESPONSIVE TARJETAS
+========================= */
+@media (max-width: 1100px) {
+  .dashboard-tarjetas,
+  .acciones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-tarjetas,
+  .acciones-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

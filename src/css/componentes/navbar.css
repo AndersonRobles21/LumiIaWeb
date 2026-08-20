@@ -1,0 +1,81 @@
+/* =========================
+   NAVBAR - LUMI
+========================= */
+
+.navbar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-md);
+}
+
+/* Título de la página actual */
+.navbar-titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar-titulo h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-texto-principal);
+  margin: 0;
+}
+
+.navbar-titulo span {
+  font-size: var(--texto-xs);
+  color: var(--color-texto-secundario, #94a3b8);
+}
+
+/* Zona derecha */
+.navbar-acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Botón de notificación / acción */
+.navbar-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radio-medio);
+  border: 1px solid var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-texto-principal);
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all var(--transicion-rapida);
+}
+
+.navbar-btn:hover {
+  border-color: var(--color-borde-cyan);
+  background: rgba(39, 217, 255, 0.08);
+  box-shadow: var(--brillo-cyan);
+}
+
+/* Avatar del usuario en el navbar */
+.navbar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gradiente-principal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color var(--transicion-rapida);
+}
+
+.navbar-avatar:hover {
+  border-color: var(--color-cyan);
+}

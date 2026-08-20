@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | LUMI</title>
+
+  <!-- Fuentes y estilos globales -->
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes -->
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/tarjetas.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de esta página -->
+  <link rel="stylesheet" href="../css/paginas/dashboard.css">
+</head>
+<body>
+
+  <!-- Contenedor principal del dashboard -->
+  <div class="dashboard-container">
+
+    <!-- Aquí se insertará el Sidebar -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- Contenido principal -->
+    <div class="dashboard-main">
+
+      <!-- Aquí se insertará el Navbar -->
+      <header id="navbar-container"></header>
+
+      <!-- Área de contenido -->
+<main class="dashboard-content">
+
+  <!-- Saludo -->
+  <section class="dashboard-saludo">
+    <h1>¡Hola, Anderson!</h1>
+    <p>Aquí tienes un resumen de tu progreso y lo que puedes hacer hoy.</p>
+  </section>
+
+  <!-- Tarjetas de resumen -->
+  <section class="dashboard-tarjetas">
+    <div class="tarjeta-resumen">
+      <div class="tarjeta-icono">✅</div>
+      <div class="tarjeta-info">
+        <span class="tarjeta-numero">0</span>
+        <span class="tarjeta-etiqueta">Tareas completadas</span>
+      </div>
+    </div>
+
+    <div class="tarjeta-resumen">
+      <div class="tarjeta-icono">📋</div>
+      <div class="tarjeta-info">
+        <span class="tarjeta-numero">0</span>
+        <span class="tarjeta-etiqueta">Tareas pendientes</span>
+      </div>
+    </div>
+
+    <div class="tarjeta-resumen">
+      <div class="tarjeta-icono">🔥</div>
+      <div class="tarjeta-info">
+        <span class="tarjeta-numero">0</span>
+        <span class="tarjeta-etiqueta">Racha de días</span>
+      </div>
+    </div>
+
+    <div class="tarjeta-resumen">
+      <div class="tarjeta-icono">⏱️</div>
+      <div class="tarjeta-info">
+        <span class="tarjeta-numero">0h</span>
+        <span class="tarjeta-etiqueta">Tiempo de estudio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Acciones rápidas -->
+  <section class="dashboard-acciones">
+    <h2>Acciones rápidas</h2>
+    <div class="acciones-grid">
+      <a href="agregar-tarea.html" class="accion-card">
+        <span class="accion-icono">➕</span>
+        <span class="accion-texto">Nueva tarea</span>
+      </a>
+      <a href="tareas.html" class="accion-card">
+        <span class="accion-icono">📝</span>
+        <span class="accion-texto">Ver tareas</span>
+      </a>
+      <a href="guia-detalle.html" class="accion-card">
+        <span class="accion-icono">📚</span>
+        <span class="accion-texto">Métodos de estudio</span>
+      </a>
+      <a href="perfil.html" class="accion-card">
+        <span class="accion-icono">👤</span>
+        <span class="accion-texto">Mi perfil</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/dashboard.js"></script>
+
+</body>
+</html>

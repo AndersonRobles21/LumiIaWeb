@@ -1,0 +1,379 @@
+/* =========================
+   MODIFICAR USUARIO
+========================= */
+
+.modificar-usuario {
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+/* =========================
+   PRESENTACIÓN
+========================= */
+
+.perfil-presentacion {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    padding: clamp(2rem, 6vw, 5rem);
+
+    overflow: hidden;
+
+    border-right: 1px solid var(--color-borde);
+}
+
+.perfil-fondo {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 20% 25%,
+            rgba(39, 217, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 75%,
+            rgba(138, 43, 226, 0.22),
+            transparent 35%
+        );
+}
+
+.perfil-contenido {
+    position: relative;
+    z-index: 1;
+
+    max-width: 600px;
+}
+
+.logo-lumi {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: var(--espacio-xl);
+
+    border-radius: var(--radio-medio);
+
+    border: 1px solid var(--color-borde-cyan);
+
+    background: rgba(39, 217, 255, 0.06);
+
+    color: var(--color-cyan);
+
+    font-size: 2rem;
+    font-weight: 700;
+
+    box-shadow: var(--brillo-cyan);
+}
+
+.perfil-etiqueta {
+    margin-bottom: var(--espacio-md);
+
+    color: var(--color-cyan);
+
+    font-size: var(--texto-xs);
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+.perfil-contenido h1 {
+    font-size: clamp(2.8rem, 5vw, 5rem);
+
+    line-height: 1.1;
+
+    margin-bottom: var(--espacio-lg);
+}
+
+.perfil-contenido h1 span {
+    display: block;
+
+    background: var(--gradiente-principal);
+
+    background-clip: text;
+    -webkit-background-clip: text;
+
+    color: transparent;
+}
+
+.perfil-descripcion {
+    max-width: 500px;
+
+    font-size: var(--texto-lg);
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+
+.perfil-formulario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: var(--espacio-xl);
+}
+
+.perfil-formulario .formulario-contenedor {
+    width: min(100%, 500px);
+}
+
+.perfil-formulario .formulario-encabezado {
+    margin-bottom: var(--espacio-xl);
+}
+
+.perfil-formulario .formulario-etiqueta {
+    margin-bottom: var(--espacio-sm);
+
+    color: var(--color-cyan);
+
+    font-size: var(--texto-xs);
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+.perfil-formulario .formulario-encabezado h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+
+    margin-bottom: var(--espacio-sm);
+}
+
+
+/* =========================
+   CAMPOS
+========================= */
+
+.modificar-usuario .campo {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: var(--espacio-lg);
+}
+
+.modificar-usuario .campo > label {
+    margin-bottom: var(--espacio-sm);
+
+    color: var(--color-texto-principal);
+
+    font-size: var(--texto-sm);
+    font-weight: 600;
+}
+
+.modificar-usuario input,
+.modificar-usuario select {
+    width: 100%;
+
+    padding: 15px 16px;
+
+    border: 1px solid var(--color-borde);
+
+    border-radius: var(--radio-pequeno);
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--color-texto-principal);
+
+    transition:
+        border-color var(--transicion-normal),
+        box-shadow var(--transicion-normal);
+}
+
+.modificar-usuario input:focus,
+.modificar-usuario select:focus {
+    border-color: var(--color-cyan);
+
+    box-shadow: var(--brillo-cyan);
+}
+
+.modificar-usuario select option {
+    background: var(--color-fondo-principal);
+
+    color: var(--color-texto-principal);
+}
+
+
+/* =========================
+   MÉTODOS DE ESTUDIO
+========================= */
+
+.metodos-estudio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: var(--espacio-sm);
+}
+
+.metodo {
+    position: relative;
+
+    min-height: 130px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--espacio-sm);
+
+    padding: var(--espacio-md);
+
+    border: 1px solid var(--color-borde);
+
+    border-radius: var(--radio-medio);
+
+    background: rgba(255, 255, 255, 0.03);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transicion-rapida),
+        border-color var(--transicion-normal),
+        background var(--transicion-normal);
+}
+
+.metodo:hover {
+    transform: translateY(-3px);
+
+    border-color: var(--color-borde-cyan);
+
+    background: rgba(39, 217, 255, 0.05);
+}
+
+.metodo input {
+    position: absolute;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.metodo:has(input:checked) {
+    border-color: var(--color-cyan);
+
+    background: rgba(39, 217, 255, 0.08);
+
+    box-shadow: var(--brillo-cyan);
+}
+
+.metodo span {
+    font-size: 2rem;
+}
+
+.metodo p {
+    color: var(--color-texto-principal);
+
+    font-size: var(--texto-xs);
+
+    text-align: center;
+}
+
+
+/* =========================
+   BOTÓN
+========================= */
+
+.boton-guardar {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 20px;
+
+    border-radius: var(--radio-pequeno);
+
+    background: var(--gradiente-principal);
+
+    color: white;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    transition:
+        transform var(--transicion-rapida),
+        box-shadow var(--transicion-rapida);
+}
+
+.boton-guardar:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 30px rgba(138, 43, 226, 0.35);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 950px) {
+
+    .modificar-usuario {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-presentacion {
+        min-height: 320px;
+
+        padding: var(--espacio-xl);
+
+        text-align: center;
+    }
+
+    .perfil-contenido {
+        margin: 0 auto;
+    }
+
+    .logo-lumi {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .perfil-descripcion {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .perfil-formulario {
+        padding:
+            var(--espacio-xl)
+            var(--espacio-md);
+    }
+}
+
+
+@media (max-width: 550px) {
+
+    .metodos-estudio {
+        grid-template-columns: 1fr;
+    }
+
+    .metodo {
+        min-height: 90px;
+
+        flex-direction: row;
+    }
+
+    .perfil-presentacion {
+        min-height: 280px;
+    }
+
+    .perfil-contenido h1 {
+        font-size: 2.4rem;
+    }
+}

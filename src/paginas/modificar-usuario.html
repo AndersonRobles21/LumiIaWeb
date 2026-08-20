@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Completa y modifica tu perfil en LUMI."
+    >
+
+    <title>Mi perfil | LUMI</title>
+
+    <!-- ESTILOS GLOBALES -->
+
+    <link
+        rel="stylesheet"
+        href="../css/global/reset.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/global/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/global/global.css"
+    >
+
+    <!-- ESTILOS DE LA PÁGINA -->
+
+    <link
+        rel="stylesheet"
+        href="../css/paginas/modificar-usuario.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="modificar-usuario">
+
+        <!-- ENCABEZADO -->
+
+        <section class="perfil-presentacion">
+
+            <div class="perfil-fondo"></div>
+
+            <div class="perfil-contenido">
+
+                <div class="logo-lumi">
+                    <span>L</span>
+                </div>
+
+                <p class="perfil-etiqueta">
+                    PERSONALIZA TU EXPERIENCIA
+                </p>
+
+                <h1>
+                    Hagamos que LUMI
+                    <span>se adapte a ti.</span>
+                </h1>
+
+                <p class="perfil-descripcion">
+                    Completa tu información para que podamos
+                    ayudarte a organizar mejor tu tiempo y
+                    crear planes de estudio personalizados.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- FORMULARIO -->
+
+        <section class="perfil-formulario">
+
+            <div class="formulario-contenedor">
+
+                <div class="formulario-encabezado">
+
+                    <p class="formulario-etiqueta">
+                        TU PERFIL
+                    </p>
+
+                    <h2>Cuéntanos sobre ti</h2>
+
+                    <p>
+                        Esta información nos ayudará a
+                        personalizar tu experiencia en LUMI.
+                    </p>
+
+                </div>
+
+
+                <form id="formulario-usuario">
+
+                    <!-- NOMBRE -->
+
+                    <div class="campo">
+
+                        <label for="nombre">
+                            Nombre completo
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Tu nombre completo"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- OBJETIVO -->
+
+                    <div class="campo">
+
+                        <label for="objetivo">
+                            ¿Cuál es tu principal objetivo?
+                        </label>
+
+                        <select
+                            id="objetivo"
+                            name="objetivo"
+                            required
+                        >
+
+                            <option value="">
+                                Selecciona una opción
+                            </option>
+
+                            <option value="estudiar">
+                                Mejorar mis hábitos de estudio
+                            </option>
+
+                            <option value="organizar">
+                                Organizar mejor mi tiempo
+                            </option>
+
+                            <option value="procrastinacion">
+                                Vencer la procrastinación
+                            </option>
+
+                            <option value="productividad">
+                                Ser más productivo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- HORAS DE ESTUDIO -->
+
+                    <div class="campo">
+
+                        <label for="horas-estudio">
+                            ¿Cuántas horas puedes estudiar al día?
+                        </label>
+
+                        <select
+                            id="horas-estudio"
+                            name="horas-estudio"
+                            required
+                        >
+
+                            <option value="">
+                                Selecciona una opción
+                            </option>
+
+                            <option value="1">
+                                Menos de 1 hora
+                            </option>
+
+                            <option value="2">
+                                1 - 2 horas
+                            </option>
+
+                            <option value="3">
+                                2 - 3 horas
+                            </option>
+
+                            <option value="4">
+                                Más de 3 horas
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MÉTODO DE ESTUDIO -->
+
+                    <div class="campo">
+
+                        <label>
+                            Método de estudio preferido
+                        </label>
+
+                        <div class="metodos-estudio">
+
+                            <label class="metodo">
+
+                                <input
+                                    type="radio"
+                                    name="metodo"
+                                    value="pomodoro"
+                                >
+
+                                <span>🍅</span>
+
+                                <p>Pomodoro</p>
+
+                            </label>
+
+
+                            <label class="metodo">
+
+                                <input
+                                    type="radio"
+                                    name="metodo"
+                                    value="active-recall"
+                                >
+
+                                <span>🧠</span>
+
+                                <p>Active Recall</p>
+
+                            </label>
+
+
+                            <label class="metodo">
+
+                                <input
+                                    type="radio"
+                                    name="metodo"
+                                    value="feynman"
+                                >
+
+                                <span>💡</span>
+
+                                <p>Feynman</p>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <button
+                        type="submit"
+                        class="boton-guardar"
+                    >
+
+                        <span>CONTINUAR</span>
+
+                        <span>→</span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="../js/paginas/modificar-usuario.js"
+    ></script>
+
+</body>
+
+</html>
