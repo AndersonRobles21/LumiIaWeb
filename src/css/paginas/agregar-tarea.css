@@ -1,0 +1,156 @@
+/* =========================
+   AGREGAR TAREA - LUMI
+========================= */
+
+/* Layout base (igual que dashboard y tareas) */
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-fondo-principal);
+  color: var(--color-texto-principal);
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: var(--espacio-xl);
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(39, 217, 255, 0.07), transparent 35%),
+    radial-gradient(circle at 15% 85%, rgba(138, 43, 226, 0.10), transparent 40%);
+}
+
+/* =========================
+   CONTENEDOR DEL FORMULARIO
+========================= */
+.agregar-tarea-contenedor {
+  max-width: 640px;
+}
+
+/* Encabezado */
+.agregar-tarea-encabezado {
+  margin-bottom: var(--espacio-xl);
+}
+
+.agregar-tarea-encabezado h1 {
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  font-weight: 700;
+  margin-bottom: 6px;
+  background: var(--gradiente-principal);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.agregar-tarea-encabezado p {
+  color: var(--color-texto-secundario, #94a3b8);
+  font-size: var(--texto-base);
+}
+
+/* =========================
+   FORMULARIO
+========================= */
+.formulario-tarea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-lg);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--color-texto-principal);
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pequeno);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-texto-principal);
+  font-size: var(--texto-base);
+  transition: border-color var(--transicion-normal), box-shadow var(--transicion-normal);
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--color-cyan);
+  box-shadow: var(--brillo-cyan);
+}
+
+.campo textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.campo select option {
+  background: var(--color-fondo-principal);
+  color: var(--color-texto-principal);
+}
+
+/* Grupo de campos (prioridad + fecha) */
+.campo-grupo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-md);
+}
+
+/* =========================
+   BOTONES
+========================= */
+.formulario-acciones {
+  display: flex;
+  gap: 12px;
+  margin-top: var(--espacio-md);
+  flex-wrap: wrap;
+}
+
+.boton-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: var(--radio-pequeno);
+  background: var(--gradiente-principal);
+  color: white;
+  font-weight: 600;
+  font-size: var(--texto-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transicion-rapida);
+  text-decoration: none;
+}
+
+.boton-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(138, 43, 226, 0.35);
+}
+
+.boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: var(--radio-pequeno);
+  border: 1px solid var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-texto-principal);
+  font-weight: 500;
+  font-size: var(--

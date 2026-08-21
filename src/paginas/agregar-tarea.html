@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Tarea | LUMI</title>
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes -->
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de esta página -->
+  <link rel="stylesheet" href="../css/paginas/agregar-tarea.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- Contenido principal -->
+    <div class="dashboard-main">
+
+      <!-- Navbar -->
+      <header id="navbar-container"></header>
+
+      <!-- Contenido -->
+      <main class="dashboard-content">
+
+        <section class="agregar-tarea-contenedor">
+
+          <!-- Encabezado -->
+          <div class="agregar-tarea-encabezado">
+            <h1>Nueva Tarea</h1>
+            <p>Define qué vas a hacer y organízalo bien desde el principio.</p>
+          </div>
+
+          <!-- Formulario -->
+          <form id="formulario-tarea" class="formulario-tarea">
+
+            <!-- Título -->
+            <div class="campo">
+              <label for="titulo">Título de la tarea</label>
+              <input 
+                type="text" 
+                id="titulo" 
+                name="titulo" 
+                placeholder="Ej: Estudiar capítulo 4 de matemáticas"
+                required
+              >
+            </div>
+
+            <!-- Descripción -->
+            <div class="campo">
+              <label for="descripcion">Descripción (opcional)</label>
+              <textarea 
+                id="descripcion" 
+                name="descripcion" 
+                rows="3"
+                placeholder="Agrega más detalles si lo necesitas..."
+              ></textarea>
+            </div>
+
+            <!-- Prioridad y Fecha -->
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="prioridad">Prioridad</label>
+                <select id="prioridad" name="prioridad" required>
+                  <option value="">Selecciona prioridad</option>
+                  <option value="alta">Alta</option>
+                  <option value="media">Media</option>
+                  <option value="baja">Baja</option>
+                </select>
+              </div>
+
+              <div class="campo">
+                <label for="fecha">Fecha límite</label>
+                <input 
+                  type="date" 
+                  id="fecha" 
+                  name="fecha"
+                >
+              </div>
+            </div>
+
+            <!-- Método de estudio relacionado -->
+            <div class="campo">
+              <label for="metodo">Método de estudio (opcional)</label>
+              <select id="metodo" name="metodo">
+                <option value="">Ninguno</option>
+                <option value="pomodoro">Pomodoro</option>
+                <option value="active-recall">Active Recall</option>
+                <option value="feynman">Feynman</option>
+              </select>
+            </div>
+
+            <!-- Botones -->
+            <div class="formulario-acciones">
+              <a href="tareas.html" class="boton-secundario">Cancelar</a>
+              <button type="submit" class="boton-principal">
+                Guardar tarea
+              </button>
+            </div>
+
+          </form>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/agregar-tarea.js"></script>
+
+</body>
+</html>

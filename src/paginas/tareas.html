@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Tareas | LUMI</title>
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes -->
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/tarjetas.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de esta página -->
+  <link rel="stylesheet" href="../css/paginas/tareas.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- Contenido principal -->
+    <div class="dashboard-main">
+
+      <!-- Navbar -->
+      <header id="navbar-container"></header>
+
+      <!-- Contenido de Tareas -->
+      <main class="dashboard-content">
+
+        <!-- Encabezado de la sección -->
+        <section class="tareas-encabezado">
+          <div>
+            <h1>Mis Tareas</h1>
+            <p>Organiza y gestiona todo lo que tienes pendiente.</p>
+          </div>
+          <a href="agregar-tarea.html" class="boton-principal">
+            <span>➕ Nueva tarea</span>
+          </a>
+        </section>
+
+        <!-- Filtros rápidos -->
+        <section class="tareas-filtros">
+          <button class="filtro activo" data-filtro="todas">Todas</button>
+          <button class="filtro" data-filtro="pendientes">Pendientes</button>
+          <button class="filtro" data-filtro="completadas">Completadas</button>
+        </section>
+
+        <!-- Lista de tareas (por ahora vacía / ejemplo) -->
+        <section class="tareas-lista" id="lista-tareas">
+          <!-- Aquí se insertarán las tareas con JavaScript -->
+          <div class="tareas-vacio">
+            <p>No tienes tareas todavía.</p>
+            <a href="agregar-tarea.html">Crear mi primera tarea</a>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/tareas.js"></script>
+
+</body>
+</html>
