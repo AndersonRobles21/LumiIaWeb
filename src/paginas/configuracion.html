@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración | LUMI</title>
+
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+  <link rel="stylesheet" href="../css/paginas/configuracion.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <aside id="sidebar-container"></aside>
+
+    <div class="dashboard-main">
+      <header id="navbar-container"></header>
+
+      <main class="dashboard-content">
+        <section class="config-contenedor">
+
+          <div class="config-encabezado">
+            <h1>Configuración</h1>
+            <p>Personaliza tu experiencia en LUMI.</p>
+          </div>
+
+          <!-- Preferencias -->
+          <div class="config-seccion">
+            <h2>Preferencias</h2>
+
+            <div class="config-item">
+              <div class="config-info">
+                <span class="config-titulo">Notificaciones</span>
+                <span class="config-desc">Recibir recordatorios de tareas y estudio</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="notif-tareas" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="config-item">
+              <div class="config-info">
+                <span class="config-titulo">Modo oscuro</span>
+                <span class="config-desc">La interfaz ya usa tema oscuro por defecto</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="modo-oscuro" checked disabled>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Cuenta -->
+          <div class="config-seccion">
+            <h2>Cuenta</h2>
+
+            <div class="config-item">
+              <div class="config-info">
+                <span class="config-titulo">Editar perfil</span>
+                <span class="config-desc">Nombre, objetivo y método de estudio</span>
+              </div>
+              <a href="modificar-usuario.html" class="boton-secundario">Editar</a>
+            </div>
+
+            <div class="config-item">
+              <div class="config-info">
+                <span class="config-titulo">Cerrar sesión</span>
+                <span class="config-desc">Salir de tu cuenta en este dispositivo</span>
+              </div>
+              <button class="boton-peligro" id="btn-cerrar-sesion">Cerrar sesión</button>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/configuracion.js"></script>
+</body>
+</html>

@@ -71,14 +71,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Datos guardados temporalmente:', datos);
     // Mensaje de confirmación
-    alert(
-      `¡Perfecto ${nombre}!\n\n` +
-      `Objetivo: ${objetivoSelect.options[objetivoSelect.selectedIndex].text}\n` +
-      `Horas: ${horasSelect.options[horasSelect.selectedIndex].text}\n` +
-      `Método: ${metodoSeleccionado.value}\n\n` +
-      `Te llevamos al dashboard...`
-    );
+    // Guardar datos del perfil en localStorage (temporal)
+    const perfil = {
+      nombre: nombre,
+      objetivo: objetivo,
+      objetivoTexto: objetivoSelect.options[objetivoSelect.selectedIndex].text,
+      horas: horas,
+      horasTexto: horasSelect.options[horasSelect.selectedIndex].text,
+      metodo: metodoSeleccionado.value
+    };
 
+    localStorage.setItem('lumi_perfil', JSON.stringify(perfil));
+
+    console.log('Perfil guardado temporalmente:', perfil);
+
+    // Redirección al dashboard
+    window.location.href = 'dashboard.html';
     // Redirección temporal al dashboard
     window.location.href = 'dashboard.html';
 

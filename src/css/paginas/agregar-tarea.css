@@ -153,4 +153,30 @@
   background: rgba(255, 255, 255, 0.03);
   color: var(--color-texto-principal);
   font-weight: 500;
-  font-size: var(--
+  font-size: var(--texto-sm);
+  text-decoration: none;
+  transition: all var(--transicion-rapida);
+}
+
+.boton-secundario:hover {
+  border-color: var(--color-borde-cyan);
+  background: rgba(39, 217, 255, 0.06);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 600px) {
+  .campo-grupo {
+    grid-template-columns: 1fr;
+  }
+
+  .formulario-acciones {
+    flex-direction: column-reverse;
+  }
+
+  .boton-principal,
+  .boton-secundario {
+    width: 100%;
+  }
+}

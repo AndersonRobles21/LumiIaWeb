@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil | LUMI</title>
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes -->
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de esta página -->
+  <link rel="stylesheet" href="../css/paginas/perfil.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- Contenido principal -->
+    <div class="dashboard-main">
+
+      <!-- Navbar -->
+      <header id="navbar-container"></header>
+
+      <!-- Contenido del perfil -->
+      <main class="dashboard-content">
+
+        <section class="perfil-contenedor">
+
+          <!-- Cabecera del perfil -->
+          <div class="perfil-header">
+            <div class="perfil-avatar-grande">A</div>
+            <div class="perfil-info-principal">
+              <h1 id="perfil-nombre">Anderson</h1>
+              <p id="perfil-rol">Estudiante</p>
+            </div>
+          </div>
+
+          <!-- Datos del perfil -->
+          <div class="perfil-datos">
+            <h2>Información personal</h2>
+
+            <div class="dato-item">
+              <span class="dato-etiqueta">Nombre completo</span>
+              <span class="dato-valor" id="dato-nombre">Anderson</span>
+            </div>
+
+            <div class="dato-item">
+              <span class="dato-etiqueta">Objetivo principal</span>
+              <span class="dato-valor" id="dato-objetivo">—</span>
+            </div>
+
+            <div class="dato-item">
+              <span class="dato-etiqueta">Horas de estudio diarias</span>
+              <span class="dato-valor" id="dato-horas">—</span>
+            </div>
+
+            <div class="dato-item">
+              <span class="dato-etiqueta">Método preferido</span>
+              <span class="dato-valor" id="dato-metodo">—</span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="perfil-acciones">
+            <a href="modificar-usuario.html" class="boton-principal">Editar perfil</a>
+            <a href="configuracion.html" class="boton-secundario">Configuración</a>
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/perfil.js"></script>
+
+</body>
+</html>

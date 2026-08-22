@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de Estudio | LUMI</title>
+
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+  <link rel="stylesheet" href="../css/paginas/guia-detalle.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <aside id="sidebar-container"></aside>
+
+    <div class="dashboard-main">
+      <header id="navbar-container"></header>
+
+      <main class="dashboard-content">
+        <section class="guia-contenedor">
+
+          <div class="guia-encabezado">
+            <h1>Guía de Estudio</h1>
+            <p>Conoce y aplica los mejores métodos para estudiar mejor y vencer la procrastinación.</p>
+          </div>
+
+          <!-- Métodos -->
+          <div class="metodos-grid">
+
+            <div class="metodo-card">
+              <div class="metodo-icono">🍅</div>
+              <h3>Pomodoro</h3>
+              <p>Estudia en bloques de 25 minutos con descansos cortos. Ideal para mantener el foco y evitar el agotamiento.</p>
+              <ul>
+                <li>25 min de estudio</li>
+                <li>5 min de descanso</li>
+                <li>Cada 4 pomodoros → descanso largo</li>
+              </ul>
+            </div>
+
+            <div class="metodo-card">
+              <div class="metodo-icono">🧠</div>
+              <h3>Active Recall</h3>
+              <p>En lugar de solo releer, intenta recordar la información. Es una de las técnicas más efectivas para memorizar.</p>
+              <ul>
+                <li>Lee el tema</li>
+                <li>Cierra el material</li>
+                <li>Intenta explicarlo o escribirlo</li>
+              </ul>
+            </div>
+
+            <div class="metodo-card">
+              <div class="metodo-icono">💡</div>
+              <h3>Método Feynman</h3>
+              <p>Explica el tema con palabras simples, como si se lo enseñaras a un niño. Si no puedes, aún no lo entiendes bien.</p>
+              <ul>
+                <li>Elige un concepto</li>
+                <li>Explícalo en voz alta o por escrito</li>
+                <li>Detecta lagunas y vuelve a estudiar</li>
+              </ul>
+            </div>
+
+            <div class="metodo-card">
+              <div class="metodo-icono">📅</div>
+              <h3>Spaced Repetition</h3>
+              <p>Repasa la información en intervalos crecientes. Ayuda a pasar el conocimiento a la memoria a largo plazo.</p>
+              <ul>
+                <li>Repasa al día siguiente</li>
+                <li>Luego a los 3 días</li>
+                <li>Después a la semana</li>
+              </ul>
+            </div>
+
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/guia-detalle.js"></script>
+</body>
+</html>
