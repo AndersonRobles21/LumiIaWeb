@@ -1,14 +1,24 @@
+import { iniciarSesion } from '../servicios/autenticacion.service.js';
+
 const formularioLogin = document.getElementById("formulario-login");
 
-formularioLogin.addEventListener("submit", (evento) => {
+formularioLogin?.addEventListener("submit", async (evento) => {
     evento.preventDefault();
 
-    console.log("Formulario de inicio de sesión enviado");
+    const correo = document.getElementById('correo').value.trim();
+    const contrasena = document.getElementById('contrasena').value;
 
-    // Aquí después conectaremos:
-    // login.js
-    // ↓
-    // autenticacion.service.js
-    // ↓
-    // Supabase / backend actual
+    try {
+        const resultado = await iniciarSesion(correo, contrasena);
+        if (resultado.esAdmin) {
+            window.location.href = 'administrador.html';
+            return;
+        }
+        const perfil = resultado.perfil || {};
+        const perfilEstudio = perfil.perfil_estudio || perfil.perfil || perfil;
+        const tienePerfil = Boolean(perfilEstudio.objetivo || (perfil.horarios || perfil.horario || []).length);
+        window.location.href = tienePerfil ? 'dashboard.html' : 'perfil.html';
+    } catch (error) {
+        alert(`No se pudo iniciar sesión: ${error.message}`);
+    }
 });

@@ -1,58 +1,61 @@
 /**
  * historial.js
- * Lógica temporal de la página Historial
- * Por ahora usa localStorage (simulación)
+ * Lógica de la página Historial
  */
 
-console.log('historial.js cargado');
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerEstadisticas } from '../servicios/estadisticas.service.js';
+import { obtenerHistorialIA } from '../servicios/ia.service.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  cargarResumen();
+document.addEventListener('DOMContentLoaded', async () => {
+  await cargarResumen();
 });
 
-function cargarResumen() {
-  const tareas = JSON.parse(localStorage.getItem('lumi_tareas') || '[]');
+async function cargarResumen() {
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (!usuario?.id) throw new Error('La sesión no está autenticada.');
+    const [estadisticasRespuesta, historial] = await Promise.all([
+      obtenerEstadisticas(usuario.id),
+      obtenerHistorialIA(usuario.id),
+    ]);
+    const estadisticas = estadisticasRespuesta?.estadisticas || estadisticasRespuesta?.data || estadisticasRespuesta || {};
 
-  const completadas = tareas.filter(t => t.completada).length;
-  const pendientes = tareas.filter(t => !t.completada).length;
+    const elCompletadas = document.getElementById('hist-completadas');
+    const elRacha = document.getElementById('hist-racha');
+    const elHoras = document.getElementById('hist-horas');
 
-  // Actualizar números
-  const elCompletadas = document.getElementById('hist-completadas');
-  const elRacha = document.getElementById('hist-racha');
-  const elHoras = document.getElementById('hist-horas');
+    if (elCompletadas) elCompletadas.textContent = estadisticas.tareas_completadas ?? 0;
+    if (elRacha) elRacha.textContent = estadisticas.racha ?? 0;
+    if (elHoras) elHoras.textContent = `${estadisticas.horas_estudio ?? 0}h`;
 
-  if (elCompletadas) elCompletadas.textContent = completadas;
-  if (elRacha) elRacha.textContent = 0; // Más adelante lo calculamos
-  if (elHoras) elHoras.textContent = '0h';
+    const lista = document.getElementById('lista-historial');
+    if (!lista) return;
 
-  // Lista de actividad (temporal)
-  const lista = document.getElementById('lista-historial');
-  if (!lista) return;
-
-  if (tareas.length === 0) {
-    lista.innerHTML = `
+    if (historial.length === 0) {
+      lista.innerHTML = `
       <div class="historial-vacio">
         <p>Aún no hay actividad registrada.</p>
       </div>
     `;
-    return;
-  }
+      return;
+    }
 
-  // Mostrar las últimas tareas
-  const recientes = [...tareas].reverse().slice(0, 10);
+    const recientes = [...historial].reverse().slice(0, 10);
 
-  lista.innerHTML = recientes.map(tarea => `
-    <div class="historial-item">
-      <div class="historial-estado ${tarea.completada ? 'completada' : 'pendiente'}">
-        ${tarea.completada ? '✅' : '🕒'}
-      </div>
+    lista.innerHTML = recientes.map(plan => `
+    <a class="historial-item" href="guia-detalle.html?plan_id=${encodeURIComponent(plan.id || plan.plan_id || '')}">
+      <div class="historial-estado completada">📚</div>
       <div class="historial-info">
-        <span class="historial-titulo">${tarea.titulo}</span>
+        <span class="historial-titulo">${plan.nombre || plan.titulo || plan.metodo_estudio || 'Plan de estudio'}</span>
         <span class="historial-meta">
-          ${tarea.completada ? 'Completada' : 'Pendiente'}
-          ${tarea.fecha ? ` · ${tarea.fecha}` : ''}
+          ${plan.metodo_estudio || ''}
+          ${plan.fecha_creacion ? ` · ${plan.fecha_creacion}` : ''}
         </span>
       </div>
-    </div>
+    </a>
   `).join('');
+  } catch (error) {
+    alert(`No se pudo cargar el historial: ${error.message}`);
+  }
 }

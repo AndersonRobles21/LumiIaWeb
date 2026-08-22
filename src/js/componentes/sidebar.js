@@ -3,30 +3,40 @@
  * Componente reutilizable del Sidebar de LUMI
  */
 
-console.log('sidebar.js cargado correctamente');
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
 
-export function crearSidebar() {
-  console.log('Ejecutando crearSidebar()...');
-
+export async function crearSidebar() {
   const contenedor = document.getElementById('sidebar-container');
 
   if (!contenedor) {
-    console.error('No se encontró #sidebar-container');
     return;
   }
 
-  console.log('Contenedor encontrado, insertando sidebar...');
-
   const paginaActual = window.location.pathname.split('/').pop() || 'dashboard.html';
+  let nombreCompleto = '';
+  let rol = '';
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (usuario?.id) {
+      const respuesta = await obtenerUsuarioConPerfil(usuario.id);
+      const datos = respuesta?.usuario || respuesta?.user || respuesta;
+      nombreCompleto = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ');
+      rol = datos?.rol || datos?.rol_nombre || (datos?.rol_id ? `Rol ${datos.rol_id}` : '');
+    }
+  } catch (error) {
+    console.warn('No se pudo cargar el usuario del sidebar:', error.message);
+  }
 
   const menu = [
     { nombre: 'Dashboard', href: 'dashboard.html', icono: '🏠' },
-    { nombre: 'Mis Tareas', href: 'tareas.html', icono: '✅' },
-    { nombre: 'Agregar Tarea', href: 'agregar-tarea.html', icono: '➕' },
-    { nombre: 'Guía de Estudio', href: 'guia-detalle.html', icono: '📚' },
-    { nombre: 'Historial', href: 'historial.html', icono: '📊' },
+    { nombre: 'Calendario', href: 'tareas.html', icono: '📅' },
+    { nombre: 'Agregar tarea inteligente', href: 'agregar-tarea.html', icono: '➕' },
+    { nombre: 'Historial de IA', href: 'historial.html', icono: '📊' },
+    { nombre: 'Recompensas', href: 'recompensas.html', icono: '🏆' },
     { nombre: 'Perfil', href: 'perfil.html', icono: '👤' },
     { nombre: 'Configuración', href: 'configuracion.html', icono: '⚙️' },
+    { nombre: 'Ayuda y privacidad', href: 'informacion.html', icono: '❓' },
   ];
 
   const linksHTML = menu.map(item => {
@@ -52,17 +62,16 @@ export function crearSidebar() {
 
       <div class="sidebar-footer">
         <div class="sidebar-usuario">
-          <div class="avatar">A</div>
+          <div class="avatar">${nombreCompleto ? nombreCompleto.charAt(0).toUpperCase() : ''}</div>
           <div class="info">
-            <span class="nombre">Anderson</span>
-            <span class="rol">Estudiante</span>
+            <span class="nombre">${nombreCompleto}</span>
+            <span class="rol">${rol}</span>
           </div>
         </div>
       </div>
     </div>
   `;
 
-  console.log('Sidebar insertado correctamente');
 }
 
 // Ejecutar cuando el DOM esté listo

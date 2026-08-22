@@ -1,94 +1,21 @@
-/**
- * modificar-usuario.js
- * Lógica temporal de la página "Modificar Usuario"
- * Solo validamos y mostramos los datos por ahora.
- */
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { comprobarAdmin, obtenerUsuarioAdmin, actualizarUsuarioAdmin, eliminarUsuarioAdmin } from '../servicios/administrador.service.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('formulario-usuario');
-  const nombreInput = document.getElementById('nombre');
-  const objetivoSelect = document.getElementById('objetivo');
-  const horasSelect = document.getElementById('horas-estudio');
-  const metodosRadios = document.querySelectorAll('input[name="metodo"]');
+const contenedor = document.getElementById('detalle-usuario');
+const escapar = valor => String(valor ?? '').replace(/[&<>'"]/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[caracter]));
 
-  // Resaltar visualmente el método seleccionado
-  metodosRadios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      // Quitar clase de todos
-      document.querySelectorAll('.metodo').forEach(m => {
-        m.classList.remove('seleccionado');
-      });
-      // Agregar clase al label del radio marcado
-      if (radio.checked) {
-        radio.closest('.metodo').classList.add('seleccionado');
-      }
-    });
-  });
+async function cargarDetalle() {
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (!id) throw new Error('No se indicó un usuario.');
+  const administrador = await obtenerUsuarioActual();
+  if (!administrador?.id) throw new Error('La sesión no está autenticada.');
+  await comprobarAdmin(administrador.id);
+  const respuesta = await obtenerUsuarioAdmin(administrador.id, id);
+  const usuario = respuesta?.user || respuesta?.usuario || respuesta?.data || respuesta;
+  const perfil = usuario?.perfil_estudio || usuario?.perfil || {};
+  contenedor.innerHTML = `<a href="usuarios.html">← Lista de usuarios</a><h1>Detalle de usuario administrador</h1><form id="editar-usuario"><label>Nombre<input id="nombre" value="${escapar(usuario.nombre)}" required></label><p>Correo: ${escapar(usuario.email)}</p><p>Objetivo: ${escapar(perfil.objetivo || 'Sin definir')}</p><p>Racha: ${escapar(usuario.racha ?? perfil.racha ?? 0)} días</p><p>Tareas: ${escapar(usuario.tareas_completadas ?? perfil.tareas_completadas ?? 0)}</p><p>Horarios: ${escapar(JSON.stringify(respuesta?.horarios || perfil.horario || 'Sin definir'))}</p><p>Planes y actividades: ${escapar(usuario.planes ?? 'Consultar historial')}</p><button type="submit">Guardar nombre</button><button type="button" id="eliminar-usuario">Eliminar usuario</button></form>`;
+  document.getElementById('editar-usuario').addEventListener('submit', async event => { event.preventDefault(); await actualizarUsuarioAdmin(administrador.id, id, { nombre: document.getElementById('nombre').value.trim() }); alert('Usuario actualizado.'); });
+  document.getElementById('eliminar-usuario').addEventListener('click', async () => { if (!confirm('¿Eliminar este usuario?')) return; await eliminarUsuarioAdmin(administrador.id, id); window.location.href = 'usuarios.html'; });
+}
 
-  // Cuando se envía el formulario
-  form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Evita que recargue la página
-    validarYContinuar();
-  });
-
-  function validarYContinuar() {
-    const nombre = nombreInput.value.trim();
-    const objetivo = objetivoSelect.value;
-    const horas = horasSelect.value;
-    const metodoSeleccionado = document.querySelector('input[name="metodo"]:checked');
-
-    // Validaciones
-    if (!nombre) {
-      alert('Por favor escribe tu nombre completo');
-      nombreInput.focus();
-      return;
-    }
-
-    if (!objetivo) {
-      alert('Selecciona tu objetivo principal');
-      objetivoSelect.focus();
-      return;
-    }
-
-    if (!horas) {
-      alert('Selecciona cuántas horas puedes estudiar');
-      horasSelect.focus();
-      return;
-    }
-
-    if (!metodoSeleccionado) {
-      alert('Elige un método de estudio preferido');
-      return;
-    }
-
-    // Todo correcto → datos temporales
-    const datos = {
-      nombre: nombre,
-      objetivo: objetivo,
-      horasEstudio: horas,
-      metodo: metodoSeleccionado.value
-    };
-
-    console.log('Datos guardados temporalmente:', datos);
-    // Mensaje de confirmación
-    // Guardar datos del perfil en localStorage (temporal)
-    const perfil = {
-      nombre: nombre,
-      objetivo: objetivo,
-      objetivoTexto: objetivoSelect.options[objetivoSelect.selectedIndex].text,
-      horas: horas,
-      horasTexto: horasSelect.options[horasSelect.selectedIndex].text,
-      metodo: metodoSeleccionado.value
-    };
-
-    localStorage.setItem('lumi_perfil', JSON.stringify(perfil));
-
-    console.log('Perfil guardado temporalmente:', perfil);
-
-    // Redirección al dashboard
-    window.location.href = 'dashboard.html';
-    // Redirección temporal al dashboard
-    window.location.href = 'dashboard.html';
-
-  }
-});
+document.addEventListener('DOMContentLoaded', () => cargarDetalle().catch(error => { contenedor.innerHTML = `<p>${escapar(error.message)}</p>`; }));

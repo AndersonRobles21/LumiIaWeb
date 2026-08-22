@@ -7,37 +7,19 @@
  * - Cuando tengamos las claves, las pondremos aquí o mejor usando variables de entorno.
  */
 
-// import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // ======================================================
 // CONFIGURACIÓN (rellenar más adelante con valores reales)
 // ======================================================
-const SUPABASE_URL = 'TU_SUPABASE_URL_AQUI';
-const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY_AQUI';
+const SUPABASE_URL = globalThis.LUMI_CONFIG?.SUPABASE_URL || 'https://lsbnizzypdmnvppatzxp.supabase.co';
+const SUPABASE_ANON_KEY = globalThis.LUMI_CONFIG?.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzYm5penp5cGRtbnZwcGF0enhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExOTE1MTEsImV4cCI6MjA5Njc2NzUxMX0.BSPlhX0JOwUWTYoSmzcse3MAIANgu5UniSNxm6Qjr0U';
 
 // ======================================================
 // CLIENTE DE SUPABASE
 // ======================================================
-// Descomentar cuando tengamos las claves reales:
-//
-// export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-//
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+	console.warn('Configura LUMI_CONFIG.SUPABASE_URL y LUMI_CONFIG.SUPABASE_ANON_KEY antes de usar Supabase.');
+}
 
-// Por ahora exportamos un objeto temporal para que no fallen los imports
-export const supabase = {
-  auth: {
-    signInWithPassword: async () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-    signUp: async () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-    signOut: async () => ({ error: null }),
-    getUser: async () => ({ data: { user: null } }),
-    getSession: async () => ({ data: { session: null } }),
-  },
-  from: () => ({
-    select: () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-    insert: () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-    update: () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-    delete: () => ({ data: null, error: { message: 'Supabase no configurado todavía' } }),
-  }),
-};
-
-console.log('supabase.js cargado (modo temporal - sin conexión real)');
+export const supabase = createClient(SUPABASE_URL || 'https://placeholder.supabase.co', SUPABASE_ANON_KEY || 'placeholder-anon-key');

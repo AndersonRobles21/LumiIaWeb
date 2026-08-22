@@ -15,67 +15,33 @@
  * - completada (boolean)
  */
 
-import { supabase } from '../config/supabase.js';
+import { apiGet, apiPut } from '../api.js';
 
 /**
  * Obtener todas las tareas de un usuario
  * (a través de sus planes → actividades → tareas)
  */
 export async function obtenerTareasDelUsuario(usuarioId) {
-  // TODO: Implementar con Supabase
-  // 1. Buscar planes del usuario
-  // 2. Buscar actividades de esos planes
-  // 3. Buscar tareas de esas actividades
-
-  console.log('obtenerTareasDelUsuario() - pendiente de conectar', { usuarioId });
-  return [];
-}
-
-/**
- * Crear una nueva tarea
- * Nota: en el schema real una tarea necesita pertenecer a una actividad
- */
-export async function crearTarea(actividadId, datos) {
-  // datos esperados:
-  // {
-  //   titulo: string,
-  //   descripcion: string (opcional),
-  //   completada: boolean (default false)
-  // }
-
-  console.log('crearTarea() - pendiente de conectar', { actividadId, datos });
-  return null;
+  const respuesta = await apiGet(`/tareas/${usuarioId}`);
+  const tareas = respuesta?.tareas || [];
+  return tareas.map(tarea => ({
+    ...tarea,
+    nombre: tarea.nombre ?? tarea.titulo ?? '',
+    descripcion: tarea.descripcion ?? '',
+    estado: tarea.estado ?? (tarea.completada ? 'completada' : 'pendiente'),
+    fecha_creacion: tarea.fecha_creacion ?? null,
+    fecha_entrega: tarea.fecha_entrega ?? null,
+    completada: Boolean(tarea.completada) || tarea.estado === 'COMPLETADA',
+  }));
 }
 
 /**
  * Marcar tarea como completada / pendiente
  */
 export async function actualizarEstadoTarea(tareaId, completada) {
-  console.log('actualizarEstadoTarea() - pendiente de conectar', { tareaId, completada });
-  return null;
+  return apiPut(`/tareas/${tareaId}/completar`, { completada });
 }
 
 /**
  * Actualizar datos de una tarea
  */
-export async function actualizarTarea(tareaId, datos) {
-  console.log('actualizarTarea() - pendiente de conectar', { tareaId, datos });
-  return null;
-}
-
-/**
- * Eliminar una tarea
- */
-export async function eliminarTarea(tareaId) {
-  console.log('eliminarTarea() - pendiente de conectar', { tareaId });
-  return null;
-}
-
-/**
- * Obtener o crear una actividad "general" temporal
- * (útil mientras no tengamos el sistema completo de planes)
- */
-export async function obtenerActividadGeneral(planId) {
-  console.log('obtenerActividadGeneral() - pendiente de conectar', { planId });
-  return null;
-}

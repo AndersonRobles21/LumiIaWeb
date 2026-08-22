@@ -3,12 +3,12 @@
  * Componente reutilizable del Navbar de LUMI
  */
 
-console.log('navbar.js cargado correctamente');
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
 
-export function crearNavbar() {
+export async function crearNavbar() {
   const contenedor = document.getElementById('navbar-container');
   if (!contenedor) {
-    console.error('No se encontró #navbar-container');
     return;
   }
 
@@ -17,15 +17,28 @@ export function crearNavbar() {
 
   const titulos = {
     'dashboard.html': { titulo: 'Dashboard', subtitulo: 'Resumen de tu productividad' },
-    'tareas.html': { titulo: 'Mis Tareas', subtitulo: 'Organiza y completa tus pendientes' },
-    'agregar-tarea.html': { titulo: 'Agregar Tarea', subtitulo: 'Crea una nueva tarea' },
+    'tareas.html': { titulo: 'Calendario', subtitulo: 'Organiza tus tareas por fecha' },
+    'agregar-tarea.html': { titulo: 'Agregar tarea inteligente', subtitulo: 'Crea un plan de estudio personalizado' },
     'guia-detalle.html': { titulo: 'Guía de Estudio', subtitulo: 'Métodos y técnicas' },
     'historial.html': { titulo: 'Historial', subtitulo: 'Tu progreso a lo largo del tiempo' },
+    'recompensas.html': { titulo: 'Recompensas', subtitulo: 'Celebra tus avances' },
     'perfil.html': { titulo: 'Mi Perfil', subtitulo: 'Información personal' },
     'configuracion.html': { titulo: 'Configuración', subtitulo: 'Ajustes de la aplicación' },
+    'informacion.html': { titulo: 'Información, ayuda y privacidad', subtitulo: 'Conoce y controla tu experiencia en LUMI' },
   };
 
   const info = titulos[paginaActual] || { titulo: 'LUMI', subtitulo: 'Tu asistente de estudio' };
+  let nombre = '';
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (usuario?.id) {
+      const respuesta = await obtenerUsuarioConPerfil(usuario.id);
+      const datos = respuesta?.usuario || respuesta?.user || respuesta;
+      nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ');
+    }
+  } catch (error) {
+    console.warn('No se pudo cargar el usuario del navbar:', error.message);
+  }
 
   contenedor.innerHTML = `
     <div class="navbar">
@@ -41,8 +54,8 @@ export function crearNavbar() {
         <button class="navbar-btn" title="Ayuda">
           ❓
         </button>
-        <div class="navbar-avatar" title="Anderson">
-          A
+        <div class="navbar-avatar" title="${nombre}">
+          ${nombre ? nombre.charAt(0).toUpperCase() : ''}
         </div>
       </div>
     </div>

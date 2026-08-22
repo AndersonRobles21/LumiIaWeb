@@ -1,10 +1,10 @@
 /**
  * agregar-tarea.js
- * Lógica temporal de la página Agregar Tarea
- * Por ahora solo validamos y mostramos los datos.
+ * Lógica de la página Agregar Tarea
  */
 
-console.log('agregar-tarea.js cargado');
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { generarPlanIA } from '../servicios/ia.service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('formulario-tarea');
@@ -17,12 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-function validarYGuardar() {
+async function validarYGuardar() {
   const titulo = document.getElementById('titulo').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
   const prioridad = document.getElementById('prioridad').value;
   const fecha = document.getElementById('fecha').value;
   const metodo = document.getElementById('metodo').value;
+  const enfoqueAdicional = document.getElementById('enfoque-adicional')?.value.trim() || '';
 
   // Validaciones
   if (!titulo) {
@@ -37,32 +38,35 @@ function validarYGuardar() {
     return;
   }
 
-  // Datos temporales
-  const tarea = {
-    titulo,
-    descripcion: descripcion || null,
-    prioridad,
-    fecha: fecha || null,
-    metodo: metodo || null,
-    completada: false,
-    creadaEn: new Date().toISOString()
-  };
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (!usuario?.id) throw new Error('La sesión no está autenticada.');
 
-  console.log('Tarea creada (temporal):', tarea);
+    if (!fecha) {
+      alert('Selecciona una fecha de entrega');
+      document.getElementById('fecha').focus();
+      return;
+    }
 
-  // Guardar en localStorage (temporal)
-  const tareasGuardadas = JSON.parse(localStorage.getItem('lumi_tareas') || '[]');
-  tarea.id = Date.now(); // id temporal
-  tareasGuardadas.push(tarea);
-  localStorage.setItem('lumi_tareas', JSON.stringify(tareasGuardadas));
+    if (!metodo) {
+      alert('Selecciona un método de estudio');
+      document.getElementById('metodo').focus();
+      return;
+    }
 
-  console.log('Tarea guardada temporalmente:', tarea);
+    const respuesta = await generarPlanIA({
+      usuario_id: usuario.id,
+      nombre: titulo,
+      descripcion,
+      fecha_entrega: fecha,
+      metodo_estudio: metodo,
+      dificultad: prioridad,
+      enfoque_adicional: enfoqueAdicional,
+    });
 
-  alert('¡Tarea guardada correctamente!');
-
-  // Redirigir a la lista de tareas
-  window.location.href = 'tareas.html';
-  // Más adelante aquí guardaremos en el servicio real
-  // y redirigiremos a tareas.html
-  // window.location.href = 'tareas.html';
+    if (!respuesta?.plan_id) throw new Error('El backend no devolvió el identificador del plan.');
+    window.location.href = `guia-detalle.html?plan_id=${encodeURIComponent(respuesta.plan_id)}`;
+  } catch (error) {
+    alert(`No se pudo guardar la tarea: ${error.message}`);
+  }
 }

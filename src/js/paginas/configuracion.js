@@ -3,23 +3,22 @@
  * Lógica temporal de la página Configuración
  */
 
-console.log('configuracion.js cargado');
+import { cerrarSesion } from '../servicios/autenticacion.service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
 
   if (btnCerrarSesion) {
-    btnCerrarSesion.addEventListener('click', () => {
+    btnCerrarSesion.addEventListener('click', async () => {
       const confirmar = confirm('¿Seguro que quieres cerrar sesión?');
 
       if (confirmar) {
-        // Por ahora solo limpiamos datos temporales
-        localStorage.removeItem('lumi_perfil');
-        localStorage.removeItem('lumi_tareas');
-
-        // Más adelante: await autenticacionService.cerrarSesion();
-        alert('Sesión cerrada (temporal)');
-        window.location.href = 'login.html';
+        try {
+          await cerrarSesion();
+          window.location.href = 'login.html';
+        } catch (error) {
+          alert(`No se pudo cerrar sesión: ${error.message}`);
+        }
       }
     });
   }

@@ -11,6 +11,7 @@
  */
 
 import { supabase } from '../config/supabase.js';
+import { apiGet, apiPost } from '../api.js';
 
 /**
  * Iniciar sesión
@@ -18,11 +19,25 @@ import { supabase } from '../config/supabase.js';
  * @param {string} password
  */
 export async function iniciarSesion(email, password) {
-  // TODO: Implementar con Supabase Auth
-  // const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(error.message);
 
-  console.log('iniciarSesion() - pendiente de conectar con Supabase', { email });
-  return null;
+  const user = data?.user || (await obtenerUsuarioActual());
+  if (!user?.id) throw new Error('Supabase no devolvió el usuario autenticado.');
+
+  try {
+    await apiPost('/auth/login', { id: user.id });
+  } catch (error) {
+    console.warn('No se pudo verificar el login en Node.js:', error.message);
+  }
+  const perfil = await apiGet(`/auth/profile/${user.id}`);
+  let esAdmin = false;
+  try {
+    esAdmin = Boolean((await apiGet('/admin/check', { headers: { 'x-user-id': user.id } }))?.admin);
+  } catch (error) {
+    if (error.status !== 403) console.warn('No se pudo comprobar el rol:', error.message);
+  }
+  return { user, perfil, esAdmin };
 }
 
 /**
@@ -32,45 +47,49 @@ export async function iniciarSesion(email, password) {
  * @param {object} datosUsuario - { nombre, apellido }
  */
 export async function registrarUsuario(email, password, datosUsuario) {
-  // Flujo real futuro:
-  // 1. supabase.auth.signUp()
-  // 2. Insertar en public.usuarios (id = auth.user.id, nombre, apellido...)
-  // 3. Opcionalmente crear perfiles_estudio vacío
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) throw new Error(error.message);
 
-  console.log('registrarUsuario() - pendiente de conectar con Supabase', {
-    email,
-    datosUsuario
+  const user = data?.user;
+  if (!user?.id) throw new Error('Supabase no devolvió el UUID del usuario.');
+
+  const perfil = await apiPost('/auth/register', {
+    id: user.id,
+    nombre: datosUsuario.nombre,
+    apellido: datosUsuario.apellido || null,
+    rol_id: null,
   });
-
-  return null;
+  return { user, perfil };
 }
 
 /**
  * Cerrar sesión
  */
 export async function cerrarSesion() {
-  // TODO: await supabase.auth.signOut();
-
-  console.log('cerrarSesion() - pendiente de conectar con Supabase');
-  return null;
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
 }
 
 /**
  * Obtener el usuario actualmente autenticado
  */
 export async function obtenerUsuarioActual() {
-  // TODO: const { data: { user } } = await supabase.auth.getUser();
-
-  console.log('obtenerUsuarioActual() - pendiente de conectar con Supabase');
-  return null;
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw new Error(error.message);
+  return data?.user || null;
 }
 
 /**
  * Verificar si hay sesión activa
  */
 export async function haySesionActiva() {
-  // TODO: revisar supabase.auth.getSession()
+  const { data, error } = await supabase.auth.getSession();
+  if (error) return false;
+  return Boolean(data?.session);
+}
 
-  console.log('haySesionActiva() - pendiente de conectar con Supabase');
-  return false;
+export async function obtenerIdUsuarioActual() {
+  const usuario = await obtenerUsuarioActual();
+  if (!usuario?.id) throw new Error('La sesión no está autenticada.');
+  return usuario.id;
 }

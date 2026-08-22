@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña | LUMI</title>
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+  <link rel="stylesheet" href="../css/paginas/login.css">
+</head>
+<body>
+  <main class="login-container">
+    <section class="login-card">
+      <p class="formulario-etiqueta">LUMI</p>
+      <h1>Recuperar contraseña</h1>
+      <p>Te enviaremos un código para recuperar tu cuenta.</p>
+      <form id="formulario-recuperacion">
+        <label for="metodo-recuperacion">Método de recuperación</label>
+        <select id="metodo-recuperacion" name="metodo-recuperacion" required>
+          <option value="correo">Correo electrónico</option>
+          <option value="sms">Mensaje de texto</option>
+        </select>
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="correo" type="email" required autocomplete="email">
+        <label for="codigo">Código de verificación</label>
+        <input id="codigo" name="codigo" inputmode="numeric" placeholder="Código recibido">
+        <label for="nueva-contrasena">Nueva contraseña</label>
+        <input id="nueva-contrasena" name="nueva-contrasena" type="password" minlength="8" placeholder="Mínimo 8 caracteres">
+        <button type="submit" class="boton-principal">Continuar</button>
+      </form>
+      <a href="login.html">Volver al inicio de sesión</a>
+      <p id="estado-recuperacion" role="status"></p>
+    </section>
+  </main>
+  <script type="module" src="../js/paginas/recuperar-contrasena.js"></script>
+</body>
+</html>

@@ -74,9 +74,9 @@
                 <label for="prioridad">Prioridad</label>
                 <select id="prioridad" name="prioridad" required>
                   <option value="">Selecciona prioridad</option>
-                  <option value="alta">Alta</option>
-                  <option value="media">Media</option>
-                  <option value="baja">Baja</option>
+                  <option value="Alta">Alta</option>
+                  <option value="Media">Media</option>
+                  <option value="Baja">Baja</option>
                 </select>
               </div>
 
@@ -95,17 +95,23 @@
               <label for="metodo">Método de estudio (opcional)</label>
               <select id="metodo" name="metodo">
                 <option value="">Ninguno</option>
-                <option value="pomodoro">Pomodoro</option>
-                <option value="active-recall">Active Recall</option>
-                <option value="feynman">Feynman</option>
+                <option value="Pomodoro">Pomodoro</option>
+                <option value="Active Recall">Active Recall</option>
+                <option value="Técnica Feynman">Técnica Feynman</option>
+                <option value="Spaced Repetition">Spaced Repetition</option>
               </select>
+            </div>
+
+            <div class="campo">
+              <label for="enfoque-adicional">Enfoque adicional (opcional)</label>
+              <textarea id="enfoque-adicional" name="enfoque-adicional" rows="3" placeholder="Indica alguna preferencia para tu plan..."></textarea>
             </div>
 
             <!-- Botones -->
             <div class="formulario-acciones">
               <a href="tareas.html" class="boton-secundario">Cancelar</a>
               <button type="submit" class="boton-principal">
-                Guardar tarea
+                Generar plan
               </button>
             </div>
 

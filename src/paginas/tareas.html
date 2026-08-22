@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Tareas | LUMI</title>
+  <title>Calendario | LUMI</title>
 
   <!-- Estilos globales -->
   <link rel="stylesheet" href="../css/global/reset.css">
@@ -32,34 +32,28 @@
       <!-- Navbar -->
       <header id="navbar-container"></header>
 
-      <!-- Contenido de Tareas -->
+      <!-- Calendario -->
       <main class="dashboard-content">
 
         <!-- Encabezado de la sección -->
         <section class="tareas-encabezado">
           <div>
-            <h1>Mis Tareas</h1>
-            <p>Organiza y gestiona todo lo que tienes pendiente.</p>
+            <h1>Calendario</h1>
+            <p>Consulta tus tareas por fecha y abre cada detalle.</p>
           </div>
           <a href="agregar-tarea.html" class="boton-principal">
-            <span>➕ Nueva tarea</span>
+            <span>➕ Nueva tarea inteligente</span>
           </a>
         </section>
 
-        <!-- Filtros rápidos -->
         <section class="tareas-filtros">
-          <button class="filtro activo" data-filtro="todas">Todas</button>
-          <button class="filtro" data-filtro="pendientes">Pendientes</button>
-          <button class="filtro" data-filtro="completadas">Completadas</button>
+          <label for="fecha-calendario">Seleccionar día</label>
+          <input id="fecha-calendario" type="date">
         </section>
 
         <!-- Lista de tareas (por ahora vacía / ejemplo) -->
         <section class="tareas-lista" id="lista-tareas">
-          <!-- Aquí se insertarán las tareas con JavaScript -->
-          <div class="tareas-vacio">
-            <p>No tienes tareas todavía.</p>
-            <a href="agregar-tarea.html">Crear mi primera tarea</a>
-          </div>
+          <div class="tareas-vacio"><p>Selecciona una fecha para consultar tus tareas.</p></div>
         </section>
 
       </main>
@@ -71,7 +65,7 @@
   <!-- Scripts -->
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
-  <script type="module" src="../js/paginas/tareas.js"></script>
+  <script type="module" src="../js/paginas/calendario.js"></script>
 
 </body>
 </html>

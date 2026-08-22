@@ -1,24 +1,30 @@
 /**
  * tareas.js
  * Lógica de la página Mis Tareas
- * Por ahora usa localStorage (temporal)
  */
 
-console.log('tareas.js cargado');
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerTareasDelUsuario, actualizarEstadoTarea } from '../servicios/tareas.service.js';
+import { registrarTareaEstadistica } from '../servicios/estadisticas.service.js';
 
 let tareas = [];
 let filtroActual = 'todas';
 
-document.addEventListener('DOMContentLoaded', () => {
-  cargarTareas();
+document.addEventListener('DOMContentLoaded', async () => {
+  await cargarTareas();
   inicializarFiltros();
   renderizarTareas();
 });
 
-function cargarTareas() {
-  const guardadas = localStorage.getItem('lumi_tareas');
-  tareas = guardadas ? JSON.parse(guardadas) : [];
-  console.log('Tareas cargadas:', tareas);
+async function cargarTareas() {
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (!usuario?.id) throw new Error('La sesión no está autenticada.');
+    tareas = await obtenerTareasDelUsuario(usuario.id);
+  } catch (error) {
+    alert(`No se pudieron cargar las tareas: ${error.message}`);
+    tareas = [];
+  }
 }
 
 function inicializarFiltros() {
@@ -61,20 +67,20 @@ function renderizarTareas() {
 
   // Renderizar tarjetas
   contenedor.innerHTML = tareasFiltradas.map(tarea => {
-    const prioridadClass = `prioridad-${tarea.prioridad}`;
+    const prioridadClass = tarea.prioridad ? `prioridad-${tarea.prioridad}` : '';
     const completadaClass = tarea.completada ? 'completada' : '';
 
     return `
       <div class="tarea-card ${completadaClass}" data-id="${tarea.id}">
         <div class="tarea-check">
-          <input type="checkbox" ${tarea.completada ? 'checked' : ''} onchange="toggleCompletada(${tarea.id})">
+          <input type="checkbox" ${tarea.completada ? 'checked' : ''} onchange="toggleCompletada(${JSON.stringify(tarea.id)})">
         </div>
         <div class="tarea-contenido">
-          <h3 class="tarea-titulo">${tarea.titulo}</h3>
+          <h3 class="tarea-titulo">${tarea.nombre}</h3>
           ${tarea.descripcion ? `<p class="tarea-descripcion">${tarea.descripcion}</p>` : ''}
           <div class="tarea-meta">
-            <span class="tarea-prioridad ${prioridadClass}">${tarea.prioridad}</span>
-            ${tarea.fecha ? `<span class="tarea-fecha">📅 ${tarea.fecha}</span>` : ''}
+            <span class="tarea-prioridad ${prioridadClass}">${tarea.prioridad || ''}</span>
+            ${tarea.fecha_entrega ? `<span class="tarea-fecha">📅 ${tarea.fecha_entrega}</span>` : ''}
             ${tarea.metodo ? `<span class="tarea-metodo">🎯 ${tarea.metodo}</span>` : ''}
           </div>
         </div>
@@ -84,11 +90,22 @@ function renderizarTareas() {
 }
 
 // Función global para el checkbox
-window.toggleCompletada = function(id) {
+window.toggleCompletada = async function(id) {
   const index = tareas.findIndex(t => t.id === id);
   if (index === -1) return;
 
-  tareas[index].completada = !tareas[index].completada;
-  localStorage.setItem('lumi_tareas', JSON.stringify(tareas));
-  renderizarTareas();
+  const estadoAnterior = tareas[index].completada;
+  try {
+    const estadoNuevo = !estadoAnterior;
+    await actualizarEstadoTarea(id, estadoNuevo);
+    if (estadoNuevo) {
+      const usuario = await obtenerUsuarioActual();
+      await registrarTareaEstadistica(usuario.id);
+    }
+    tareas[index].completada = estadoNuevo;
+    renderizarTareas();
+  } catch (error) {
+    alert(`No se pudo actualizar la tarea: ${error.message}`);
+    renderizarTareas();
+  }
 };

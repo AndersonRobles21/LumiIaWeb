@@ -10,20 +10,14 @@
  * Más adelante se conectará con Supabase.
  */
 
-import { supabase } from '../config/supabase.js';
+import { apiGet, apiPut } from '../api.js';
 
 /**
  * Obtiene los datos del usuario + su perfil de estudio
  * @param {string} usuarioId - UUID del usuario
  */
 export async function obtenerUsuarioConPerfil(usuarioId) {
-  // TODO: Implementar con Supabase
-  // 1. Buscar en public.usuarios
-  // 2. Buscar en public.perfiles_estudio por usuario_id
-  // 3. Devolver ambos juntos
-
-  console.log('obtenerUsuarioConPerfil() - pendiente de conectar con Supabase');
-  return null;
+  return apiGet(`/auth/profile/${usuarioId}`);
 }
 
 /**
@@ -35,36 +29,12 @@ export async function obtenerUsuarioConPerfil(usuarioId) {
  * - foto_perfil (text)
  */
 export async function guardarPerfilEstudio(usuarioId, datos) {
-  // datos esperados:
-  // {
-  //   horas_disponibles: number,
-  //   objetivo: string,
-  //   nivel_procrastinacion: number (opcional),
-  //   foto_perfil: string (opcional)
-  // }
-
-  console.log('guardarPerfilEstudio() - pendiente de conectar con Supabase', {
-    usuarioId,
-    datos
-  });
-
-  return null;
+  return apiPut(`/auth/profile/${usuarioId}`, datos);
 }
 
 /**
  * Actualiza datos básicos del usuario (nombre, apellido)
  */
 export async function actualizarUsuario(usuarioId, datos) {
-  // datos esperados:
-  // {
-  //   nombre: string,
-  //   apellido: string (opcional)
-  // }
-
-  console.log('actualizarUsuario() - pendiente de conectar con Supabase', {
-    usuarioId,
-    datos
-  });
-
-  return null;
+  return apiPut(`/auth/profile/${usuarioId}`, datos);
 }

@@ -15,7 +15,7 @@
         content="Completa y modifica tu perfil en LUMI."
     >
 
-    <title>Mi perfil | LUMI</title>
+    <title>Detalle de usuario | LUMI</title>
 
     <!-- ESTILOS GLOBALES -->
 
@@ -46,7 +46,7 @@
 
 <body>
 
-    <main class="modificar-usuario">
+    <main class="dashboard-content" id="detalle-usuario">
 
         <!-- ENCABEZADO -->
 
@@ -60,19 +60,14 @@
                     <span>L</span>
                 </div>
 
-                <p class="perfil-etiqueta">
-                    PERSONALIZA TU EXPERIENCIA
-                </p>
+                <p class="perfil-etiqueta">ADMINISTRACIÓN</p>
 
                 <h1>
-                    Hagamos que LUMI
-                    <span>se adapte a ti.</span>
+                    Detalle de usuario
                 </h1>
 
                 <p class="perfil-descripcion">
-                    Completa tu información para que podamos
-                    ayudarte a organizar mejor tu tiempo y
-                    crear planes de estudio personalizados.
+                    Consulta y gestiona la información de este usuario.
                 </p>
 
             </div>
@@ -88,15 +83,12 @@
 
                 <div class="formulario-encabezado">
 
-                    <p class="formulario-etiqueta">
-                        TU PERFIL
-                    </p>
+                    <p class="formulario-etiqueta">USUARIO SELECCIONADO</p>
 
-                    <h2>Cuéntanos sobre ti</h2>
+                    <h2 id="detalle-titulo">Cargando información...</h2>
 
                     <p>
-                        Esta información nos ayudará a
-                        personalizar tu experiencia en LUMI.
+                        Edita el nombre o elimina la cuenta desde este panel.
                     </p>
 
                 </div>
@@ -109,155 +101,21 @@
                     <div class="campo">
 
                         <label for="nombre">
-                            Nombre completo
+                            Nombre
                         </label>
 
                         <input
                             type="text"
                             id="nombre"
                             name="nombre"
-                            placeholder="Tu nombre completo"
+                            placeholder="Nombre del usuario"
                             required
                         >
 
                     </div>
 
 
-                    <!-- OBJETIVO -->
-
-                    <div class="campo">
-
-                        <label for="objetivo">
-                            ¿Cuál es tu principal objetivo?
-                        </label>
-
-                        <select
-                            id="objetivo"
-                            name="objetivo"
-                            required
-                        >
-
-                            <option value="">
-                                Selecciona una opción
-                            </option>
-
-                            <option value="estudiar">
-                                Mejorar mis hábitos de estudio
-                            </option>
-
-                            <option value="organizar">
-                                Organizar mejor mi tiempo
-                            </option>
-
-                            <option value="procrastinacion">
-                                Vencer la procrastinación
-                            </option>
-
-                            <option value="productividad">
-                                Ser más productivo
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- HORAS DE ESTUDIO -->
-
-                    <div class="campo">
-
-                        <label for="horas-estudio">
-                            ¿Cuántas horas puedes estudiar al día?
-                        </label>
-
-                        <select
-                            id="horas-estudio"
-                            name="horas-estudio"
-                            required
-                        >
-
-                            <option value="">
-                                Selecciona una opción
-                            </option>
-
-                            <option value="1">
-                                Menos de 1 hora
-                            </option>
-
-                            <option value="2">
-                                1 - 2 horas
-                            </option>
-
-                            <option value="3">
-                                2 - 3 horas
-                            </option>
-
-                            <option value="4">
-                                Más de 3 horas
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- MÉTODO DE ESTUDIO -->
-
-                    <div class="campo">
-
-                        <label>
-                            Método de estudio preferido
-                        </label>
-
-                        <div class="metodos-estudio">
-
-                            <label class="metodo">
-
-                                <input
-                                    type="radio"
-                                    name="metodo"
-                                    value="pomodoro"
-                                >
-
-                                <span>🍅</span>
-
-                                <p>Pomodoro</p>
-
-                            </label>
-
-
-                            <label class="metodo">
-
-                                <input
-                                    type="radio"
-                                    name="metodo"
-                                    value="active-recall"
-                                >
-
-                                <span>🧠</span>
-
-                                <p>Active Recall</p>
-
-                            </label>
-
-
-                            <label class="metodo">
-
-                                <input
-                                    type="radio"
-                                    name="metodo"
-                                    value="feynman"
-                                >
-
-                                <span>💡</span>
-
-                                <p>Feynman</p>
-
-                            </label>
-
-                        </div>
-
-                    </div>
+                    <div class="campo"><p id="detalle-correo"></p><p id="detalle-objetivo"></p><p id="detalle-racha"></p><p id="detalle-tareas"></p><p id="detalle-horarios"></p><p id="detalle-planes"></p></div>
 
 
                     <!-- BOTÓN -->
@@ -267,13 +125,13 @@
                         class="boton-guardar"
                     >
 
-                        <span>CONTINUAR</span>
-
-                        <span>→</span>
+                        <span>GUARDAR NOMBRE</span>
 
                     </button>
 
                 </form>
+                <a href="usuarios.html">Volver a la lista de usuarios</a>
+                <button type="button" class="boton-peligro" id="eliminar-usuario">Eliminar usuario</button>
 
             </div>
 

@@ -72,9 +72,25 @@
 
           <!-- Acciones -->
           <div class="perfil-acciones">
-            <a href="modificar-usuario.html" class="boton-principal">Editar perfil</a>
+            <button type="button" class="boton-principal" id="editar-perfil">Editar perfil</button>
             <a href="configuracion.html" class="boton-secundario">Configuración</a>
           </div>
+
+          <form id="formulario-edicion-perfil" hidden>
+            <h2>Editar datos personales y objetivo</h2>
+            <label for="perfil-nombre-edicion">Nombre</label>
+            <input id="perfil-nombre-edicion" required>
+            <label for="perfil-apellido-edicion">Apellido</label>
+            <input id="perfil-apellido-edicion">
+            <label for="perfil-objetivo-edicion">Objetivo de estudio</label>
+            <input id="perfil-objetivo-edicion" required>
+            <label for="perfil-procrastinacion-edicion">Nivel de procrastinación</label>
+            <input id="perfil-procrastinacion-edicion" type="number" min="1" max="5" value="1">
+            <label for="perfil-horarios-edicion">Horarios de estudio</label>
+            <input id="perfil-horarios-edicion" placeholder="Lunes 18:00-20:00">
+            <button type="submit" class="boton-principal">Guardar cambios</button>
+            <p id="estado-edicion-perfil" role="status"></p>
+          </form>
 
         </section>
 
