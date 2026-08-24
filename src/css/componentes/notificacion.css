@@ -1,0 +1,15 @@
+.lumi-notificacion{
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  z-index: 9999;
+  font-weight: 600;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.lumi-notificacion.hide{ opacity: 0; transform: translateY(-8px); }
+.lumi-notificacion.error{ background: #c0392b; }
+.lumi-notificacion.success{ background: #27ae60; }

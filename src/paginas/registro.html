@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="description"
-        content="Crea una cuenta en LUMI."
-    >
+    <meta name="description" content="Crea una cuenta en LUMI.">
 
     <title>Registro | LUMI</title>
 
@@ -107,14 +102,18 @@
                             Nombre
                         </label>
 
-                        <input
-                            type="text"
-                            id="nombre"
-                            name="nombre"
-                            placeholder="Tu nombre"
-                            autocomplete="name"
-                            required
-                        >
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="name"
+                            required>
+
+                    </div>
+                    <div class="campo">
+
+                        <label for="apellido">
+                            Apellido
+                        </label>
+
+                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido"
+                            autocomplete="family-name" required>
 
                     </div>
 
@@ -130,14 +129,8 @@
                             Correo electrónico
                         </label>
 
-                        <input
-                            type="email"
-                            id="correo"
-                            name="correo"
-                            placeholder="correo@ejemplo.com"
-                            autocomplete="email"
-                            required
-                        >
+                        <input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com"
+                            autocomplete="email" required>
 
                     </div>
 
@@ -148,14 +141,8 @@
                             Contraseña
                         </label>
 
-                        <input
-                            type="password"
-                            id="contrasena"
-                            name="contrasena"
-                            placeholder="Crea una contraseña"
-                            autocomplete="new-password"
-                            required
-                        >
+                        <input type="password" id="contrasena" name="contrasena" placeholder="Crea una contraseña"
+                            autocomplete="new-password" required>
 
                     </div>
 
@@ -166,25 +153,15 @@
                             Confirmar contraseña
                         </label>
 
-                        <input
-                            type="password"
-                            id="confirmar-contrasena"
-                            name="confirmar-contrasena"
-                            placeholder="Repite tu contraseña"
-                            autocomplete="new-password"
-                            required
-                        >
+                        <input type="password" id="confirmar-contrasena" name="confirmar-contrasena"
+                            placeholder="Repite tu contraseña" autocomplete="new-password" required>
 
                     </div>
 
 
                     <label class="aceptar-terminos">
 
-                        <input
-                            type="checkbox"
-                            id="terminos"
-                            required
-                        >
+                        <input type="checkbox" id="terminos" required>
 
                         <span>
                             Acepto los términos y condiciones
@@ -194,10 +171,7 @@
                     </label>
 
 
-                    <button
-                        type="submit"
-                        class="boton-registro"
-                    >
+                    <button type="submit" class="boton-registro">
                         <span>CREAR CUENTA</span>
                         <span>→</span>
                     </button>
@@ -223,10 +197,8 @@
 
     </main>
 
-    <script
-        type="module"
-        src="../js/paginas/registro.js"
-    ></script>
+    <script type="module" src="../js/paginas/registro.js"></script>
 
 </body>
+
 </html>
