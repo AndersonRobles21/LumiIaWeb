@@ -3,65 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial | LUMI</title>
-
-  <link rel="stylesheet" href="../css/global/reset.css">
-  <link rel="stylesheet" href="../css/global/variables.css">
-  <link rel="stylesheet" href="../css/global/global.css">
-  <link rel="stylesheet" href="../css/componentes/sidebar.css">
-  <link rel="stylesheet" href="../css/componentes/navbar.css">
-  <link rel="stylesheet" href="../css/componentes/botones.css">
+  <title>Historial IA - LUMI</title>
+  
+  <!-- Estilos base y de la página -->
+  <link rel="stylesheet" href="../css/globales/variables.css">
+  <link rel="stylesheet" href="../css/paginas/dashboard.css">
   <link rel="stylesheet" href="../css/paginas/historial.css">
 </head>
-<body>
-
+<body class="historial-body">
   <div class="dashboard-container">
-    <aside id="sidebar-container"></aside>
-
-    <div class="dashboard-main">
-      <header id="navbar-container"></header>
-
-      <main class="dashboard-content">
-        <section class="historial-contenedor">
-
-          <div class="historial-encabezado">
-            <h1>Historial</h1>
-            <p>Revisa tu progreso y actividad reciente.</p>
-          </div>
-
-          <!-- Resumen rápido -->
-          <div class="historial-resumen">
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-completadas">0</span>
-              <span class="resumen-etiqueta">Tareas completadas</span>
+    
+    <main class="dashboard-main">
+      <div class="dashboard-content">
+        <div class="historial-grid-main">
+          
+          <!-- COLUMNA IZQUIERDA: Lista de Conversaciones/Tareas -->
+          <aside class="card-historial-sidebar">
+            <div class="buscador-historial">
+              <span class="icono-buscar">🔍</span>
+              <input type="text" id="input-buscar-historial" placeholder="Buscar conversaciones con Lumi..." />
             </div>
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-racha">0</span>
-              <span class="resumen-etiqueta">Racha actual</span>
-            </div>
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-horas">0h</span>
-              <span class="resumen-etiqueta">Horas de estudio</span>
-            </div>
-          </div>
 
-          <!-- Lista de actividad -->
-          <div class="historial-lista">
-            <h2>Actividad reciente</h2>
-            <div id="lista-historial">
-              <div class="historial-vacio">
-                <p>Aún no hay actividad registrada.</p>
+            <div class="lista-conversaciones" id="lista-conversaciones">
+              <div class="grupo-fecha-label">Hoy</div>
+              
+              <div class="item-conversacion activa" data-id="1">
+                <div class="avatar-lumi-sm">🤖</div>
+                <div class="info-conversacion">
+                  <h4>Trabajo de flutter</h4>
+                  <p>Desarrollo de app educativa</p>
+                </div>
+                <span class="hora-item">10:42 AM</span>
+              </div>
+
+              <div class="item-conversacion" data-id="2">
+                <div class="avatar-lumi-sm">🤖</div>
+                <div class="info-conversacion">
+                  <h4>Base de Datos Supabase</h4>
+                  <p>Diseño de esquema relacional</p>
+                </div>
+                <span class="hora-item">09:15 AM</span>
+              </div>
+
+              <div class="grupo-fecha-label">Ayer</div>
+              
+              <div class="item-conversacion" data-id="3">
+                <div class="avatar-lumi-sm">🤖</div>
+                <div class="info-conversacion">
+                  <h4>Backend Node.js API</h4>
+                  <p>Endpoints para tareas</p>
+                </div>
+                <span class="hora-item">Ayer</span>
               </div>
             </div>
-          </div>
+          </aside>
 
-        </section>
-      </main>
-    </div>
+          <!-- COLUMNA DERECHA: Chat Tutor Guiado -->
+          <main class="card-chat-tutor">
+            <header class="chat-header">
+              <div class="chat-header-info">
+                <div class="avatar-lumi-md">🤖</div>
+                <div>
+                  <h2 id="chat-titulo-tarea">Trabajo de flutter</h2>
+                  <p class="chat-consejo">
+                    💡 <strong>Consejo:</strong> Toca el ícono del Rayo ⚡ arriba a la derecha en cualquier momento para abrir el método de estudio que seleccionaste.
+                  </p>
+                </div>
+              </div>
+              <button class="btn-rayo-metodo" id="btn-metodo-metrica" title="Ver método de estudio">⚡</button>
+            </header>
+
+            <div class="chat-body-stream" id="chat-body-stream">
+              <!-- Mensaje de LUMI -->
+              <div class="mensaje-lumi">
+                <div class="avatar-lumi-sm">🤖</div>
+                <div class="burbuja-lumi">
+                  <p id="texto-saludo-lumi">
+                    ¡Hola! Vamos a empezar con tu trabajo de Flutter. No voy a hacer el trabajo por ti, pero puedo explicarte cualquier concepto. Para tu tarea, te recomiendo el método Feynman. ¿Quieres usar este o prefieres cambiarlo?
+                  </p>
+                  <span class="meta-hora">10:42 AM</span>
+                </div>
+              </div>
+
+              <!-- Tarjeta de Acción: Cambiar Método -->
+              <div class="card-accion-chat" id="card-metodo-estudio">
+                <div class="info-card-accion">
+                  <span class="icono-card">⚙️</span>
+                  <div class="texto-card-accion">
+                    <strong>Cambiar método</strong>
+                    <small>de estudio</small>
+                  </div>
+                </div>
+                <button class="btn-flecha-accion" id="btn-cambiar-metodo">➔</button>
+              </div>
+
+              <!-- Mensaje del Usuario -->
+              <div class="mensaje-usuario">
+                <div class="burbuja-usuario">
+                  <p>¿Qué es flutter?</p>
+                  <span class="meta-hora">10:43 AM</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Barra Inferior de Sugerencias -->
+            <footer class="chat-footer-sugerencias">
+              <span class="label-sugerencias">Sugerencias</span>
+              <div class="contenedor-chips-sugerencias" id="contenedor-chips">
+                <button class="chip-btn" data-accion="paso_a_paso">Paso a paso</button>
+                <button class="chip-btn" data-accion="que_es">¿Qué es flutter?</button>
+                <button class="chip-btn" data-accion="explica_tarea">Explica qué toca hacer</button>
+                <button class="chip-btn" data-accion="mas_opciones">Más opciones</button>
+              </div>
+            </footer>
+          </main>
+
+        </div>
+      </div>
+    </main>
   </div>
 
-  <script type="module" src="../js/componentes/sidebar.js"></script>
-  <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/historial.js"></script>
 </body>
 </html>

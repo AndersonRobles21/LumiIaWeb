@@ -1,293 +1,219 @@
-/* ===== PANTALLA DE CARGA ===== */
+/* ===== PANTALLA DE CARGA - LUMI ===== */
 
 .pantalla-carga {
-    position: relative;
-    width: 100%;
     min-height: 100vh;
-    overflow: hidden;
-
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(35, 70, 110, 0.7) 0%,
-            rgba(25, 30, 55, 0.95) 45%,
-            #181b32 100%
-        );
-}
-
-/* ===== FONDO TECNOLÓGICO ===== */
-
-.fondo-tecnologico {
-    position: absolute;
-    inset: 0;
+    background: #03000a;
+    background-image: 
+        radial-gradient(ellipse at 75% 30%, rgba(147, 51, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 25% 70%, rgba(59, 130, 246, 0.12) 0%, transparent 50%);
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 2rem;
+    box-sizing: border-box;
     overflow: hidden;
-    pointer-events: none;
 }
 
-/* ===== PUNTOS ===== */
+.carga-contenedor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    width: 100%;
+    max-width: 1100px;
+    align-items: center;
+}
 
-.punto {
+/* =========================
+   COLUMNA IZQUIERDA: ROBOT
+========================= */
+
+.columna-robot {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.aura-piso {
     position: absolute;
-
-    width: 4px;
-    height: 4px;
-
+    bottom: -25px;
+    width: 320px;
+    height: 70px;
+    background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, rgba(59, 130, 246, 0.2) 40%, transparent 75%);
     border-radius: 50%;
-
-    background: var(--color-cyan);
-    box-shadow: var(--brillo-cyan);
-
-    opacity: 0.6;
+    filter: blur(10px);
 }
 
-.punto-1 {
-    top: 10%;
-    left: 9%;
-}
-
-.punto-2 {
-    top: 24%;
-    left: 28%;
-}
-
-.punto-3 {
-    top: 12%;
-    right: 12%;
-}
-
-.punto-4 {
-    bottom: 28%;
-    left: 18%;
-}
-
-.punto-5 {
-    bottom: 16%;
-    right: 20%;
-}
-
-/* ===== LÍNEAS ===== */
-
-.linea {
-    position: absolute;
-
-    background: rgba(39, 217, 255, 0.08);
-}
-
-.linea-1 {
-    width: 280px;
-    height: 1px;
-
-    top: 16%;
-    left: 8%;
-}
-
-.linea-2 {
-    width: 1px;
-    height: 220px;
-
-    top: 20%;
-    left: 18%;
-}
-
-.linea-3 {
-    width: 250px;
-    height: 1px;
-
-    bottom: 30%;
-    right: 10%;
-}
-
-/* ===== CONTENIDO ===== */
-
-.carga-contenido {
+.lumi-robot-wrapper {
     position: relative;
     z-index: 2;
+}
 
-    width: min(90%, 650px);
+.lumi-robot-img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    object-fit: contain;
+    mix-blend-mode: screen; /* Permite integrarlo suavemente si el fondo tiene variaciones de tono */
+    filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.3));
+    animation: flotar 4s ease-in-out infinite;
+}
 
+@keyframes flotar {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-14px);
+    }
+}
+
+/* =========================
+   COLUMNA DERECHA: CONTENIDO
+========================= */
+
+.columna-contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+}
+
+/* BRANDING LOGO */
+
+.lumi-brand {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* ===== ÓRBITA DE LUMI ===== */
+.lumi-logo-img {
+    height: 110px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.3));
+}
 
-.lumi-orbita {
-    width: 320px;
-    height: 320px;
+.logo-slogan {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #ffffff;
+    margin-top: 0.5rem;
+}
 
+.logo-slogan span {
+    color: #c084fc;
+}
+
+/* CÁPSULA INFORMATIVA */
+
+.capsula-info {
     display: flex;
     align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    border: 2px solid rgba(39, 217, 255, 0.45);
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(39, 217, 255, 0.08),
-            rgba(39, 217, 255, 0.01)
-        );
-
-    box-shadow:
-        inset 0 0 40px rgba(39, 217, 255, 0.05),
-        0 0 40px rgba(39, 217, 255, 0.08);
+    gap: 0.8rem;
+    background: rgba(25, 16, 48, 0.75);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    border-radius: 40px;
+    padding: 0.75rem 1.75rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* ===== ROBOT TEMPORAL ===== */
-
-.lumi-imagen {
-    width: 150px;
-    height: 150px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 5rem;
-
-    filter:
-        drop-shadow(
-            0 0 15px rgba(39, 217, 255, 0.5)
-        );
-
-    animation: flotar 3s ease-in-out infinite;
+.icono-birrete svg {
+    width: 22px;
+    height: 22px;
+    stroke: #c084fc;
 }
 
-@keyframes flotar {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-15px);
-    }
-
+.capsula-info p {
+    font-size: 0.9rem;
+    color: #e2e8f0;
+    margin: 0;
 }
 
-/* ===== TEXTO ===== */
-
-.carga-texto {
-    margin-top: var(--espacio-lg);
-    text-align: center;
+.capsula-info span {
+    color: #d946ef;
+    font-weight: 600;
 }
 
-.carga-texto h1 {
-    font-size: clamp(3rem, 8vw, 4.5rem);
-
-    font-weight: 500;
-
-    letter-spacing: 12px;
-
-    text-shadow:
-        0 0 20px rgba(255, 255, 255, 0.15);
-}
-
-.bienvenida {
-    margin-top: var(--espacio-lg);
-
-    font-size: var(--texto-sm);
-
-    letter-spacing: 5px;
-
-    color: var(--color-texto-secundario);
-}
-
-.subtitulo {
-    margin-top: var(--espacio-sm);
-
-    font-size: var(--texto-md);
-
-    letter-spacing: 4px;
-
-    color: var(--color-texto-secundario);
-}
-
-/* ===== BARRA DE CARGA ===== */
+/* BARRA DE CARGA */
 
 .carga-progreso {
-    width: min(100%, 760px);
-
-    margin-top: var(--espacio-xl);
-
-    text-align: center;
+    width: 100%;
+    max-width: 420px;
 }
 
 .carga-progreso p {
-    margin-bottom: var(--espacio-sm);
-
-    font-size: var(--texto-sm);
-
-    letter-spacing: 4px;
-
-    color: var(--color-cyan);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #c084fc;
+    margin-bottom: 0.6rem;
 }
 
 .barra-carga {
     width: 100%;
-    height: 4px;
-
-    overflow: hidden;
-
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 10px;
-
-    background: rgba(80, 110, 160, 0.3);
+    overflow: hidden;
 }
 
 .progreso-carga {
     width: 0%;
     height: 100%;
-
+    background: linear-gradient(90deg, #c084fc 0%, #e879f9 100%);
     border-radius: inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            #168dff,
-            #27d9ff
-        );
-
-    box-shadow: var(--brillo-cyan);
-
-    transition: width 0.1s linear;
+    box-shadow: 0 0 14px rgba(217, 70, 239, 0.8);
+    transition: width 0.15s ease-out;
 }
 
-/* ===== RESPONSIVE ===== */
+/* FEATURES FOOTER */
 
-@media (max-width: 768px) {
+.features-footer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    padding-top: 0.5rem;
+}
 
-    .lumi-orbita {
-        width: 240px;
-        height: 240px;
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    max-width: 100px;
+}
+
+.f-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #a855f7;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 900px) {
+    .carga-contenedor {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
     }
 
-    .lumi-imagen {
-        width: 120px;
-        height: 120px;
-
-        font-size: 4rem;
+    .lumi-robot-img {
+        max-width: 280px;
     }
 
-    .carga-texto h1 {
-        letter-spacing: 8px;
-    }
-
-    .bienvenida,
-    .subtitulo {
-        letter-spacing: 2px;
-        font-size: var(--texto-xs);
-    }
-
-    .linea-1,
-    .linea-3 {
-        width: 150px;
+    .lumi-logo-img {
+        height: 85px;
     }
 }

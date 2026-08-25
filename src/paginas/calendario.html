@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario - LUMI</title>
+
+  <!-- Hojas de estilo -->
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/paginas/calendario.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Área de contenido principal -->
+    <main class="dashboard-main">
+      <div class="dashboard-content">
+
+        <!-- Header -->
+        <div class="calendario-header-top">
+          <div>
+            <h1>Calendario</h1>
+            <p>Organiza tus tareas y nunca pierdas una fecha importante.</p>
+          </div>
+          <span class="badge-hoy" id="fecha-actual-badge">Hoy</span>
+        </div>
+
+        <!-- Layout 2 columnas -->
+        <div class="calendario-grid-main">
+          
+          <!-- Columna Izquierda: Mes y Métricas -->
+          <div class="columna-izquierda">
+            
+            <div class="card-calendario-mes">
+              <div class="header-mes">
+                <button type="button" class="btn-nav-mes" id="btn-mes-prev" aria-label="Mes anterior">&lt;</button>
+                <h2 class="titulo-mes" id="mes-anio-label">Cargando mes...</h2>
+                <button type="button" class="btn-nav-mes" id="btn-mes-next" aria-label="Mes siguiente">&gt;</button>
+              </div>
+
+              <!-- Encabezado días de la semana -->
+              <div class="grid-dias-semana">
+                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+              </div>
+
+              <!-- Cuadrícula de días -->
+              <div id="grid-dias-mes" class="grid-dias-mes"></div>
+            </div>
+
+            <!-- Métricas -->
+            <div class="card-metricas-dia">
+              <div class="metricas-info">
+                <div class="icono-metricas">📊</div>
+                <div>
+                  <h3 id="resumen-cant-tareas">0</h3>
+                  <p>Tareas asignadas</p>
+                </div>
+              </div>
+
+              <div class="tiempo-info">
+                <span>Tiempo est.</span>
+                <strong id="resumen-tiempo">0h 0m</strong>
+              </div>
+
+              <div class="progreso-circular-container">
+                <div class="progreso-ring" id="resumen-porcentaje-grafico">
+                  <span id="resumen-porcentaje-texto">0%</span>
+                </div>
+                <span class="label-completado">Completado</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Columna Derecha: Timeline y LUMI -->
+          <div class="columna-derecha">
+            
+            <div class="card-timeline-dia">
+              <div class="timeline-header">
+                <h2 id="titulo-dia-seleccionado">Cargando...</h2>
+              </div>
+              <div id="contenedor-timeline" class="contenedor-timeline"></div>
+            </div>
+
+            <div class="card-asistente-lumii">
+              <div class="lumii-content">
+                <h3>Asistente LUMI</h3>
+                <p>Selecciona un día para visualizar el plan de estudio generado.</p>
+              </div>
+              <div class="lumii-avatar">🤖</div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/paginas/calendario.js"></script>
+</body>
+</html>

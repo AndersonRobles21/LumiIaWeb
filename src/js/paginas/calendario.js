@@ -1,11 +1,199 @@
-import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { obtenerTareasDelUsuario } from '../servicios/tareas.service.js';
+/**
+ * calendario.js
+ * Visualización del mes, lectura de tareas locales y renderizado del timeline.
+ */
 
-const lista = document.getElementById('lista-tareas');
-const fecha = document.getElementById('fecha-calendario');
-function renderizar(tareas) {
-  const seleccion = fecha.value;
-  const delDia = tareas.filter(tarea => !seleccion || String(tarea.fecha_entrega || '').startsWith(seleccion));
-  lista.innerHTML = delDia.length ? delDia.map(tarea => `<article class="tarea-card"><h3>${tarea.nombre || 'Tarea'}</h3><p>${tarea.descripcion || ''}</p><span>${tarea.fecha_entrega || 'Sin fecha'}</span></article>`).join('') : '<p>No hay tareas para este día.</p>';
+let fechaSeleccionada = new Date();
+let tareasGuardadas = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  inicializarCalendario();
+});
+
+function inicializarCalendario() {
+  cargarTareasLocalStorage();
+  configurarBotonesNavegacion();
+  renderizarCalendario();
+  renderizarTimelineDia(fechaSeleccionada);
 }
-document.addEventListener('DOMContentLoaded', async () => { try { const usuario = await obtenerUsuarioActual(); const tareas = usuario?.id ? await obtenerTareasDelUsuario(usuario.id) : []; fecha.addEventListener('change', () => renderizar(tareas)); renderizar(tareas); } catch (error) { lista.innerHTML = `<p>${error.message}</p>`; } });
+
+function cargarTareasLocalStorage() {
+  try {
+    const data = localStorage.getItem('lumi_tareas') || localStorage.getItem('tareas') || '[]';
+    tareasGuardadas = JSON.parse(data);
+  } catch (e) {
+    tareasGuardadas = [];
+  }
+}
+
+function configurarBotonesNavegacion() {
+  const btnPrev = document.getElementById('btn-mes-prev');
+  const btnNext = document.getElementById('btn-mes-next');
+
+  if (btnPrev) {
+    btnPrev.addEventListener('click', () => {
+      fechaSeleccionada.setMonth(fechaSeleccionada.getMonth() - 1);
+      renderizarCalendario();
+    });
+  }
+
+  if (btnNext) {
+    btnNext.addEventListener('click', () => {
+      fechaSeleccionada.setMonth(fechaSeleccionada.getMonth() + 1);
+      renderizarCalendario();
+    });
+  }
+}
+
+function construirFechaISO(anio, mes, dia) {
+  return `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+}
+
+function obtenerIndiceDiaSemana(anio, mes, dia) {
+  const fecha = new Date(anio, mes - 1, dia);
+  const diaSemana = fecha.getDay();
+  return diaSemana === 0 ? 6 : diaSemana - 1;
+}
+
+function normalizarCategoria(cat) {
+  if (!cat) return 'entrega';
+  const c = String(cat).toLowerCase();
+  if (c.includes('examen') || c.includes('evaluacion') || c.includes('parcial')) return 'examen';
+  if (c.includes('clase') || c.includes('estudio')) return 'clase';
+  if (c.includes('proyecto') || c.includes('taller')) return 'proyecto';
+  return 'entrega';
+}
+
+function renderizarCalendario() {
+  const gridDias = document.getElementById('grid-dias-mes');
+  const labelMesAnio = document.getElementById('mes-anio-label');
+
+  if (!gridDias || !labelMesAnio) return;
+
+  const anio = fechaSeleccionada.getFullYear();
+  const mes = fechaSeleccionada.getMonth();
+
+  const nombreMes = fechaSeleccionada.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+  labelMesAnio.textContent = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
+
+  const primerDiaIndex = new Date(anio, mes, 1).getDay();
+  const inicioLunes = primerDiaIndex === 0 ? 6 : primerDiaIndex - 1;
+  const diasEnMes = new Date(anio, mes + 1, 0).getDate();
+  const diasEnMesPrevio = new Date(anio, mes, 0).getDate();
+
+  let diasEstudioGuardados = [];
+  try {
+    const configHorarios = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{"dias":[]}');
+    diasEstudioGuardados = configHorarios.dias || [];
+  } catch (e) {
+    diasEstudioGuardados = [];
+  }
+
+  let html = '';
+
+  for (let i = inicioLunes; i > 0; i--) {
+    html += `<div class="dia-cell inactivo">${diasEnMesPrevio - i + 1}</div>`;
+  }
+
+  const hoy = new Date();
+  for (let dia = 1; dia <= diasEnMes; dia++) {
+    const fechaISO = construirFechaISO(anio, mes + 1, dia);
+    const tareasDelDia = tareasGuardadas.filter(t => 
+      (t.fecha || t.fecha_entrega || t.fecha_limite || '').startsWith(fechaISO)
+    );
+    
+    const indiceDiaSemana = obtenerIndiceDiaSemana(anio, mes + 1, dia);
+    const esDiaEstudioPerfil = diasEstudioGuardados.includes(indiceDiaSemana);
+
+    const esHoy = (hoy.getDate() === dia && hoy.getMonth() === mes && hoy.getFullYear() === anio);
+    const esSeleccionado = (dia === fechaSeleccionada.getDate()) ? 'seleccionado' : '';
+    
+    const puntos = generarPuntosCategorias(tareasDelDia, esDiaEstudioPerfil);
+
+    html += `
+      <div class="dia-cell ${esSeleccionado} ${esHoy ? 'dia-hoy' : ''}" data-dia="${dia}">
+        <span>${dia}</span>
+        ${puntos ? `<div class="puntos-dia">${puntos}</div>` : ''}
+      </div>
+    `;
+  }
+
+  gridDias.innerHTML = html;
+
+  gridDias.querySelectorAll('.dia-cell:not(.inactivo)').forEach(el => {
+    el.addEventListener('click', () => {
+      const diaNum = parseInt(el.dataset.dia, 10);
+      fechaSeleccionada.setDate(diaNum);
+      renderizarCalendario();
+      renderizarTimelineDia(fechaSeleccionada);
+    });
+  });
+}
+
+function generarPuntosCategorias(tareas, esDiaEstudioPerfil) {
+  const categorias = new Set();
+
+  if (esDiaEstudioPerfil) {
+    categorias.add('clase'); // Punto azul
+  }
+
+  tareas.forEach(tarea => {
+    const cat = normalizarCategoria(tarea.categoria || tarea.prioridad);
+    categorias.add(cat);
+  });
+
+  if (categorias.size === 0) return '';
+
+  return Array.from(categorias)
+    .map(c => `<span class="punto-categoria ${c}"></span>`)
+    .join('');
+}
+
+function renderizarTimelineDia(fecha) {
+  const tituloDia = document.getElementById('titulo-dia-seleccionado');
+  const contenedorTimeline = document.getElementById('contenedor-timeline');
+  const cantTareas = document.getElementById('resumen-cant-tareas');
+  const resumenTiempo = document.getElementById('resumen-tiempo');
+
+  if (!tituloDia || !contenedorTimeline) return;
+
+  const fechaISO = construirFechaISO(fecha.getFullYear(), fecha.getMonth() + 1, fecha.getDate());
+  const fechaTexto = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  tituloDia.textContent = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
+
+  const tareasDelDia = tareasGuardadas.filter(t => 
+    (t.fecha || t.fecha_entrega || t.fecha_limite || '').startsWith(fechaISO)
+  );
+
+  if (cantTareas) cantTareas.textContent = tareasDelDia.length;
+  if (resumenTiempo) resumenTiempo.textContent = `${tareasDelDia.length * 1}h 0m`;
+
+  if (tareasDelDia.length === 0) {
+    contenedorTimeline.innerHTML = `
+      <div class="tareas-vacio-cal">
+        <p>No hay tareas ni exámenes programados para este día.</p>
+      </div>`;
+    return;
+  }
+
+  contenedorTimeline.innerHTML = tareasDelDia.map(tarea => {
+    const cat = normalizarCategoria(tarea.categoria || tarea.prioridad);
+    const hora = tarea.hora || '09:00 AM';
+
+    return `
+      <div class="timeline-item">
+        <div class="hora-col">
+          <span>${hora}</span>
+        </div>
+        <div class="linea-indicador ${cat}"></div>
+        <div class="card-tarea-timeline">
+          <div class="header-tarea-item">
+            <h3>${tarea.titulo || 'Tarea sin título'}</h3>
+            <span class="badge-cat ${cat}">${cat}</span>
+          </div>
+          ${tarea.descripcion ? `<p class="desc-tarea">${tarea.descripcion}</p>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}

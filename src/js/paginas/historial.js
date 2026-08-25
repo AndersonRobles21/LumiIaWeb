@@ -1,61 +1,108 @@
 /**
  * historial.js
- * Lógica de la página Historial
+ * Lógica funcional para la interfaz de 2 columnas (LUMI)
  */
 
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { obtenerEstadisticas } from '../servicios/estadisticas.service.js';
 import { obtenerHistorialIA } from '../servicios/ia.service.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await cargarResumen();
-});
+export async function initHistorial() {
+  const contenedorLista = document.getElementById('lista-conversaciones');
+  if (!contenedorLista) return;
 
-async function cargarResumen() {
+  // Asignar listeners a los elementos precargados en el HTML
+  configurarSeleccionConversaciones();
+  configurarBuscador();
+  configurarChipsSugerencias();
+
   try {
     const usuario = await obtenerUsuarioActual();
-    if (!usuario?.id) throw new Error('La sesión no está autenticada.');
-    const [estadisticasRespuesta, historial] = await Promise.all([
-      obtenerEstadisticas(usuario.id),
-      obtenerHistorialIA(usuario.id),
-    ]);
-    const estadisticas = estadisticasRespuesta?.estadisticas || estadisticasRespuesta?.data || estadisticasRespuesta || {};
+    if (!usuario?.id) return;
 
-    const elCompletadas = document.getElementById('hist-completadas');
-    const elRacha = document.getElementById('hist-racha');
-    const elHoras = document.getElementById('hist-horas');
+    const historial = await obtenerHistorialIA(usuario.id);
 
-    if (elCompletadas) elCompletadas.textContent = estadisticas.tareas_completadas ?? 0;
-    if (elRacha) elRacha.textContent = estadisticas.racha ?? 0;
-    if (elHoras) elHoras.textContent = `${estadisticas.horas_estudio ?? 0}h`;
+    // Si existen datos reales en el backend, los renderizamos sin romper la UI
+    if (historial && historial.length > 0) {
+      renderizarConversacionesBackend(historial, contenedorLista);
+    }
+  } catch (error) {
+    console.warn('Usando vista previa estática de conversaciones:', error);
+  }
+}
 
-    const lista = document.getElementById('lista-historial');
-    if (!lista) return;
+function configurarSeleccionConversaciones() {
+  const items = document.querySelectorAll('.item-conversacion');
+  const elTituloChat = document.getElementById('chat-titulo-tarea');
 
-    if (historial.length === 0) {
-      lista.innerHTML = `
-      <div class="historial-vacio">
-        <p>Aún no hay actividad registrada.</p>
+  items.forEach(elemento => {
+    elemento.addEventListener('click', () => {
+      items.forEach(el => el.classList.remove('activa'));
+      elemento.classList.add('activa');
+
+      const tituloItem = elemento.querySelector('h4')?.textContent;
+      if (elTituloChat && tituloItem) {
+        elTituloChat.textContent = tituloItem;
+      }
+    });
+  });
+}
+
+function renderizarConversacionesBackend(historial, contenedor) {
+  contenedor.innerHTML = `<div class="grupo-fecha-label">Recientes</div>`;
+
+  historial.forEach((item, index) => {
+    const esActiva = index === 0 ? 'activa' : '';
+    const titulo = item.nombre || item.titulo || item.metodo_estudio || 'Consulta de estudio';
+    const subtitulo = item.metodo_estudio ? `Método: ${item.metodo_estudio}` : 'Desarrollo de proyecto';
+    const hora = item.fecha_creacion 
+      ? new Date(item.fecha_creacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : 'Hoy';
+
+    const itemHTML = `
+      <div class="item-conversacion ${esActiva}" data-id="${item.id || index}">
+        <div class="avatar-lumi-sm">🤖</div>
+        <div class="info-conversacion">
+          <h4>${titulo}</h4>
+          <p>${subtitulo}</p>
+        </div>
+        <span class="hora-item">${hora}</span>
       </div>
     `;
-      return;
-    }
 
-    const recientes = [...historial].reverse().slice(0, 10);
+    contenedor.insertAdjacentHTML('beforeend', itemHTML);
+  });
 
-    lista.innerHTML = recientes.map(plan => `
-    <a class="historial-item" href="guia-detalle.html?plan_id=${encodeURIComponent(plan.id || plan.plan_id || '')}">
-      <div class="historial-estado completada">📚</div>
-      <div class="historial-info">
-        <span class="historial-titulo">${plan.nombre || plan.titulo || plan.metodo_estudio || 'Plan de estudio'}</span>
-        <span class="historial-meta">
-          ${plan.metodo_estudio || ''}
-          ${plan.fecha_creacion ? ` · ${plan.fecha_creacion}` : ''}
-        </span>
-      </div>
-    </a>
-  `).join('');
-  } catch (error) {
-    alert(`No se pudo cargar el historial: ${error.message}`);
-  }
+  configurarSeleccionConversaciones();
+}
+
+function configurarBuscador() {
+  const inputBuscador = document.getElementById('input-buscar-historial');
+  if (!inputBuscador) return;
+
+  inputBuscador.addEventListener('input', (e) => {
+    const termino = e.target.value.toLowerCase();
+    const items = document.querySelectorAll('.item-conversacion');
+
+    items.forEach(item => {
+      const coincidencia = item.textContent.toLowerCase().includes(termino);
+      item.style.display = coincidencia ? 'flex' : 'none';
+    });
+  });
+}
+
+function configurarChipsSugerencias() {
+  const chips = document.querySelectorAll('.chip-btn');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const texto = chip.textContent;
+      console.log('Sugerencia seleccionada:', texto);
+    });
+  });
+}
+
+// Inicialización
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHistorial);
+} else {
+  initHistorial();
 }

@@ -13,94 +13,177 @@
   <!-- Componentes -->
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/componentes/navbar.css">
-  <link rel="stylesheet" href="../css/componentes/tarjetas.css">
-  <link rel="stylesheet" href="../css/componentes/botones.css">
 
-  <!-- Estilos de esta página -->
+  <!-- Estilos de la página -->
   <link rel="stylesheet" href="../css/paginas/dashboard.css">
 </head>
 <body>
 
-  <!-- Contenedor principal del dashboard -->
   <div class="dashboard-container">
 
-    <!-- Aquí se insertará el Sidebar -->
+    <!-- Sidebar lateral -->
     <aside id="sidebar-container"></aside>
 
-    <!-- Contenido principal -->
+    <!-- Contenido Principal -->
     <div class="dashboard-main">
 
-      <!-- Aquí se insertará el Navbar -->
+      <!-- Header / Navbar -->
       <header id="navbar-container"></header>
 
-      <!-- Área de contenido -->
-<main class="dashboard-content">
+      <main class="dashboard-content">
 
-  <!-- Saludo -->
-  <section class="dashboard-saludo">
-    <h1>¡Hola, Anderson!</h1>
-    <p>Aquí tienes un resumen de tu progreso y lo que puedes hacer hoy.</p>
-  </section>
+        <!-- Saludo -->
+        <section class="dashboard-saludo">
+          <h1>¡Hola ...!</h1>
+          <p>¿Listo para aprender hoy?</p>
+        </section>
 
-  <!-- Tarjetas de resumen -->
-  <section class="dashboard-tarjetas">
-    <div class="tarjeta-resumen">
-      <div class="tarjeta-icono">✅</div>
-      <div class="tarjeta-info">
-        <span class="tarjeta-numero">0</span>
-        <span class="tarjeta-etiqueta">Tareas completadas</span>
-      </div>
-    </div>
+        <!-- Grilla principal del Dashboard -->
+        <div class="dashboard-grid">
 
-    <div class="tarjeta-resumen">
-      <div class="tarjeta-icono">📋</div>
-      <div class="tarjeta-info">
-        <span class="tarjeta-numero">0</span>
-        <span class="tarjeta-etiqueta">Tareas pendientes</span>
-      </div>
-    </div>
+          <!-- COLUMNA IZQUIERDA -->
+          <div class="columna-izquierda">
+            
+            <!-- TARJETA: PLAN DE ESTUDIO -->
+            <section class="tarjeta-panel plan-estudio-panel">
+              <h2>Tu plan de estudio de hoy</h2>
 
-    <div class="tarjeta-resumen">
-      <div class="tarjeta-icono">🔥</div>
-      <div class="tarjeta-info">
-        <span class="tarjeta-numero">0</span>
-        <span class="tarjeta-etiqueta">Racha de días</span>
-      </div>
-    </div>
+              <div class="lista-tareas">
+                
+                <!-- Tarea 1 -->
+                <div class="item-tarea">
+                  <div class="icono-tarea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+                    </svg>
+                  </div>
+                  <div class="info-tarea">
+                    <h3>Trabajo de flutter</h3>
+                    <div class="progreso-wrapper">
+                      <div class="barra-progreso"><div class="progreso-fill" style="width: 75%;"></div></div>
+                      <span class="porcentaje">75%</span>
+                    </div>
+                  </div>
+                  <button class="btn-flecha-tarea" aria-label="Ver detalles">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                </div>
 
-    <div class="tarjeta-resumen">
-      <div class="tarjeta-icono">⏱️</div>
-      <div class="tarjeta-info">
-        <span class="tarjeta-numero">0h</span>
-        <span class="tarjeta-etiqueta">Puntos</span>
-      </div>
-    </div>
-  </section>
+                <!-- Tarea 2 -->
+                <div class="item-tarea">
+                  <div class="icono-tarea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                      <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                  </div>
+                  <div class="info-tarea">
+                    <h3>Trabajo de flutter</h3>
+                    <div class="progreso-wrapper">
+                      <div class="barra-progreso"><div class="progreso-fill cyan" style="width: 40%;"></div></div>
+                      <span class="porcentaje">40%</span>
+                    </div>
+                  </div>
+                  <button class="btn-flecha-tarea" aria-label="Ver detalles">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                </div>
 
-  <!-- Acciones rápidas -->
-  <section class="dashboard-acciones">
-    <h2>Acciones rápidas</h2>
-    <div class="acciones-grid">
-      <a href="agregar-tarea.html" class="accion-card">
-        <span class="accion-icono">➕</span>
-        <span class="accion-texto">Nueva tarea</span>
-      </a>
-      <a href="tareas.html" class="accion-card">
-        <span class="accion-icono">📝</span>
-        <span class="accion-texto">Ver tareas</span>
-      </a>
-      <a href="guia-detalle.html" class="accion-card">
-        <span class="accion-icono">📚</span>
-        <span class="accion-texto">Métodos de estudio</span>
-      </a>
-      <a href="perfil.html" class="accion-card">
-        <span class="accion-icono">👤</span>
-        <span class="accion-texto">Mi perfil</span>
-      </a>
-    </div>
-  </section>
+                <!-- Tarea 3 -->
+                <div class="item-tarea">
+                  <div class="icono-tarea">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </div>
+                  <div class="info-tarea">
+                    <h3>Trabajo de flutter</h3>
+                    <span class="estado-texto">Sin empezar</span>
+                  </div>
+                  <button class="btn-flecha-tarea" aria-label="Ver detalles">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                </div>
 
-</main>
+              </div>
+            </section>
+
+            <!-- TARJETA: RACHA ACTUAL -->
+            <section class="tarjeta-panel racha-panel">
+              <div class="header-racha">
+                <span class="icono-fuego-main">🔥</span>
+                <div>
+                  <h2>Tu racha actual</h2>
+                  <p>Aca podras ver el avance de tu racha</p>
+                </div>
+              </div>
+
+              <div class="dias-racha-grid">
+                <div class="dia-item activo">
+                  <div class="circulo-fuego">🔥</div>
+                  <span>Lun</span>
+                </div>
+                <div class="dia-item activo">
+                  <div class="circulo-fuego">🔥</div>
+                  <span>Mar</span>
+                </div>
+                <div class="dia-item activo corona">
+                  <div class="circulo-fuego">👑<span class="fuego-sub">🔥</span></div>
+                  <span>Mie</span>
+                </div>
+                <div class="dia-item">
+                  <div class="circulo-fuego inactivo">🔥</div>
+                  <span>Jue</span>
+                </div>
+                <div class="dia-item">
+                  <div class="circulo-fuego inactivo">🔥</div>
+                  <span>Vie</span>
+                </div>
+                <div class="dia-item">
+                  <div class="circulo-fuego inactivo">🔥</div>
+                  <span>Sab</span>
+                </div>
+                <div class="dia-item">
+                  <div class="circulo-fuego inactivo">🔥</div>
+                  <span>Dom</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- COLUMNA DERECHA -->
+          <div class="columna-derecha">
+            
+            <!-- CONTENEDOR ASISTENTE / MASCOTA -->
+            <div class="mascota-asistente-section">
+              <div class="bocadillo-chat">
+                <span class="lumi-tag">Lumi:</span>
+                <p>Tu asistente personal</p>
+              </div>
+
+              <div class="wrapper-mascota">
+                <img src="../assets/mascota3-lumi.png" alt="Mascota Lumi IA" class="mascota-img">
+              </div>
+            </div>
+
+            <!-- CARD AGREGAR TAREAS -->
+            <section class="card-agregar-tareas">
+              <div class="info-agregar">
+                <h2>Agrega tus nuevas tareas!</h2>
+                <p>Al tocar el botón de más "+" podrás agregar tu nueva tarea. Lumi IA la analizará para sugerirte los mejores métodos de estudio y darte recomendaciones personalizadas.</p>
+              </div>
+              <a href="agregar-tarea.html" class="btn-mas-flotante" aria-label="Agregar nueva tarea">
+                <span>+</span>
+              </a>
+            </section>
+
+          </div>
+
+        </div>
+
+      </main>
+
     </div>
 
   </div>

@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description" content="Crea una cuenta en LUMI.">
-
+    <meta name="description" content="Crea una cuenta en LUMI - Tu compañero inteligente de estudio.">
     <title>Registro | LUMI</title>
 
     <!-- Estilos globales -->
@@ -23,172 +19,129 @@
 
     <main class="registro">
 
-        <!-- PARTE VISUAL -->
+        <!-- LADO IZQUIERDO: Presentación y Mascota -->
         <section class="registro-presentacion">
 
-            <div class="registro-fondo"></div>
-
             <div class="registro-brand">
-
-                <div class="logo-lumi">
-                    <span>L</span>
-                </div>
-
-                <p class="registro-etiqueta">
-                    COMIENZA TU CAMBIO
-                </p>
-
-                <h1>
-                    Menos procrastinación.
-                    <span>Más progreso.</span>
-                </h1>
-
-                <p class="registro-eslogan">
-                    LUMI te ayuda a organizar tus tareas,
-                    crear mejores hábitos y avanzar hacia
-                    tus objetivos.
-                </p>
-
+                <img src="../assets/logo-lumi.png" alt="Logo LUMI" class="logo-lumi-img">
+                <p class="registro-subtitulo-logo">ESTUDIA <span>MEJOR</span>. LOGRA <span>MÁS</span></p>
             </div>
 
-            <div class="registro-pasos">
-
-                <div class="paso activo">
-                    <span>01</span>
-                    <p>Crea tu cuenta</p>
+            <!-- Personaje 3D con Badge de características -->
+            <div class="registro-mascota-contenedor">
+                <div class="badge-caracteristica">
+                    <span class="icono-shield">🛡️</span>
+                    <p>Crea tu cuenta y empieza a organizar tu estudio con <strong>Lumi</strong>.</p>
                 </div>
-
-                <div class="paso">
-                    <span>02</span>
-                    <p>Personaliza tu perfil</p>
-                </div>
-
-                <div class="paso">
-                    <span>03</span>
-                    <p>Comienza a avanzar</p>
-                </div>
-
+                <img src="../assets/mascota2-lumi.png" alt="Mascota inteligente LUMI" class="mascota-img">
             </div>
 
         </section>
 
 
-        <!-- FORMULARIO -->
-        <section class="registro-formulario">
+        <!-- LADO DERECHO: Formulario en Card -->
+        <section class="registro-formulario-seccion">
 
-            <div class="formulario-contenedor">
+            <div class="card-registro">
 
                 <div class="formulario-encabezado">
-
-                    <p class="formulario-etiqueta">
-                        NUEVA CUENTA
-                    </p>
-
-                    <h2>Únete a LUMI</h2>
-
-                    <p>
-                        Crea tu cuenta y comienza a organizar
-                        mejor tu tiempo.
-                    </p>
-
+                    <h2>Registra tu Cuenta</h2>
+                    <p>Completa los datos para crear tu cuenta</p>
                 </div>
-
 
                 <form id="formulario-registro">
 
-                    <div class="campo">
+                    <!-- Nombre y Apellido en 2 Columnas -->
+                    <div class="fila-doble">
+                        <div class="campo">
+                            <label for="nombre">Nombre</label>
+                            <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                autocomplete="given-name"
+                                required
+                            >
+                        </div>
 
-                        <label for="nombre">
-                            Nombre
-                        </label>
-
-                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="name"
-                            required>
-
-                    </div>
-                    <div class="campo">
-
-                        <label for="apellido">
-                            Apellido
-                        </label>
-
-                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido"
-                            autocomplete="family-name" required>
-
-                    </div>
-
-                    <div class="campo">
-                        <label for="apellido">Apellido</label>
-                        <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" autocomplete="family-name">
-                    </div>
-
-
-                    <div class="campo">
-
-                        <label for="correo">
-                            Correo electrónico
-                        </label>
-
-                        <input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com"
-                            autocomplete="email" required>
-
+                        <div class="campo">
+                            <label for="apellido">Apellido</label>
+                            <input
+                                type="text"
+                                id="apellido"
+                                name="apellido"
+                                autocomplete="family-name"
+                                required
+                            >
+                        </div>
                     </div>
 
-
                     <div class="campo">
-
-                        <label for="contrasena">
-                            Contraseña
-                        </label>
-
-                        <input type="password" id="contrasena" name="contrasena" placeholder="Crea una contraseña"
-                            autocomplete="new-password" required>
-
+                        <label for="correo">Email</label>
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            autocomplete="email"
+                            required
+                        >
                     </div>
 
-
                     <div class="campo">
-
-                        <label for="confirmar-contrasena">
-                            Confirmar contraseña
-                        </label>
-
-                        <input type="password" id="confirmar-contrasena" name="confirmar-contrasena"
-                            placeholder="Repite tu contraseña" autocomplete="new-password" required>
-
+                        <label for="contrasena">Contraseña</label>
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            autocomplete="new-password"
+                            required
+                        >
                     </div>
 
+                    <div class="campo">
+                        <label for="confirmar-contrasena">Confirmar tu contraseña</label>
+                        <input
+                            type="password"
+                            id="confirmar-contrasena"
+                            name="confirmar-contrasena"
+                            autocomplete="new-password"
+                            required
+                        >
+                    </div>
 
+                    <!-- Aceptar Términos -->
                     <label class="aceptar-terminos">
-
-                        <input type="checkbox" id="terminos" required>
-
-                        <span>
-                            Acepto los términos y condiciones
-                            y la política de privacidad.
-                        </span>
-
+                        <input type="checkbox" id="terminos" name="terminos" required>
+                        <span>Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a>.</span>
                     </label>
 
-
                     <button type="submit" class="boton-registro">
-                        <span>CREAR CUENTA</span>
-                        <span>→</span>
+                        Crear cuenta
                     </button>
 
                 </form>
 
+                <!-- Separador Social -->
+                <div class="separador">
+                    <span>O registrate con</span>
+                </div>
 
+                <!-- Botones de Redes Sociales -->
+                <div class="social-registro">
+                    <button type="button" class="btn-social btn-google">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                        <span>Google</span>
+                    </button>
+
+                    <button type="button" class="btn-social btn-microsoft">
+                        <img src="https://www.svgrepo.com/show/448239/microsoft.svg" alt="Microsoft">
+                        <span>Microsoft</span>
+                    </button>
+                </div>
+
+                <!-- Redirección a Login -->
                 <div class="registro-login">
-
-                    <p>
-                        ¿Ya tienes una cuenta?
-                    </p>
-
-                    <a href="./login.html">
-                        Iniciar sesión
-                    </a>
-
+                    <p>¿Ya tienes cuenta? <a href="./login.html">Inicia sesión</a></p>
                 </div>
 
             </div>
@@ -200,5 +153,4 @@
     <script type="module" src="../js/paginas/registro.js"></script>
 
 </body>
-
 </html>

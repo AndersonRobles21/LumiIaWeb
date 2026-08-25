@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
   <link rel="stylesheet" href="../css/componentes/botones.css">
   <link rel="stylesheet" href="../css/paginas/guia-detalle.css">
 </head>
+
 <body>
 
   <div class="dashboard-container">
@@ -23,6 +25,13 @@
 
       <main class="dashboard-content">
         <section class="guia-contenedor">
+          <!-- En la parte superior de guia-contenedor en guia-detalle.html -->
+          <div style="margin-bottom: 20px;">
+            <a href="historial.html" class="btn-secundario"
+              style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+              ← Volver al Historial
+            </a>
+          </div>
 
           <div class="guia-encabezado">
             <h1>Guía de Estudio</h1>
@@ -37,7 +46,8 @@
             <div class="metodo-card">
               <div class="metodo-icono">🍅</div>
               <h3>Pomodoro</h3>
-              <p>Estudia en bloques de 25 minutos con descansos cortos. Ideal para mantener el foco y evitar el agotamiento.</p>
+              <p>Estudia en bloques de 25 minutos con descansos cortos. Ideal para mantener el foco y evitar el
+                agotamiento.</p>
               <ul>
                 <li>25 min de estudio</li>
                 <li>5 min de descanso</li>
@@ -48,7 +58,8 @@
             <div class="metodo-card">
               <div class="metodo-icono">🧠</div>
               <h3>Active Recall</h3>
-              <p>En lugar de solo releer, intenta recordar la información. Es una de las técnicas más efectivas para memorizar.</p>
+              <p>En lugar de solo releer, intenta recordar la información. Es una de las técnicas más efectivas para
+                memorizar.</p>
               <ul>
                 <li>Lee el tema</li>
                 <li>Cierra el material</li>
@@ -59,7 +70,8 @@
             <div class="metodo-card">
               <div class="metodo-icono">💡</div>
               <h3>Método Feynman</h3>
-              <p>Explica el tema con palabras simples, como si se lo enseñaras a un niño. Si no puedes, aún no lo entiendes bien.</p>
+              <p>Explica el tema con palabras simples, como si se lo enseñaras a un niño. Si no puedes, aún no lo
+                entiendes bien.</p>
               <ul>
                 <li>Elige un concepto</li>
                 <li>Explícalo en voz alta o por escrito</li>
@@ -70,7 +82,8 @@
             <div class="metodo-card">
               <div class="metodo-icono">📅</div>
               <h3>Spaced Repetition</h3>
-              <p>Repasa la información en intervalos crecientes. Ayuda a pasar el conocimiento a la memoria a largo plazo.</p>
+              <p>Repasa la información en intervalos crecientes. Ayuda a pasar el conocimiento a la memoria a largo
+                plazo.</p>
               <ul>
                 <li>Repasa al día siguiente</li>
                 <li>Luego a los 3 días</li>
@@ -89,4 +102,5 @@
   <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/guia-detalle.js"></script>
 </body>
+
 </html>

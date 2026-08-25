@@ -34,65 +34,120 @@
       <!-- Contenido del perfil -->
       <main class="dashboard-content">
 
-        <section class="perfil-contenedor">
+        <!-- Encabezado -->
+        <div class="perfil-encabezado">
+          <h1>Mi Perfil</h1>
+          <p>Configura tus datos personales y gestiona tus horarios de tiempo libre para el calendario inteligente.</p>
+        </div>
 
-          <!-- Cabecera del perfil -->
-          <div class="perfil-header">
-            <div class="perfil-avatar-grande">A</div>
-            <div class="perfil-info-principal">
-              <h1 id="perfil-nombre">Anderson</h1>
-              <p id="perfil-rol">Estudiante</p>
+        <form id="formulario-perfil" class="perfil-grid">
+
+          <!-- TARJETA 1: Información Personal -->
+          <section class="card-perfil card-usuario">
+            <div class="card-header">
+              <h2>Información Personal</h2>
             </div>
+
+            <div class="perfil-avatar-seccion">
+              <div class="avatar-badge" id="perfil-avatar">U</div>
+              <div class="avatar-info">
+                <h3 id="avatar-nombre-display">Usuario</h3>
+                <span class="rol-badge">Estudiante ADSO</span>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="perfil-nombre">Nombre</label>
+              <input type="text" id="perfil-nombre" name="nombre" placeholder="Tu nombre" required>
+            </div>
+
+            <div class="campo">
+              <label for="perfil-apellido">Apellido</label>
+              <input type="text" id="perfil-apellido" name="apellido" placeholder="Tu apellido">
+            </div>
+
+            <div class="campo">
+              <label for="perfil-objetivo">Objetivo de estudio</label>
+              <input type="text" id="perfil-objetivo" name="objetivo" placeholder="Ej: Desarrollar el proyecto LUMI" required>
+            </div>
+
+            <div class="campo">
+              <label for="perfil-procrastinacion">Nivel de procrastinación</label>
+              <select id="perfil-procrastinacion" name="nivel_procrastinacion">
+                <option value="1">1 - Bajo (Muy enfocado)</option>
+                <option value="2">2 - Leve</option>
+                <option value="3" selected>3 - Moderado</option>
+                <option value="4">4 - Alto</option>
+                <option value="5">5 - Muy alto (Suelo dejar todo para el final)</option>
+              </select>
+            </div>
+          </section>
+
+          <!-- TARJETA 2: Disponibilidad y Tiempo Libre Semanal -->
+          <section class="card-perfil card-horarios">
+
+            <!-- Mascot Banner -->
+            <div class="mascota-bocadillo-contenedor">
+              <div class="mascota-icono">🤖</div>
+              <div class="bocadillo-chat">
+                ¡Hola! Agrega tus <strong>bloques de tiempo libre</strong>. Usaré esta disponibilidad para distribuirte las tareas en el <strong>calendario de forma equilibrada</strong>.
+              </div>
+            </div>
+
+            <div class="card-header flex-header">
+              <h2>🗓️ Disponibilidad Semanal</h2>
+              <span class="horas-promedio-tag" id="horas-promedio-tag">0 hrs/día disp.</span>
+            </div>
+
+            <!-- Formulario para ingresar horarios -->
+            <div class="agregar-horario-bar">
+              <div class="campo-horario">
+                <label for="horario-dia">Día</label>
+                <select id="horario-dia">
+                  <option value="Lunes">Lunes</option>
+                  <option value="Martes">Martes</option>
+                  <option value="Miércoles">Miércoles</option>
+                  <option value="Jueves">Jueves</option>
+                  <option value="Viernes">Viernes</option>
+                  <option value="Sábado">Sábado</option>
+                  <option value="Domingo">Domingo</option>
+                </select>
+              </div>
+
+              <div class="campo-horario">
+                <label for="horario-inicio">Hora Inicio</label>
+                <input type="time" id="horario-inicio" required>
+              </div>
+
+              <div class="campo-horario">
+                <label for="horario-fin">Hora Fin</label>
+                <input type="time" id="horario-fin" required>
+              </div>
+
+              <button type="button" id="btn-agregar-horario" class="boton-agregar">
+                + Agregar
+              </button>
+            </div>
+
+            <!-- Alertas de validación -->
+            <p id="error-horario" class="mensaje-error-horario" hidden></p>
+
+            <!-- Grid de días (Lunes a Domingo) -->
+            <div class="semana-grid" id="contenedor-semana">
+              <!-- Renderizado dinámico desde perfil.js -->
+            </div>
+
+          </section>
+
+          <!-- Acciones Globales -->
+          <div class="perfil-acciones-footer">
+            <span id="estado-guardado" class="estado-mensaje" role="status"></span>
+            <button type="submit" id="btn-guardar-perfil" class="boton-principal">
+              Guardar Perfil y Horarios
+            </button>
           </div>
 
-          <!-- Datos del perfil -->
-          <div class="perfil-datos">
-            <h2>Información personal</h2>
-
-            <div class="dato-item">
-              <span class="dato-etiqueta">Nombre completo</span>
-              <span class="dato-valor" id="dato-nombre">Anderson</span>
-            </div>
-
-            <div class="dato-item">
-              <span class="dato-etiqueta">Objetivo principal</span>
-              <span class="dato-valor" id="dato-objetivo">—</span>
-            </div>
-
-            <div class="dato-item">
-              <span class="dato-etiqueta">Horas de estudio diarias</span>
-              <span class="dato-valor" id="dato-horas">—</span>
-            </div>
-
-            <div class="dato-item">
-              <span class="dato-etiqueta">Método preferido</span>
-              <span class="dato-valor" id="dato-metodo">—</span>
-            </div>
-          </div>
-
-          <!-- Acciones -->
-          <div class="perfil-acciones">
-            <button type="button" class="boton-principal" id="editar-perfil">Editar perfil</button>
-            <a href="configuracion.html" class="boton-secundario">Configuración</a>
-          </div>
-
-          <form id="formulario-edicion-perfil" hidden>
-            <h2>Editar datos personales y objetivo</h2>
-            <label for="perfil-nombre-edicion">Nombre</label>
-            <input id="perfil-nombre-edicion" required>
-            <label for="perfil-apellido-edicion">Apellido</label>
-            <input id="perfil-apellido-edicion">
-            <label for="perfil-objetivo-edicion">Objetivo de estudio</label>
-            <input id="perfil-objetivo-edicion" required>
-            <label for="perfil-procrastinacion-edicion">Nivel de procrastinación</label>
-            <input id="perfil-procrastinacion-edicion" type="number" min="1" max="5" value="1">
-            <label for="perfil-horarios-edicion">Horarios de estudio</label>
-            <input id="perfil-horarios-edicion" placeholder="Lunes 18:00-20:00">
-            <button type="submit" class="boton-principal">Guardar cambios</button>
-            <p id="estado-edicion-perfil" role="status"></p>
-          </form>
-
-        </section>
+        </form>
 
       </main>
 

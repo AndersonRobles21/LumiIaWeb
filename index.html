@@ -3,82 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta
-        name="description"
-        content="LUMI - Tu compañero inteligente de estudio."
-    >
-
+    <meta name="description" content="LUMI - Tu compañero inteligente de estudio.">
     <title>LUMI | Cargando...</title>
 
     <link rel="stylesheet" href="./src/css/global/reset.css">
     <link rel="stylesheet" href="./src/css/global/variables.css">
     <link rel="stylesheet" href="./src/css/global/global.css">
-
     <link rel="stylesheet" href="./src/css/paginas/carga.css">
+    <!-- En el <head> de tu index.html o dashboard.html principal -->
+    <link rel="stylesheet" href="../css/paginas/historial.css">
 </head>
-
 <body>
 
     <main class="pantalla-carga">
+        <div class="carga-contenedor">
 
-        <div class="fondo-tecnologico">
+            <!-- Columna Izquierda: Mascot / Robot Animado -->
+            <div class="columna-robot">
+                <div class="aura-piso"></div>
+                <div class="lumi-robot-wrapper">
+                    <img src="./src/assets/lumi-robot-img.jpeg" alt="LUMI Mascot" class="lumi-robot-img">
+                </div>
+            </div>
 
-            <span class="punto punto-1"></span>
-            <span class="punto punto-2"></span>
-            <span class="punto punto-3"></span>
-            <span class="punto punto-4"></span>
-            <span class="punto punto-5"></span>
+            <!-- Columna Derecha: Branding y Progreso -->
+            <div class="columna-contenido">
+                
+                <!-- Logo Marca -->
+                <div class="lumi-brand">
+                    <img src="./src/assets/logo-lumi.png" alt="Logo LUMI" class="lumi-logo-img">
+                    <p class="logo-slogan">ESTUDIA <span>MEJOR</span>. LOGRA <span>MAS</span></p>
+                </div>
 
-            <div class="linea linea-1"></div>
-            <div class="linea linea-2"></div>
-            <div class="linea linea-3"></div>
+                <!-- Cápsula Informativa -->
+                <div class="capsula-info">
+                    <div class="icono-birrete">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/>
+                        </svg>
+                    </div>
+                    <p>Tu compañero inteligente para aprender <span>sin límites</span></p>
+                </div>
 
+                <!-- Barra de Carga -->
+                <div class="carga-progreso">
+                    <p id="texto-carga">CARGANDO...</p>
+                    <div class="barra-carga">
+                        <div class="progreso-carga" id="progreso-carga"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Features -->
+                <div class="features-footer">
+                    <div class="feature-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/>
+                                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/>
+                            </svg>
+                        </div>
+                        <span>Inteligencia Artificial</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                        </div>
+                        <span>Enfoque Personalizado</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/>
+                                <path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/>
+                                <path d="M4 22h16"/>
+                                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                            </svg>
+                        </div>
+                        <span>Logros Constantes</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
-
-        <section class="carga-contenido">
-
-            <div class="lumi-orbita">
-
-                <div class="lumi-imagen">
-                    <!-- Aquí después pondremos el robot de LUMI -->
-                    🤖
-                </div>
-
-            </div>
-
-            <div class="carga-texto">
-
-                <h1>LUMI</h1>
-
-                <p class="bienvenida">
-                    BIENVENIDO AL FUTURO
-                </p>
-
-                <p class="subtitulo">
-                    LA PROCRASTINACIÓN TERMINA AQUÍ
-                </p>
-
-            </div>
-
-            <div class="carga-progreso">
-
-                <p id="texto-carga">LOADING...</p>
-
-                <div class="barra-carga">
-                    <div
-                        class="progreso-carga"
-                        id="progreso-carga"
-                    ></div>
-                </div>
-
-            </div>
-
-        </section>
-
     </main>
 
     <script type="module" src="./src/js/paginas/carga.js"></script>
-
 </body>
 </html>

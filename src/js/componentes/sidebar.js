@@ -30,7 +30,7 @@ export async function crearSidebar() {
 
   const menu = [
     { nombre: 'Dashboard', href: 'dashboard.html', icono: '🏠' },
-    { nombre: 'Calendario', href: 'tareas.html', icono: '📅' },
+    { nombre: 'Calendario', href: 'calendario.html', icono: '📅' },
     { nombre: 'Agregar tarea inteligente', href: 'agregar-tarea.html', icono: '➕' },
     { nombre: 'Historial de IA', href: 'historial.html', icono: '📊' },
     { nombre: 'Recompensas', href: 'recompensas.html', icono: '🏆' },

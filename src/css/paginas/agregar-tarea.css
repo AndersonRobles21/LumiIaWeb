@@ -2,12 +2,16 @@
    AGREGAR TAREA - LUMI
 ========================= */
 
-/* Layout base (igual que dashboard y tareas) */
+body {
+  margin: 0;
+  background-color: #04010b;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
 .dashboard-container {
   min-height: 100vh;
   display: flex;
-  background: var(--color-fondo-principal);
-  color: var(--color-texto-principal);
 }
 
 .dashboard-main {
@@ -19,164 +23,265 @@
 
 .dashboard-content {
   flex: 1;
-  padding: var(--espacio-xl);
-  overflow-y: auto;
-  background:
-    radial-gradient(circle at 85% 15%, rgba(39, 217, 255, 0.07), transparent 35%),
-    radial-gradient(circle at 15% 85%, rgba(138, 43, 226, 0.10), transparent 40%);
+  padding: 2rem 3rem;
+  background: 
+    radial-gradient(circle at 85% 15%, rgba(147, 51, 234, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.1) 0%, transparent 45%);
+}
+
+.agregar-tarea-wrapper {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 /* =========================
-   CONTENEDOR DEL FORMULARIO
+   COLUMNA IZQUIERDA (FORMULARIO)
 ========================= */
-.agregar-tarea-contenedor {
-  max-width: 640px;
+
+.agregar-tarea-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
-/* Encabezado */
-.agregar-tarea-encabezado {
-  margin-bottom: var(--espacio-xl);
+.btn-regresar {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-regresar:hover {
+  transform: translateX(-4px);
+  color: #c084fc;
 }
 
 .agregar-tarea-encabezado h1 {
-  font-size: clamp(1.8rem, 4vw, 2.3rem);
-  font-weight: 700;
-  margin-bottom: 6px;
-  background: var(--gradiente-principal);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0 0 0.2rem 0;
+  color: #ffffff;
 }
 
 .agregar-tarea-encabezado p {
-  color: var(--color-texto-secundario, #94a3b8);
-  font-size: var(--texto-base);
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
-/* =========================
-   FORMULARIO
-========================= */
 .formulario-tarea {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-lg);
+  gap: 1.25rem;
 }
 
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.campo label {
-  font-size: var(--texto-sm);
-  font-weight: 600;
-  color: var(--color-texto-principal);
-}
-
-.campo input,
-.campo select,
+/* INPUTS ESTILO MAQUETA */
+.campo input[type="text"],
 .campo textarea {
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-pequeno);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--color-texto-principal);
-  font-size: var(--texto-base);
-  transition: border-color var(--transicion-normal), box-shadow var(--transicion-normal);
-}
-
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus {
+  box-sizing: border-box;
+  background: rgba(30, 25, 55, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  color: #ffffff;
+  font-size: 0.95rem;
   outline: none;
-  border-color: var(--color-cyan);
-  box-shadow: var(--brillo-cyan);
+  transition: border-color 0.2s ease;
 }
 
-.campo textarea {
-  resize: vertical;
-  min-height: 90px;
+.campo input[type="text"]:focus,
+.campo textarea:focus {
+  border-color: #a855f7;
 }
 
-.campo select option {
-  background: var(--color-fondo-principal);
-  color: var(--color-texto-principal);
+.campo-descripcion {
+  position: relative;
 }
 
-/* Grupo de campos (prioridad + fecha) */
-.campo-grupo {
+.campo-descripcion textarea {
+  resize: none;
+}
+
+.btn-adjuntar {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* CAJA DE FECHA MAQUETADA */
+.campo-fecha-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(26, 20, 50, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+}
+
+.icono-calendario svg {
+  width: 26px;
+  height: 26px;
+  stroke: #e879f9;
+}
+
+.fecha-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.campo-fecha-banner input[type="date"] {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  color-scheme: dark;
+  cursor: pointer;
+}
+
+/* CAMPOS SECUNDARIOS */
+.campo-grupo-secundario {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--espacio-md);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.campo-grupo-secundario label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.campo-grupo-secundario select {
+  width: 100%;
+  background: rgba(30, 25, 55, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.6rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+/* BOTÓN MAGENTA PRINCIPAL */
+.contenedor-btn-submit {
+  margin-top: 1rem;
+}
+
+.btn-generar-cronograma {
+  width: 100%;
+  max-width: 320px;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(90deg, #d946ef 0%, #a855f7 100%);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(217, 70, 239, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-generar-cronograma:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(217, 70, 239, 0.6);
 }
 
 /* =========================
-   BOTONES
+   COLUMNA DERECHA (MASCOTA)
 ========================= */
-.formulario-acciones {
+.columna-mascota {
   display: flex;
-  gap: 12px;
-  margin-top: var(--espacio-md);
-  flex-wrap: wrap;
-}
-
-.boton-principal {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.bocadillo-lumi {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 0.8rem 1.4rem;
+  max-width: 220px;
+  text-align: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+}
+
+.bocadillo-lumi p {
+  margin: 0;
+  color: #1e1b4b;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.bocadillo-lumi span {
+  color: #a855f7;
+}
+
+.bocadillo-lumi .corazon {
+  color: #d946ef;
+}
+
+.wrapper-mascota4 {
+  width: 100%;
+  display: flex;
   justify-content: center;
-  padding: 14px 24px;
-  border-radius: var(--radio-pequeno);
-  background: var(--gradiente-principal);
-  color: white;
-  font-weight: 600;
-  font-size: var(--texto-sm);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transicion-rapida);
-  text-decoration: none;
 }
 
-.boton-principal:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(138, 43, 226, 0.35);
+.mascota4-img {
+  width: 100%;
+  max-width: 330px;
+  height: auto;
+  filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.35));
+  animation: flotar 3.5s ease-in-out infinite;
 }
 
-.boton-secundario {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 24px;
-  border-radius: var(--radio-pequeno);
-  border: 1px solid var(--color-borde);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--color-texto-principal);
-  font-weight: 500;
-  font-size: var(--texto-sm);
-  text-decoration: none;
-  transition: all var(--transicion-rapida);
-}
-
-.boton-secundario:hover {
-  border-color: var(--color-borde-cyan);
-  background: rgba(39, 217, 255, 0.06);
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 600px) {
-  .campo-grupo {
+@media (max-width: 900px) {
+  .agregar-tarea-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .campo-grupo-secundario {
     grid-template-columns: 1fr;
   }
 
-  .formulario-acciones {
-    flex-direction: column-reverse;
-  }
-
-  .boton-principal,
-  .boton-secundario {
-    width: 100%;
+  .btn-generar-cronograma {
+    max-width: 100%;
   }
 }
