@@ -72,6 +72,9 @@
 
               <!-- Contenedor dinámico de actividades / pasos del plan -->
               <div id="contenedor-pasos-historial" style="margin-top: 1rem;"></div>
+              <div id="contenedor-resumen-historial" class="resumen-historial" hidden></div>
+              <div id="contenedor-paso-actual" class="paso-actual-historial" hidden></div>
+              <div id="contenedor-completar-tarea" class="completar-tarea-historial" hidden></div>
 
               <!-- Tarjeta de Acción: Cambiar Método -->
               <div class="card-accion-chat" id="card-metodo-estudio" style="margin-top: 1.5rem;">
@@ -91,8 +94,8 @@
               <span class="label-sugerencias">Sugerencias</span>
               <div class="contenedor-chips-sugerencias" id="contenedor-chips">
                 <button class="chip-btn" data-accion="paso_a_paso">Paso a paso</button>
-                <button class="chip-btn" data-accion="explica_tarea">Explicar tarea</button>
-                <button class="chip-btn" data-accion="mas_opciones">Más opciones</button>
+                <button class="chip-btn" data-accion="explica_tarea">Mostrar resumen</button>
+                <button class="chip-btn" data-accion="mas_opciones" disabled title="No hay más acciones disponibles para este plan">Más opciones</button>
               </div>
             </footer>
           </main>
@@ -106,5 +109,6 @@
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/historial.js"></script>
+  <script type="module" src="../js/componentes/tema.js"></script>
 </body>
 </html>

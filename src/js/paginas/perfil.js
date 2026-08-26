@@ -32,32 +32,34 @@ async function cargarDatosPerfil() {
     // 1. Intentar cargar desde Backend
     if (usuarioActual?.id) {
       const respuestaApi = await obtenerUsuarioConPerfil(usuarioActual.id);
+      const datosRespuesta = respuestaApi?.data || respuestaApi || {};
       
-      datosUsuario = respuestaApi?.usuario || respuestaApi || {};
-      datosPerfil = respuestaApi?.perfil || respuestaApi?.perfil_estudio || respuestaApi || {};
+      datosUsuario = datosRespuesta?.usuario || datosRespuesta?.user || datosRespuesta;
+      datosPerfil = datosRespuesta?.perfil_estudio || datosRespuesta?.perfil || {};
 
       // EXTRAER HORARIOS DE TODAS LAS ESTRUCTURAS POSIBLES DEL BACKEND
-      datosHorarios = respuestaApi?.horarios || 
-                      respuestaApi?.perfil?.horarios || 
-                      respuestaApi?.perfil_estudio?.horarios || 
-                      datosPerfil?.horarios || [];
+      datosHorarios = datosRespuesta?.horarios ||
+                      datosPerfil?.horarios ||
+                      datosPerfil?.horario || [];
 
-      document.getElementById('perfil-nombre').value = datosPerfil?.nombre || datosUsuario?.nombre || usuarioActual.nombre || '';
-      document.getElementById('perfil-apellido').value = datosPerfil?.apellido || datosUsuario?.apellido || usuarioActual.apellido || '';
+      document.getElementById('perfil-nombre').value = datosUsuario?.nombre || usuarioActual.nombre || '';
+      document.getElementById('perfil-apellido').value = datosUsuario?.apellido || usuarioActual.apellido || '';
       document.getElementById('perfil-objetivo').value = datosPerfil?.objetivo || '';
       document.getElementById('perfil-procrastinacion').value = datosPerfil?.nivel_procrastinacion || '3';
 
-      const nombreDisplay = datosPerfil?.nombre || datosUsuario?.nombre || usuarioActual.nombre || 'Usuario';
+      const nombreDisplay = datosUsuario?.nombre || usuarioActual.nombre || 'Usuario';
       document.getElementById('avatar-nombre-display').textContent = nombreDisplay;
       document.getElementById('perfil-avatar').textContent = nombreDisplay.charAt(0).toUpperCase();
+      document.getElementById('nombre-usuario-visible').textContent = datosUsuario?.nombre || 'No disponible';
+      document.getElementById('apellido-usuario-visible').textContent = datosUsuario?.apellido || 'No disponible';
     }
 
     // 2. Prioridad inteligente de horarios: localStorage vs Backend
     const localCache = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{}');
     const horariosGuardadosLocal = localCache.horarios || [];
 
-    if (Array.isArray(datosHorarios) && datosHorarios.length > 0) {
-      horariosLocales = datosHorarios;
+    if (usuarioActual?.id && Array.isArray(datosHorarios)) {
+      horariosLocales = normalizarHorariosPerfil(datosHorarios);
     } else if (Array.isArray(horariosGuardadosLocal) && horariosGuardadosLocal.length > 0) {
       horariosLocales = horariosGuardadosLocal;
     } else {
@@ -82,9 +84,40 @@ async function cargarDatosPerfil() {
 function inicializarEventos() {
   const btnAgregar = document.getElementById('btn-agregar-horario');
   const formulario = document.getElementById('formulario-perfil');
+  const btnEditarNombre = document.getElementById('btn-editar-nombre');
+  const btnCancelarNombre = document.getElementById('btn-cancelar-nombre');
+  const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
 
   if (btnAgregar) btnAgregar.addEventListener('click', agregarBloqueHorario);
   if (formulario) formulario.addEventListener('submit', guardarPerfil);
+  if (btnEditarNombre) btnEditarNombre.addEventListener('click', () => alternarEditorNombre(true));
+  if (btnCancelarNombre) btnCancelarNombre.addEventListener('click', cancelarEdicionNombre);
+  if (btnGuardarNombre) btnGuardarNombre.addEventListener('click', guardarNombreDesdeEditor);
+}
+
+function alternarEditorNombre(visible) {
+  document.getElementById('editor-nombre').hidden = !visible;
+  document.getElementById('btn-editar-nombre').hidden = visible;
+  if (visible) document.getElementById('perfil-nombre').focus();
+}
+
+function cancelarEdicionNombre() {
+  aplicarNombreVisible();
+  alternarEditorNombre(false);
+}
+
+async function guardarNombreDesdeEditor() {
+  await guardarPerfil({ preventDefault: () => {} });
+  if (document.getElementById('estado-guardado')?.classList.contains('exito')) alternarEditorNombre(false);
+}
+
+function aplicarNombreVisible() {
+  const nombre = document.getElementById('perfil-nombre').value.trim();
+  const apellido = document.getElementById('perfil-apellido').value.trim();
+  document.getElementById('nombre-usuario-visible').textContent = nombre || 'No disponible';
+  document.getElementById('apellido-usuario-visible').textContent = apellido || 'No disponible';
+  document.getElementById('avatar-nombre-display').textContent = nombre || 'Usuario';
+  document.getElementById('perfil-avatar').textContent = (nombre || 'U').charAt(0).toUpperCase();
 }
 
 function agregarBloqueHorario() {
@@ -114,7 +147,6 @@ function agregarBloqueHorario() {
     finInput.value = '';
     
     renderizarSemana();
-    guardarEnLocalStorage(); // Persistencia inmediata local
   } catch (error) {
     mostrarErrorHorario(error.message);
   }
@@ -125,7 +157,6 @@ function eliminarBloqueHorario(index) {
   
   horariosLocales.splice(index, 1);
   renderizarSemana();
-  guardarEnLocalStorage(); // Persistencia inmediata local
 }
 
 function guardarEnLocalStorage() {
@@ -204,8 +235,6 @@ async function guardarPerfil(e) {
   const estadoMsg = document.getElementById('estado-guardado');
   const btnGuardar = document.getElementById('btn-guardar-perfil');
 
-  guardarEnLocalStorage();
-
   if (!usuarioActual?.id) return;
 
   try {
@@ -222,20 +251,23 @@ async function guardarPerfil(e) {
     const horas_disponibles = calcularHorasDisponibles(horariosLocales);
 
     const horariosPayload = horariosLocales.map(h => ({
-      dia: h.dia,
-      dia_semana: MAPA_INDICES_DIAS[h.dia] !== undefined ? MAPA_INDICES_DIAS[h.dia] : h.dia_semana,
-      hora_inicio: h.hora_inicio,
-      hora_fin: h.hora_fin
+      dia: String(h.dia ?? '').trim(),
+      hora_inicio: String(h.hora_inicio ?? '').trim(),
+      hora_fin: String(h.hora_fin ?? '').trim()
     }));
 
     await guardarPerfilEstudio(usuarioActual.id, {
-      nombre, 
-      apellido, 
-      objetivo, 
-      nivel_procrastinacion, 
-      horas_disponibles, 
-      horarios: horariosPayload
+      nombre,
+      apellido,
+      objetivo,
+      nivel_procrastinacion,
+      horas_disponibles,
+      horario: horariosPayload
     });
+
+    const respuestaActualizada = await obtenerUsuarioConPerfil(usuarioActual.id);
+    aplicarDatosPerfil(respuestaActualizada);
+    guardarEnLocalStorage();
 
     if (estadoMsg) {
       estadoMsg.className = 'estado-mensaje exito';
@@ -261,4 +293,30 @@ function mostrarErrorHorario(mensaje) {
 function ocultarErrorHorario() {
   const errorEl = document.getElementById('error-horario');
   if (errorEl) { errorEl.hidden = true; errorEl.textContent = ''; }
+}
+
+function normalizarHorariosPerfil(horarios) {
+  return horarios.map(horario => ({
+    ...horario,
+    dia: horario.dia || DIAS_SEMANA[Number(horario.dia_semana)] || horario.dia_semana
+  })).filter(horario => horario.dia);
+}
+
+function aplicarDatosPerfil(respuestaApi) {
+  const datosRespuesta = respuestaApi?.data || respuestaApi || {};
+  const datosUsuario = datosRespuesta?.usuario || datosRespuesta?.user || datosRespuesta;
+  const datosPerfil = datosRespuesta?.perfil_estudio || datosRespuesta?.perfil || {};
+  const datosHorarios = datosRespuesta?.horarios || datosPerfil?.horarios || datosPerfil?.horario || [];
+
+  document.getElementById('perfil-nombre').value = datosUsuario?.nombre || '';
+  document.getElementById('perfil-apellido').value = datosUsuario?.apellido || '';
+  document.getElementById('perfil-objetivo').value = datosPerfil?.objetivo || '';
+  if (datosPerfil?.nivel_procrastinacion != null) document.getElementById('perfil-procrastinacion').value = datosPerfil.nivel_procrastinacion;
+  if (Array.isArray(datosHorarios)) horariosLocales = normalizarHorariosPerfil(datosHorarios);
+  const nombre = datosUsuario?.nombre || '';
+  document.getElementById('avatar-nombre-display').textContent = nombre || 'Usuario';
+  document.getElementById('perfil-avatar').textContent = (nombre || 'U').charAt(0).toUpperCase();
+  document.getElementById('nombre-usuario-visible').textContent = nombre || 'No disponible';
+  document.getElementById('apellido-usuario-visible').textContent = datosUsuario?.apellido || 'No disponible';
+  renderizarSemana();
 }

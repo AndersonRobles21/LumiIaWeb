@@ -11,7 +11,9 @@ function renderSidebar() {
     { href: 'calendario.html', icono: '📅', texto: 'Calendario', active: ruta.includes('calendario') },
     { href: 'agregar-tarea.html', icono: '➕', texto: 'Agregar tarea', active: ruta.includes('agregar-tarea') },
     { href: 'historial.html', icono: '📊', texto: 'Historial de IA', active: ruta.includes('historial') },
+    { href: 'gamificacion.html', icono: '✦', texto: 'Gamificación', active: ruta.includes('gamificacion') },
     { href: 'recompensas.html', icono: '🏆', texto: 'Recompensas', active: ruta.includes('recompensas') },
+    { href: 'app-movil.html', icono: '📱', texto: 'App móvil', active: ruta.includes('app-movil') },
     { href: 'perfil.html', icono: '👤', texto: 'Perfil', active: ruta.includes('perfil') },
     { href: 'configuracion.html', icono: '⚙️', texto: 'Configuración', active: ruta.includes('configuracion') },
     { href: 'informacion.html', icono: '❓', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') }

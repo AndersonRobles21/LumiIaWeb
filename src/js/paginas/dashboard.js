@@ -1,5 +1,7 @@
-import { supabase } from '../config/supabase.js';
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
+import { estaTareaCompletada, obtenerGamificacionLocal } from '../utilidades/progreso-tareas.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await inicializarDashboard();
@@ -11,11 +13,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function inicializarDashboard() {
   try {
     // 1. Obtener la sesión del usuario actual desde Supabase Auth
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    const usuario = session?.user;
+    const usuario = await obtenerUsuarioActual();
 
     // 2. Personalizar el saludo con el nombre del usuario
-    actualizarSaludo(usuario);
+    await actualizarSaludo(usuario);
 
     // 3. Cargar la lista de tareas / planes de estudio
     if (usuario) {
@@ -26,6 +27,7 @@ async function inicializarDashboard() {
       const tareasLocales = JSON.parse(localStorage.getItem('lumi_tareas') || '[]');
       renderizarPlanesEstudio(tareasLocales);
     }
+    actualizarIndicadoresLocales();
 
   } catch (error) {
     console.error('Error al inicializar el Dashboard:', error);
@@ -35,14 +37,24 @@ async function inicializarDashboard() {
 /**
  * Actualiza el encabezado con el nombre del estudiante
  */
-function actualizarSaludo(usuario) {
+async function actualizarSaludo(usuario) {
   const tituloSaludo = document.querySelector('.dashboard-saludo h1');
   if (!tituloSaludo) return;
 
   if (usuario) {
-    const nombre = usuario.user_metadata?.nombre || 
-                   usuario.user_metadata?.full_name || 
-                   usuario.email?.split('@')[0] || 
+    let datos = usuario;
+    try {
+      const respuesta = await obtenerUsuarioConPerfil(usuario.id);
+      const envoltura = respuesta?.data || respuesta || {};
+      const perfil = envoltura.perfil || envoltura.perfil_estudio || {};
+      const usuarioBackend = envoltura.usuario || envoltura.user || envoltura;
+      datos = { ...usuario, ...usuarioBackend, ...perfil };
+    } catch (error) {
+      console.warn('No se pudo cargar el nombre del perfil:', error.message);
+    }
+    const nombre = [datos.nombre, datos.apellido].filter(Boolean).join(' ') ||
+                   datos.user_metadata?.full_name ||
+                   datos.email?.split('@')[0] ||
                    'Estudiante';
     tituloSaludo.textContent = `¡Hola ${nombre}!`;
   } else {
@@ -67,11 +79,13 @@ function renderizarPlanesEstudio(planes) {
     return;
   }
 
-  contenedorLista.innerHTML = planes.map(plan => {
+  const planesUnicos = [...new Map(planes.filter(plan => plan?.id).map(plan => [String(plan.id), plan])).values()];
+  contenedorLista.innerHTML = planesUnicos.map(plan => {
     const planId = plan.id || plan.plan_id;
     const titulo = plan.nombre || plan.titulo || 'Tarea de estudio';
-    const progreso = plan.progreso ?? plan.porcentaje ?? 0;
-    const estado = plan.estado || 'PENDIENTE';
+    const completadaLocal = estaTareaCompletada(planId);
+    const progreso = completadaLocal ? 100 : plan.progreso ?? plan.porcentaje ?? 0;
+    const estado = completadaLocal ? '✅ Completada' : plan.estado || 'PENDIENTE';
 
     // SVG según el estado o tipo
     const svgIcono = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>`;
@@ -93,7 +107,7 @@ function renderizarPlanesEstudio(planes) {
     }
 
     return `
-      <div class="item-tarea" data-id="${planId}">
+      <div class="item-tarea ${completadaLocal ? 'tarea-completada' : ''}" data-id="${planId}">
         <div class="icono-tarea">
           ${svgIcono}
         </div>
@@ -120,3 +134,19 @@ function renderizarPlanesEstudio(planes) {
     });
   });
 }
+
+function actualizarIndicadoresLocales() {
+  const datos = obtenerGamificacionLocal();
+  const indicadores = {
+    'dashboard-completadas': datos.tareas_completadas,
+    'dashboard-puntos': datos.puntos,
+    'dashboard-racha': datos.racha,
+    'dashboard-mejor-racha': datos.mejor_racha
+  };
+  Object.entries(indicadores).forEach(([id, valor]) => {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.textContent = valor;
+  });
+}
+
+window.addEventListener('lumi:progreso-actualizado', actualizarIndicadoresLocales);

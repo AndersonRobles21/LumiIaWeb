@@ -22,6 +22,7 @@ export async function crearNavbar() {
     'guia-detalle.html': { titulo: 'Guía de Estudio', subtitulo: 'Métodos y técnicas' },
     'historial.html': { titulo: 'Historial', subtitulo: 'Tu progreso a lo largo del tiempo' },
     'recompensas.html': { titulo: 'Recompensas', subtitulo: 'Celebra tus avances' },
+    'app-movil.html': { titulo: 'App móvil', subtitulo: 'LUMI contigo donde estés' },
     'perfil.html': { titulo: 'Mi Perfil', subtitulo: 'Información personal' },
     'configuracion.html': { titulo: 'Configuración', subtitulo: 'Ajustes de la aplicación' },
     'informacion.html': { titulo: 'Información, ayuda y privacidad', subtitulo: 'Conoce y controla tu experiencia en LUMI' },
@@ -33,8 +34,9 @@ export async function crearNavbar() {
     const usuario = await obtenerUsuarioActual();
     if (usuario?.id) {
       const respuesta = await obtenerUsuarioConPerfil(usuario.id);
-      const datos = respuesta?.usuario || respuesta?.user || respuesta;
-      nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ');
+      const envoltura = respuesta?.data || respuesta || {};
+      const datos = { ...usuario, ...(envoltura.usuario || envoltura.user || envoltura), ...(envoltura.perfil || envoltura.perfil_estudio || {}) };
+      nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ') || datos?.user_metadata?.full_name || '';
     }
   } catch (error) {
     console.warn('No se pudo cargar el usuario del navbar:', error.message);
@@ -48,15 +50,15 @@ export async function crearNavbar() {
       </div>
 
       <div class="navbar-acciones">
-        <button class="navbar-btn" title="Notificaciones">
+        <button class="navbar-btn navbar-btn-inactivo" type="button" title="Notificaciones no disponibles" aria-disabled="true" disabled>
           🔔
         </button>
-        <button class="navbar-btn" title="Ayuda">
+        <a class="navbar-btn" href="informacion.html" title="Ayuda" aria-label="Abrir ayuda">
           ❓
-        </button>
-        <div class="navbar-avatar" title="${nombre}">
+        </a>
+        <a class="navbar-avatar" href="perfil.html" title="Abrir perfil${nombre ? ` de ${nombre}` : ''}" aria-label="Abrir perfil">
           ${nombre ? nombre.charAt(0).toUpperCase() : ''}
-        </div>
+        </a>
       </div>
     </div>
   `;

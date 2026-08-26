@@ -59,6 +59,32 @@
   box-shadow: var(--brillo-cyan);
 }
 
+.navbar-btn-inactivo,
+.navbar-btn-inactivo:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.navbar-btn-inactivo:hover,
+.navbar-btn-inactivo:disabled:hover {
+  border-color: var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+.navbar-btn-inactivo,
+.navbar-btn-inactivo:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.navbar-btn-inactivo:hover,
+.navbar-btn-inactivo:disabled:hover {
+  border-color: var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
 /* Avatar del usuario en el navbar */
 .navbar-avatar {
   width: 40px;
@@ -78,4 +104,12 @@
 
 .navbar-avatar:hover {
   border-color: var(--color-cyan);
+}
+
+.navbar a {
+  text-decoration: none;
+}
+
+.navbar a {
+  text-decoration: none;
 }

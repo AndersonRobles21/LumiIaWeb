@@ -56,6 +56,13 @@
               </div>
             </div>
 
+            <div class="datos-basicos-usuario">
+              <div class="dato-usuario"><span>Nombre</span><strong id="nombre-usuario-visible">No disponible</strong></div>
+              <div class="dato-usuario"><span>Apellido</span><strong id="apellido-usuario-visible">No disponible</strong></div>
+              <button type="button" id="btn-editar-nombre" class="boton-secundario">Editar nombre</button>
+            </div>
+
+            <div id="editor-nombre" hidden>
             <div class="campo">
               <label for="perfil-nombre">Nombre</label>
               <input type="text" id="perfil-nombre" name="nombre" placeholder="Tu nombre" required>
@@ -64,6 +71,12 @@
             <div class="campo">
               <label for="perfil-apellido">Apellido</label>
               <input type="text" id="perfil-apellido" name="apellido" placeholder="Tu apellido">
+            </div>
+
+            <div class="acciones-nombre" id="acciones-nombre">
+              <button type="button" id="btn-cancelar-nombre" class="boton-secundario">Cancelar</button>
+              <button type="button" id="btn-guardar-nombre" class="boton-principal boton-principal-compacto">Guardar</button>
+            </div>
             </div>
 
             <div class="campo">
@@ -159,6 +172,7 @@
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/perfil.js"></script>
+  <script type="module" src="../js/componentes/tema.js"></script>
 
 </body>
 </html>

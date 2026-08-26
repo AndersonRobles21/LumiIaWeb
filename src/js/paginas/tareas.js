@@ -9,6 +9,7 @@ import { registrarTareaEstadistica } from '../servicios/estadisticas.service.js'
 
 let tareas = [];
 let filtroActual = 'todas';
+const actualizacionesEnCurso = new Set();
 
 document.addEventListener('DOMContentLoaded', async () => {
   await cargarTareas();
@@ -92,13 +93,14 @@ function renderizarTareas() {
 // Función global para el checkbox
 window.toggleCompletada = async function(id) {
   const index = tareas.findIndex(t => t.id === id);
-  if (index === -1) return;
+  if (index === -1 || actualizacionesEnCurso.has(id)) return;
 
   const estadoAnterior = tareas[index].completada;
+  actualizacionesEnCurso.add(id);
   try {
     const estadoNuevo = !estadoAnterior;
-    await actualizarEstadoTarea(id, estadoNuevo);
-    if (estadoNuevo) {
+    const respuesta = await actualizarEstadoTarea(id, estadoNuevo);
+    if (estadoNuevo && !respuesta?.estadisticas && !respuesta?.stats && !respuesta?.progreso) {
       const usuario = await obtenerUsuarioActual();
       await registrarTareaEstadistica(usuario.id);
     }
@@ -107,5 +109,7 @@ window.toggleCompletada = async function(id) {
   } catch (error) {
     alert(`No se pudo actualizar la tarea: ${error.message}`);
     renderizarTareas();
+  } finally {
+    actualizacionesEnCurso.delete(id);
   }
 };

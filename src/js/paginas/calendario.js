@@ -1,17 +1,71 @@
 /**
  * calendario.js
- * Visualización del mes, lectura de tareas locales y renderizado del timeline.
+ * Visualización del mes y renderizado del timeline.
  */
+
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
+import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
+import { estaTareaCompletada } from '../utilidades/progreso-tareas.js';
 
 let fechaSeleccionada = new Date();
 let tareasGuardadas = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await cargarDisponibilidad();
+  await cargarTareasPersistentes();
   inicializarCalendario();
 });
 
+async function cargarTareasPersistentes() {
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (!usuario?.id) throw new Error('Sin sesión');
+    const planes = await obtenerPlanesUsuarioBD(usuario.id);
+    tareasGuardadas = normalizarPlanesCalendario(planes);
+  } catch {
+    cargarTareasLocalStorage();
+  }
+}
+
+function normalizarPlanesCalendario(planes) {
+  const entradas = [];
+  (Array.isArray(planes) ? planes : []).forEach(plan => {
+    const actividades = Array.isArray(plan.actividades) ? plan.actividades : [];
+    const completadaLocal = estaTareaCompletada(plan.id);
+    const fechas = actividades.filter(actividad => actividad.fecha).map(actividad => ({ ...actividad, plan_id: plan.id, titulo: actividad.titulo || plan.nombre, fechaCalendario: actividad.fecha, completadaLocal }));
+    const fechaPlan = plan.fecha_entrega || plan.fecha_fin || plan.fecha;
+    if (fechaPlan && !fechas.some(actividad => String(actividad.fechaCalendario).split('T')[0] === String(fechaPlan).split('T')[0])) {
+      fechas.push({ ...plan, titulo: plan.nombre || plan.titulo, plan_id: plan.id, fechaCalendario: fechaPlan, completadaLocal });
+    }
+    entradas.push(...fechas);
+  });
+  return entradas;
+}
+
+async function cargarDisponibilidad() {
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (!usuario?.id) throw new Error('Sin sesión');
+    const respuesta = await obtenerUsuarioConPerfil(usuario.id);
+    const datos = respuesta?.data || respuesta || {};
+    const perfil = datos.perfil || datos.perfil_estudio || {};
+    const horarios = datos.horarios || perfil.horarios || perfil.horario || [];
+    localStorage.setItem('lumi_horarios_estudio', JSON.stringify({ dias: obtenerDiasDisponibles(horarios), horarios }));
+  } catch {
+    // Mantener el último respaldo local si el backend no responde.
+  }
+}
+
+function obtenerDiasDisponibles(horarios) {
+  const nombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  return [...new Set((Array.isArray(horarios) ? horarios : []).map(horario => {
+    if (Number.isInteger(Number(horario.dia_semana))) return Number(horario.dia_semana);
+    return nombres.indexOf(horario.dia);
+  }).filter(indice => indice >= 0))];
+}
+
 function inicializarCalendario() {
-  cargarTareasLocalStorage();
   configurarBotonesNavegacion();
   renderizarCalendario();
   renderizarTimelineDia(fechaSeleccionada);
@@ -52,7 +106,7 @@ function construirFechaISO(anio, mes, dia) {
 // Función robusta para verificar si una tarea pertenece a un día específico del calendario
 function tareaCorrespondeADia(tarea, anio, mes, dia) {
   // Buscar cualquier campo de fecha disponible en el objeto de la tarea
-  const fechaStr = tarea.fecha || tarea.fecha_entrega || tarea.fecha_limite || tarea.created_at || '';
+  const fechaStr = tarea.fechaCalendario || tarea.fecha || tarea.fecha_entrega || tarea.fecha_limite || tarea.created_at || '';
   if (!fechaStr) return false;
 
   // Extraer solamente la parte YYYY-MM-DD independientemente de si incluye hora o formato UTC
@@ -124,7 +178,7 @@ function renderizarCalendario() {
     html += `
       <div class="dia-cell ${esSeleccionado} ${esHoy ? 'dia-hoy' : ''}" data-dia="${dia}">
         <span>${dia}</span>
-        ${puntos ? `<div class="puntos-dia">${puntos}</div>` : ''}
+        ${puntos ? `<div class="puntos-dia">${puntos}<small>${tareasDelDia.length} tarea${tareasDelDia.length === 1 ? '' : 's'}</small></div>` : ''}
       </div>
     `;
   }
@@ -179,7 +233,8 @@ function renderizarTimelineDia(fecha) {
   const tareasDelDia = tareasGuardadas.filter(t => tareaCorrespondeADia(t, anio, mes, diaNum));
 
   if (cantTareas) cantTareas.textContent = tareasDelDia.length;
-  if (resumenTiempo) resumenTiempo.textContent = `${tareasDelDia.length * 1}h 0m`;
+  const minutos = tareasDelDia.map(tarea => Number(tarea.duracion ?? tarea.duracion_minutos)).filter(Number.isFinite).reduce((total, valor) => total + valor, 0);
+  if (resumenTiempo) resumenTiempo.textContent = minutos ? `${Math.floor(minutos / 60)}h ${minutos % 60}m` : 'No disponible';
 
   if (tareasDelDia.length === 0) {
     contenedorTimeline.innerHTML = `
@@ -194,19 +249,23 @@ function renderizarTimelineDia(fecha) {
     const hora = tarea.hora || '09:00 AM';
 
     return `
-      <div class="timeline-item">
+      <div class="timeline-item ${String(tarea.estado || '').toLowerCase()} ${tarea.completadaLocal ? 'completada' : ''}" data-plan-id="${tarea.plan_id || tarea.id || ''}">
         <div class="hora-col">
           <span>${hora}</span>
         </div>
         <div class="linea-indicador ${cat}"></div>
         <div class="card-tarea-timeline">
           <div class="header-tarea-item">
-            <h3>${tarea.titulo || 'Tarea sin título'}</h3>
-            <span class="badge-cat ${cat}">${cat}</span>
+            <h3>${(tarea.plan_id || tarea.id) ? `<a href="guia-detalle.html?plan_id=${encodeURIComponent(tarea.plan_id || tarea.id)}">${escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</a>` : escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</h3>
+            <span class="badge-cat ${cat}">${escapar(cat)}</span>
           </div>
-          ${tarea.descripcion ? `<p class="desc-tarea">${tarea.descripcion}</p>` : ''}
+          ${tarea.descripcion ? `<p class="desc-tarea">${escapar(tarea.descripcion)}</p>` : ''}
         </div>
       </div>
     `;
   }).join('');
+}
+
+function escapar(valor) {
+  return String(valor).replace(/[&<>"']/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[caracter]);
 }

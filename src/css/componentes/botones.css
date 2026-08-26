@@ -1,0 +1,15 @@
+.boton-primario, .boton-principal, .boton-secundario, .boton-agregar, .btn-generar-cronograma, .boton-login, .boton-registro, .btn-completar-tarea, .btn-regresar, .btn-adjuntar, .btn-nav-mes, .btn-lumii-accion, .btn-flecha-accion, .btn-flecha-tarea, .btn-mas-flotante, .btn-privacidad, .btn-soporte, .btn-social, .boton-guardar, .boton-volver {
+	border-radius: 10px;
+	padding: .75rem 1.1rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background-color .2s, border-color .2s, box-shadow .2s, transform .2s, opacity .2s;
+}
+
+.boton-primario:hover, .boton-principal:hover, .boton-secundario:hover, .boton-agregar:hover, .btn-generar-cronograma:hover, .boton-login:hover, .boton-registro:hover, .btn-completar-tarea:hover, .btn-regresar:hover, .btn-adjuntar:hover, .btn-nav-mes:hover, .btn-lumii-accion:hover, .btn-flecha-accion:hover, .btn-flecha-tarea:hover, .btn-mas-flotante:hover, .btn-privacidad:hover, .btn-soporte:hover, .btn-social:hover, .boton-guardar:hover, .boton-volver:hover { box-shadow: 0 0 14px rgba(0, 240, 255, .2); }
+.boton-primario:focus-visible, .boton-principal:focus-visible, .boton-secundario:focus-visible, .boton-agregar:focus-visible, .btn-generar-cronograma:focus-visible, .boton-login:focus-visible, .boton-registro:focus-visible, .btn-completar-tarea:focus-visible, .btn-regresar:focus-visible, .btn-adjuntar:focus-visible, .btn-nav-mes:focus-visible, .btn-lumii-accion:focus-visible, .btn-flecha-accion:focus-visible, .btn-flecha-tarea:focus-visible, .btn-mas-flotante:focus-visible, .btn-privacidad:focus-visible, .btn-soporte:focus-visible, .btn-social:focus-visible, .boton-guardar:focus-visible, .boton-volver:focus-visible { outline: 2px solid var(--color-cyan-neon); outline-offset: 2px; }
+.boton-primario:disabled, .boton-principal:disabled, .boton-secundario:disabled, .boton-agregar:disabled, .btn-generar-cronograma:disabled, .boton-login:disabled, .boton-registro:disabled, .btn-completar-tarea:disabled, .btn-regresar:disabled, .btn-adjuntar:disabled, .btn-nav-mes:disabled, .btn-lumii-accion:disabled, .btn-flecha-accion:disabled, .btn-flecha-tarea:disabled, .btn-mas-flotante:disabled, .btn-privacidad:disabled, .btn-soporte:disabled, .btn-social:disabled, .boton-guardar:disabled, .boton-volver:disabled { cursor: not-allowed; opacity: .55; }
+
+.selector-tema { display: flex; gap: .5rem; flex-wrap: wrap; }
+.boton-tema { border: 1px solid rgba(39, 217, 255, .35); border-radius: 8px; padding: .6rem .8rem; color: var(--color-texto-principal); background: rgba(39, 217, 255, .08); }
+.boton-tema.activo { border-color: var(--color-cyan-neon); box-shadow: 0 0 12px rgba(0, 240, 255, .2); background: rgba(0, 240, 255, .18); }

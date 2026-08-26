@@ -441,3 +441,14 @@
     text-align: center;
   }
 }
+
+.datos-basicos-usuario { display: grid; gap: 0.8rem; margin-bottom: 1.25rem; padding: 1rem; border: 1px solid rgba(39, 217, 255, 0.2); border-radius: 14px; background: rgba(39, 217, 255, 0.05); }
+.dato-usuario { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+.dato-usuario span { color: #a0a0c0; font-size: 0.8rem; }
+.dato-usuario strong { color: #fff; overflow-wrap: anywhere; text-align: right; }
+.boton-secundario { width: fit-content; padding: 0.65rem 1rem; border: 1px solid rgba(39, 217, 255, 0.45); border-radius: 10px; background: rgba(39, 217, 255, 0.08); color: #fff; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+.boton-secundario:hover { background: rgba(39, 217, 255, 0.18); box-shadow: 0 0 12px rgba(39, 217, 255, 0.2); }
+.acciones-nombre { display: flex; justify-content: flex-end; gap: 0.6rem; margin: -0.5rem 0 1rem; }
+.boton-principal-compacto { padding: 0.65rem 1rem; border-radius: 10px; }
+
+.boton-principal:disabled, .boton-secundario:disabled { cursor: not-allowed; opacity: 0.55; }

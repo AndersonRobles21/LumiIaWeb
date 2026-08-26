@@ -1,0 +1,266 @@
+import { obtenerPlanIA } from '../servicios/ia.service.js';
+import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
+import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { completarPaso, completarTareaLocal, estaPasoCompletado, estaTareaCompletada, obtenerPasosCompletados, todosLosPasosCompletados } from '../utilidades/progreso-tareas.js';
+
+let temporizador = null;
+let segundosRestantes = 25 * 60;
+let modoPomodoro = 'Trabajo';
+let tarjetasRecall = [];
+let tarjetaActual = 0;
+let planGuiaActual = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const planId = urlParams.get('plan_id');
+
+  let tareaActual = null;
+  if (planId) {
+    try {
+      tareaActual = await cargarPlanPersistente(planId);
+    } catch (error) {
+      mostrarNota(`No se pudo cargar el plan: ${error.message}`);
+    }
+  }
+
+  if (tareaActual) {
+    establecerTexto('plan-titulo', tareaActual.nombre || tareaActual.titulo, 'Plan de Estudio');
+    establecerTexto('plan-descripcion', tareaActual.descripcion);
+    establecerTexto('plan-objetivo', tareaActual.objetivo);
+    const pasos = tareaActual.pasos || tareaActual.actividades || tareaActual.fases || tareaActual.tareas || [];
+    planGuiaActual = { plan: tareaActual, pasos };
+    configurarCompletarTarea(tareaActual, planId, pasos.length);
+    const fechaEntrega = tareaActual.fecha_entrega || tareaActual.fecha_fin || tareaActual.fecha || pasos.find(paso => paso.fecha)?.fecha;
+    establecerTexto('plan-inicio', tareaActual.fecha_inicio || tareaActual.inicio || tareaActual.fecha_creacion, 'No disponible', true);
+    establecerTexto('plan-entrega', fechaEntrega, 'No disponible', true);
+    establecerTexto('plan-estado', tareaActual.estado);
+    const metodo = tareaActual.metodo_estudio;
+    establecerTexto('metodo-actual-nombre', metodo);
+    const cajaMetodo = document.querySelector('.plan-metodo-box');
+    if (cajaMetodo) cajaMetodo.hidden = !metodo;
+    const progreso = tareaActual.progreso ?? tareaActual.porcentaje;
+    establecerTexto('plan-progreso-valor', progreso == null ? null : `${progreso}%`);
+    const barraProgreso = document.getElementById('plan-progreso-barra');
+    if (barraProgreso && Number.isFinite(Number(progreso))) { barraProgreso.value = Math.max(0, Math.min(100, Number(progreso))); barraProgreso.hidden = false; }
+
+    actualizarResumenActividades(pasos);
+
+    const contenedorPasos = document.getElementById('lista-pasos-container');
+    if (contenedorPasos) {
+      contenedorPasos.innerHTML = pasos.length ? pasos.map((paso, index) => renderizarActividad(paso, index, planId, pasos.length)).join('') : '<p class="plan-no-disponible">Este plan no contiene pasos.</p>';
+      configurarBotonesPasos(planId, pasos.length);
+      actualizarProgresoPasos(planId, pasos.length);
+    }
+  }
+
+  inicializarMetodos(tareaActual);
+  document.getElementById('btn-cambiar-metodo')?.addEventListener('click', () => document.getElementById('selector-metodo')?.focus());
+
+  document.getElementById('btn-modo-rayo')?.addEventListener('click', () => {
+    cambiarMetodo('pomodoro', true);
+    iniciarPomodoro();
+  });
+});
+
+function configurarCompletarTarea(plan, planId, totalPasos) {
+  const boton = document.getElementById('btn-completar-tarea');
+  if (!boton) return;
+  const completada = estaTareaCompletada(planId);
+  const pasosCompletos = todosLosPasosCompletados(planId, totalPasos);
+  boton.disabled = !planId || !pasosCompletos || completada;
+  boton.textContent = completada ? '✅ Tarea completada' : '✅ Completar tarea';
+  boton.title = pasosCompletos ? 'Completa el plan completo' : `Completa los ${totalPasos} pasos para finalizar la tarea.`;
+  boton.onclick = () => {
+    if (!planId || boton.disabled || estaTareaCompletada(planId)) return;
+    boton.disabled = true;
+    boton.textContent = 'Guardando...';
+    completarTareaLocal(planId);
+    establecerTexto('plan-estado', '✅ Completada');
+    boton.textContent = '✅ Tarea completada';
+  });
+}
+
+
+async function cargarPlanPersistente(planId) {
+  const usuario = await obtenerUsuarioActual();
+  let planPersistente = null;
+  if (usuario?.id) {
+    const planes = await obtenerPlanesUsuarioBD(usuario.id);
+    planPersistente = planes.find(item => String(item.id) === String(planId)) || null;
+  }
+  try {
+    const respuesta = await obtenerPlanIA(planId);
+    const planIA = extraerPlanIA(respuesta);
+    if (!planPersistente) return planIA;
+    return {
+      ...planPersistente,
+      ...planIA,
+      actividades: planIA?.pasos || planIA?.actividades || planIA?.fases || planIA?.tareas || planPersistente.actividades,
+      pasos: planIA?.pasos || planIA?.fases || planIA?.actividades || planPersistente.actividades
+    };
+  } catch (error) {
+    if (planPersistente) return planPersistente;
+    throw error;
+  }
+}
+
+function extraerPlanIA(respuesta) {
+  if (!respuesta || typeof respuesta !== 'object') return null;
+  return respuesta.data?.plan || respuesta.plan || respuesta.data || respuesta;
+}
+
+function inicializarMetodos(plan) {
+  const selector = document.getElementById('selector-metodo');
+  if (!selector) return;
+  selector.value = normalizarMetodo(plan?.metodo_estudio);
+  selector.addEventListener('change', () => cambiarMetodo(selector.value, true));
+  document.getElementById('pomodoro-iniciar')?.addEventListener('click', iniciarPomodoro);
+  document.getElementById('pomodoro-pausar')?.addEventListener('click', pausarPomodoro);
+  document.getElementById('pomodoro-reiniciar')?.addEventListener('click', reiniciarPomodoro);
+  document.getElementById('feynman-confirmar')?.addEventListener('click', validarFeynman);
+  const actividades = plan?.pasos || plan?.actividades || plan?.fases || plan?.tareas || [];
+  tarjetasRecall = actividades.map(actividad => ({ pregunta: actividad.titulo || actividad.nombre, respuesta: actividad.descripcion || 'No hay una respuesta detallada en este plan.' })).filter(tarjeta => tarjeta.pregunta);
+  renderizarRecall();
+  renderizarRepasos(actividades);
+  cambiarMetodo(selector.value, Boolean(plan?.metodo_estudio));
+}
+
+function normalizarMetodo(metodo = '') {
+  const texto = metodo.toLowerCase();
+  if (texto.includes('feynman')) return 'feynman';
+  if (texto.includes('recall')) return 'active-recall';
+  if (texto.includes('spaced') || texto.includes('repetition')) return 'spaced-repetition';
+  return 'pomodoro';
+}
+
+function cambiarMetodo(metodo, metodoDelPlan = false) {
+  document.querySelectorAll('.metodo-interactivo').forEach(panel => { panel.hidden = panel.id !== `metodo-${metodo}`; });
+  const nombre = { pomodoro: 'Pomodoro', feynman: 'Feynman', 'active-recall': 'Active Recall', 'spaced-repetition': 'Spaced Repetition' }[metodo];
+  if (metodoDelPlan) establecerTexto('metodo-actual-nombre', nombre);
+  mostrarNota(metodoDelPlan ? '' : 'Método no informado por el plan; la herramienta inicia en Pomodoro. Guardarlo requiere un endpoint de regeneración del backend.');
+}
+
+function iniciarPomodoro() {
+  if (temporizador) return;
+  temporizador = setInterval(() => {
+    segundosRestantes -= 1;
+    actualizarReloj();
+    if (segundosRestantes <= 0) {
+      modoPomodoro = modoPomodoro === 'Trabajo' ? 'Descanso' : 'Trabajo';
+      segundosRestantes = modoPomodoro === 'Trabajo' ? 25 * 60 : 5 * 60;
+      actualizarReloj();
+    }
+  }, 1000);
+  mostrarNota(`Temporizador en modo ${modoPomodoro.toLowerCase()}.`);
+}
+
+function pausarPomodoro() { clearInterval(temporizador); temporizador = null; mostrarNota('Temporizador pausado.'); }
+function reiniciarPomodoro() { pausarPomodoro(); segundosRestantes = modoPomodoro === 'Trabajo' ? 25 * 60 : 5 * 60; actualizarReloj(); }
+function actualizarReloj() { document.getElementById('pomodoro-tiempo').textContent = `${String(Math.floor(segundosRestantes / 60)).padStart(2, '0')}:${String(segundosRestantes % 60).padStart(2, '0')}`; document.getElementById('pomodoro-estado').textContent = modoPomodoro; }
+
+function validarFeynman() {
+  const entrada = document.getElementById('feynman-explicacion');
+  const feedback = document.getElementById('feynman-feedback');
+  const palabras = entrada.value.trim().split(/\s+/).filter(Boolean).length;
+  feedback.textContent = palabras < 5 ? 'Escribe al menos cinco palabras para comprobar que la explicación tiene contenido.' : 'Explicación confirmada. Revisa si podrías hacerla todavía más simple.';
+  feedback.className = palabras < 5 ? 'metodo-error' : 'metodo-ok';
+}
+
+function renderizarRecall() {
+  const tarjeta = tarjetasRecall[tarjetaActual];
+  document.getElementById('recall-contador').textContent = tarjetasRecall.length ? `${tarjetaActual + 1}/${tarjetasRecall.length}` : '0/0';
+  document.getElementById('recall-progreso').textContent = tarjetasRecall.length ? `${Math.round(((tarjetaActual + 1) / tarjetasRecall.length) * 100)}% del plan` : 'Sin tarjetas';
+  document.getElementById('recall-pregunta').textContent = tarjeta?.pregunta || 'No hay preguntas en este plan.';
+  const respuesta = document.getElementById('recall-respuesta');
+  respuesta.textContent = tarjeta?.respuesta || '';
+  respuesta.hidden = true;
+}
+
+function renderizarRepasos(actividades) {
+  const fechas = actividades.filter(actividad => actividad.fecha).map(actividad => ({ fecha: actividad.fecha, titulo: actividad.titulo || actividad.nombre || 'Repaso' }));
+  document.getElementById('lista-repasos').innerHTML = fechas.length ? fechas.map(item => `<div class="repaso-item"><strong>${item.fecha}</strong><span>${item.titulo}</span></div>`).join('') : '<p>No hay fechas de repaso en este plan.</p>';
+  document.getElementById('repaso-fecha').addEventListener('change', evento => { document.querySelectorAll('.repaso-item').forEach(item => item.classList.toggle('seleccionado', item.textContent.includes(evento.target.value))); });
+}
+
+document.getElementById('recall-mostrar')?.addEventListener('click', () => { document.getElementById('recall-respuesta').hidden = false; });
+document.getElementById('recall-siguiente')?.addEventListener('click', () => { if (tarjetasRecall.length) { tarjetaActual = (tarjetaActual + 1) % tarjetasRecall.length; renderizarRecall(); } });
+function mostrarNota(texto) { const nota = document.getElementById('metodo-nota'); if (nota) nota.textContent = texto; }
+
+function renderizarActividad(actividad, indice, planId, totalPasos) {
+  const subtareas = actividad.subtareas || actividad.tareas || [];
+  const duracion = actividad.duracion ?? actividad.duracion_minutos;
+  const titulo = escapar(actividad.titulo || actividad.nombre || `Actividad ${indice + 1}`);
+  const completado = estaPasoCompletado(planId, indice + 1);
+  const disponible = !completado && (indice === 0 || estaPasoCompletado(planId, indice));
+  const contenido = actividad.descripcion || actividad.contenido || actividad.detalle;
+  const subpasos = actividad.subpasos || actividad.sub_steps || actividad.actividades;
+  return `<article class="paso-ia ${completado ? 'completado' : disponible ? 'disponible' : 'bloqueado'}"><div class="actividad-cabecera"><div><span class="actividad-numero">${completado ? '✓' : disponible ? indice + 1 : '🔒'}</span><div><p class="paso-etiqueta">PASO ${indice + 1} DE ${totalPasos}</p><h3>${titulo}</h3></div></div><span class="actividad-estado">${completado ? '✓ Completado' : disponible ? 'Disponible' : 'Bloqueado'}</span></div>${contenido ? `<p>${escapar(contenido)}</p>` : '<p>Sin descripción disponible</p>'}<div class="actividad-datos">${actividad.fecha ? `<span>Fecha: ${escapar(actividad.fecha)}</span>` : ''}${duracion != null ? `<span>Duración: ${escapar(duracion)} min</span>` : ''}</div>${Array.isArray(subpasos) && subpasos.length ? `<div class="plan-checklist">${subpasos.map(subpaso => `<span>${escapar(subpaso.titulo || subpaso.nombre || subpaso.contenido || subpaso)}</span>`).join('')}</div>` : ''}${completado ? '<p class="paso-mensaje">✓ Paso completado</p>' : disponible ? `<button type="button" class="btn-confirmar-paso" data-paso="${indice + 1}">✓ Confirmar paso</button>` : '<p class="paso-mensaje">Completa el paso anterior</p>'}</article>`;
+}
+
+function configurarBotonesPasos(planId, totalPasos) {
+  document.querySelectorAll('.btn-confirmar-paso').forEach(boton => boton.addEventListener('click', () => {
+    const numeroPaso = Number(boton.dataset.paso);
+    if (numeroPaso > 1 && !estaPasoCompletado(planId, numeroPaso - 1)) return;
+    if (!completarPaso(planId, numeroPaso)) return;
+    const plan = planGuiaActual;
+    if (!plan) return;
+    document.querySelectorAll('.paso-ia').forEach((paso, indice) => {
+      paso.outerHTML = renderizarActividad(plan.pasos[indice], indice, planId, totalPasos);
+    });
+    configurarBotonesPasos(planId, totalPasos);
+    configurarCompletarTarea(plan.plan, planId, totalPasos);
+    actualizarResumenActividades(plan.pasos);
+    actualizarProgresoPasos(planId, totalPasos);
+  }));
+}
+
+function actualizarProgresoPasos(planId, totalPasos) {
+  const completados = obtenerPasosCompletados(planId).length;
+  establecerTexto('plan-actividades-resumen', `${completados}/${totalPasos} pasos completados`);
+  establecerTexto('plan-progreso-valor', `${Math.round((completados / totalPasos) * 100)}%`);
+  const barra = document.getElementById('plan-progreso-barra');
+  if (barra) { barra.value = totalPasos ? completados / totalPasos * 100 : 0; barra.hidden = false; }
+}
+
+function establecerTexto(id, valor, vacio = 'No disponible', fecha = false) {
+  const elemento = document.getElementById(id);
+  if (!elemento) return;
+  const contenedor = elemento.closest('article') || (id === 'plan-progreso-valor' ? elemento.closest('.plan-progreso') : null);
+  if (valor == null || valor === '') { elemento.textContent = vacio; if (contenedor) contenedor.hidden = true; return; }
+  if (contenedor) contenedor.hidden = false;
+  elemento.textContent = fecha ? formatearFecha(valor) : valor;
+}
+
+function formatearFecha(valor) {
+  const fecha = new Date(valor);
+  return Number.isNaN(fecha.getTime()) ? valor : fecha.toLocaleDateString('es-ES');
+}
+
+function escapar(valor) {
+  return String(valor).replace(/[&<>"']/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[caracter]);
+}
+
+function actualizarResumenActividades(actividades) {
+  if (!Array.isArray(actividades) || !actividades.length) return;
+  const estadosConocidos = actividades.filter(actividad => actividad.estado != null || actividad.completada != null || actividad.completed != null);
+  establecerTexto('plan-actividades-resumen', `${actividades.length} actividad${actividades.length === 1 ? '' : 'es'}`);
+  if (estadosConocidos.length) {
+    const completadas = estadosConocidos.filter(estaActividadCompletada).length;
+    establecerTexto('plan-actividades-resumen', `${completadas} completadas / ${actividades.length} total`);
+  }
+  const estadosDisponibles = actividades.every(actividad => actividad.estado != null || actividad.completada != null || actividad.completed != null);
+  const porcentaje = actividades.filter(estaActividadCompletada).length / actividades.length * 100;
+  if (estadosDisponibles) {
+    establecerTexto('plan-progreso-valor', `${Math.round(porcentaje)}%`);
+    const barra = document.getElementById('plan-progreso-barra');
+    if (barra) { barra.value = porcentaje; barra.hidden = false; }
+    const seccion = document.querySelector('.plan-progreso');
+    if (seccion) seccion.hidden = false;
+  }
+  const duraciones = actividades.map(actividad => Number(actividad.duracion ?? actividad.duracion_minutos)).filter(Number.isFinite);
+  if (duraciones.length) establecerTexto('plan-duracion-resumen', `${duraciones.reduce((total, duracion) => total + duracion, 0)} min`);
+}
+
+function estaActividadCompletada(actividad) {
+  return Boolean(actividad.completada ?? actividad.completed ?? ['completada', 'completado', 'realizada', 'realizado', 'completed'].includes(String(actividad.estado || '').toLowerCase()));
+}
