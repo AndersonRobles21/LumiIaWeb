@@ -1,13 +1,153 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Información, ayuda y privacidad | LUMI</title>
-  <link rel="stylesheet" href="../css/global/reset.css"><link rel="stylesheet" href="../css/global/variables.css"><link rel="stylesheet" href="../css/global/global.css"><link rel="stylesheet" href="../css/componentes/sidebar.css"><link rel="stylesheet" href="../css/componentes/navbar.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda y Privacidad | LUMI</title>
+
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../css/global/reset.css">
+  <link rel="stylesheet" href="../css/global/variables.css">
+  <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes reutilizables -->
+  <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
+  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de esta página -->
+  <link rel="stylesheet" href="../css/paginas/informacion.css">
 </head>
-<body><div class="dashboard-container"><aside id="sidebar-container"></aside><div class="dashboard-main"><header id="navbar-container"></header><main class="dashboard-content"><section class="informacion-contenedor">
-  <h1>Información, ayuda y privacidad</h1><section><h2>Acerca de LUMI</h2><p>LUMI te ayuda a convertir tus objetivos de estudio en planes claros y alcanzables.</p></section>
-  <section><h2>Preguntas frecuentes</h2><details><summary>¿Cómo se genera un plan?</summary><p>Completa los datos de tu tarea y LUMI propone un plan adaptado.</p></details><details><summary>¿Cómo se usan mis datos?</summary><p>Tus datos se utilizan para personalizar tu experiencia y gestionar tu cuenta.</p></details><details><summary>¿Necesitas ayuda?</summary><p>Revisa tus preferencias o contacta con el equipo de soporte.</p></details></section>
-  <section><h2>Privacidad y datos</h2><p>Puedes revisar y gestionar la información asociada a tu perfil desde Configuración.</p></section><a href="configuracion.html">Volver a Configuración</a>
-</section></main></div></div><script type="module" src="../js/componentes/sidebar.js"></script><script type="module" src="../js/componentes/navbar.js"></script></body>
+<body>
+
+  <div class="dashboard-container">
+
+    <!-- Sidebar dinámico -->
+    <aside id="sidebar-container"></aside>
+
+    <!-- Contenido principal -->
+    <div class="dashboard-main">
+
+      <!-- Navbar dinámico -->
+      <header id="navbar-container"></header>
+
+      <!-- Zona de contenido -->
+      <main class="dashboard-content">
+
+        <div class="informacion-wrapper">
+
+          <!-- COLUMNA IZQUIERDA: INFORMACIÓN Y PREGUNTAS -->
+          <div class="columna-informacion">
+            
+            <!-- Encabezado -->
+            <div class="informacion-encabezado">
+              <h1>Información, ayuda y privacidad</h1>
+              <p>Conoce cómo funciona LUMI, resuelve tus dudas y controla tu privacidad.</p>
+            </div>
+
+            <!-- Secciones principales -->
+            <div class="informacion-secciones">
+              
+              <!-- Tarjeta: Acerca de LUMI -->
+              <section class="tarjeta-info">
+                <div class="tarjeta-header">
+                  <span class="icono-titulo">🚀</span>
+                  <h2>Acerca de LUMI</h2>
+                </div>
+                <p>
+                  LUMI es tu asistente personal de estudio diseñado para combatir la procrastinación. 
+                  Transformamos tus entregas y proyectos en planes de estudio accionables utilizando inteligencia artificial y metodologías de aprendizaje activo.
+                </p>
+                <div class="caracteristicas-tags">
+                  <span class="tag">🤖 Algoritmo Inteligente</span>
+                  <span class="tag">⏱️ Pomodoro</span>
+                  <span class="tag">🧠 Active Recall</span>
+                  <span class="tag">📅 Planificación Personalizada</span>
+                </div>
+              </section>
+
+              <!-- Tarjeta: Preguntas Frecuentes (FAQ) -->
+              <section class="tarjeta-info">
+                <div class="tarjeta-header">
+                  <span class="icono-titulo">❓</span>
+                  <h2>Preguntas Frecuentes</h2>
+                </div>
+
+                <div class="faq-lista">
+                  <details class="faq-item">
+                    <summary>¿Cómo genera LUMI mis planes de estudio?</summary>
+                    <div class="faq-contenido">
+                      <p>LUMI analiza la fecha límite de tu tarea, la prioridad y la complejidad descrita en la rúbrica para calcular bloques de tiempo óptimos adaptados a tus hábitos.</p>
+                    </div>
+                  </details>
+
+                  <details class="faq-item">
+                    <summary>¿Cómo se protegen mis datos personales?</summary>
+                    <div class="faq-contenido">
+                      <p>Tus datos están protegidos bajo protocolos de seguridad. Únicamente se utilizan para personalizar tus recomendaciones de estudio y llevar el registro de tu progreso.</p>
+                    </div>
+                  </details>
+
+                  <details class="faq-item">
+                    <summary>¿Puedo cambiar mi técnica de estudio predeterminada?</summary>
+                    <div class="faq-contenido">
+                      <p>¡Sí! Al crear una nueva tarea o en la sección de guía de estudio puedes elegir la técnica que prefieras (Feynman, Pomodoro, Spaced Repetition, etc.).</p>
+                    </div>
+                  </details>
+
+                  <details class="faq-item">
+                    <summary>¿Dónde puedo ajustar mis notificaciones o cuenta?</summary>
+                    <div class="faq-contenido">
+                      <p>Puedes personalizar el comportamiento de la aplicación y tus datos personales desde el panel de <strong>Configuración</strong>.</p>
+                    </div>
+                  </details>
+                </div>
+              </section>
+
+              <!-- Tarjeta: Privacidad y Datos -->
+              <section class="tarjeta-info tarjeta-destacada">
+                <div class="tarjeta-header">
+                  <span class="icono-titulo">🔒</span>
+                  <h2>Privacidad y Control de Datos</h2>
+                </div>
+                <p>Tienes control total sobre la información de tu perfil y preferencias registradas en la plataforma.</p>
+                <div class="acciones-privacidad">
+                  <a href="configuracion.html" class="btn-privacidad">Ir a Configuración</a>
+                </div>
+              </section>
+
+            </div>
+
+          </div>
+
+          <!-- COLUMNA DERECHA: MASCOTA Y ASISTENCIA -->
+          <div class="columna-mascota">
+            <div class="bocadillo-lumi">
+              <p>¿Tienes dudas o necesitas ayuda? <span>¡Estoy aquí para acompañarte!</span> <span class="corazon">♥</span></p>
+            </div>
+            
+            <div class="wrapper-mascota">
+              <img src="../assets/mascota4-lumi.png" alt="Mascota Lumi IA" class="mascota-img">
+            </div>
+
+            <div class="tarjeta-soporte">
+              <h3>¿Necesitas soporte técnico?</h3>
+              <p>Si encuentras un problema en la plataforma o quieres darnos tu opinión, escríbenos.</p>
+              <button class="btn-soporte" type="button">Contactar Soporte</button>
+            </div>
+          </div>
+
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../js/componentes/sidebar.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+
+</body>
 </html>

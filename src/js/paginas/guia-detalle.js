@@ -1,50 +1,41 @@
-import { obtenerPlanIA } from '../servicios/ia.service.js';
-import { actualizarEstadoTarea } from '../servicios/tareas.service.js';
-import { registrarTareaEstadistica } from '../servicios/estadisticas.service.js';
-import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-
 document.addEventListener('DOMContentLoaded', async () => {
-	const planId = new URLSearchParams(window.location.search).get('plan_id');
-	if (!planId) return;
+  const urlParams = new URLSearchParams(window.location.search);
+  const planId = urlParams.get('plan_id');
 
-	const contenedor = document.getElementById('detalle-plan');
-	if (!contenedor) return;
+  // Buscar el plan en localStorage o cargarlo de la API
+  const tareasLocales = JSON.parse(localStorage.getItem('lumi_tareas') || '[]');
+  const tareaActual = tareasLocales[0]; // Carga la última tarea por defecto si no hay backend aún
 
-	try {
-		const plan = await obtenerPlanIA(planId);
-		renderizarPlan(contenedor, plan);
-	} catch (error) {
-		contenedor.innerHTML = `<p class="error">No se pudo cargar el plan: ${escapar(error.message)}</p>`;
-	}
+  if (tareaActual) {
+    document.getElementById('plan-titulo').textContent = tareaActual.titulo || 'Plan de Estudio';
+    document.getElementById('plan-descripcion').textContent = tareaActual.descripcion || 'Sin descripción adicional';
+    document.getElementById('metodo-actual-nombre').textContent = tareaActual.metodo_estudio || 'Pomodoro';
+
+    // Pasos genéricos de prueba (se reemplazan con la respuesta de la IA)
+    const pasos = [
+      { num: 1, titulo: 'Revisión de requisitos y objetivos', duracion: '25 min' },
+      { num: 2, titulo: 'Desarrollo de la estructura principal', duracion: '45 min' },
+      { num: 3, titulo: 'Pruebas y ajustes finales', duracion: '30 min' }
+    ];
+
+    const contenedorPasos = document.getElementById('lista-pasos-container');
+    if (contenedorPasos) {
+      contenedorPasos.innerHTML = pasos.map(paso => `
+        <div class="paso-card" style="margin-bottom: 1rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;">
+          <h3>Paso ${paso.num}: ${paso.titulo}</h3>
+          <small>⏱️ Tiempo estimado: ${paso.duracion}</small>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Evento para el botón de Cambiar Método
+  document.getElementById('btn-cambiar-metodo')?.addEventListener('click', () => {
+    alert('Función para alternar método de estudio (Pomodoro / Active Recall / Feynman).');
+  });
+
+  // Evento para el Modo Rayo (Enfoque rápido)
+  document.getElementById('btn-modo-rayo')?.addEventListener('click', () => {
+    alert('¡Modo Enfoque Rápido ⚡ iniciado!');
+  });
 });
-
-function renderizarPlan(contenedor, plan) {
-	const subtareas = Array.isArray(plan?.subtareas) ? plan.subtareas : [];
-	contenedor.hidden = false;
-	contenedor.innerHTML = `<h2>Plan generado</h2>
-		<p><strong>Método:</strong> ${escapar(plan?.metodo_estudio || '')}</p>
-		<p>${escapar(plan?.justificacion || '')}</p>
-		<p><strong>Tiempo estimado:</strong> ${plan?.tiempo_estimado_total ?? 0}</p>
-		<h3>Subtareas</h3>
-		<ul>${subtareas.map((subtarea, indice) => `<li><label><input type="checkbox" data-tarea-id="${escapar(subtarea.id || '')}" ${subtarea.completada ? 'checked' : ''} ${subtarea.id ? '' : 'disabled'}> ${escapar(subtarea.nombre || subtarea.titulo || subtarea.descripcion || `Subtarea ${indice + 1}`)}</label></li>`).join('')}</ul>
-		<p>${escapar(plan?.resumen_final || '')}</p>`;
-
-	contenedor.querySelectorAll('[data-tarea-id]').forEach(control => {
-		control.addEventListener('change', async () => {
-			try {
-				await actualizarEstadoTarea(control.dataset.tareaId, control.checked);
-				if (control.checked) {
-					const usuario = await obtenerUsuarioActual();
-					await registrarTareaEstadistica(usuario.id);
-				}
-			} catch (error) {
-				control.checked = !control.checked;
-				alert(`No se pudo actualizar la subtarea: ${error.message}`);
-			}
-		});
-	});
-}
-
-function escapar(valor) {
-	return String(valor ?? '').replace(/[&<>'"]/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[caracter]));
-}

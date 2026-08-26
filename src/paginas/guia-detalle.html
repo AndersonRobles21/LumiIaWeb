@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guía de Estudio | LUMI</title>
+  <title>Plan de Estudio | LUMI</title>
 
+  <!-- Estilos globales -->
   <link rel="stylesheet" href="../css/global/reset.css">
   <link rel="stylesheet" href="../css/global/variables.css">
   <link rel="stylesheet" href="../css/global/global.css">
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/componentes/navbar.css">
-  <link rel="stylesheet" href="../css/componentes/botones.css">
-  <link rel="stylesheet" href="../css/paginas/guia-detalle.css">
 </head>
-
 <body>
 
   <div class="dashboard-container">
@@ -24,76 +21,38 @@
       <header id="navbar-container"></header>
 
       <main class="dashboard-content">
-        <section class="guia-contenedor">
-          <!-- En la parte superior de guia-contenedor en guia-detalle.html -->
-          <div style="margin-bottom: 20px;">
-            <a href="historial.html" class="btn-secundario"
-              style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-              ← Volver al Historial
-            </a>
+        <div class="contenedor-plan-estudio">
+
+          <!-- Encabezado del Plan -->
+          <div class="plan-header">
+            <a href="dashboard.html" class="btn-regresar">&#60; Volver al Dashboard</a>
+            <h1 id="plan-titulo">Cargando plan de estudio...</h1>
+            <p id="plan-descripcion"></p>
           </div>
 
-          <div class="guia-encabezado">
-            <h1>Guía de Estudio</h1>
-            <p>Conoce y aplica los mejores métodos para estudiar mejor y vencer la procrastinación.</p>
+          <!-- Selector / Cambio de Método de Estudio -->
+          <div class="plan-metodo-box">
+            <span>Método sugerido por IA:</span>
+            <strong id="metodo-actual-nombre">Cargando...</strong>
+            <button id="btn-cambiar-metodo" type="button">⚡ Cambiar método</button>
           </div>
 
-          <section id="detalle-plan" class="plan-detalle" hidden></section>
-
-          <!-- Métodos -->
-          <div class="metodos-grid">
-
-            <div class="metodo-card">
-              <div class="metodo-icono">🍅</div>
-              <h3>Pomodoro</h3>
-              <p>Estudia en bloques de 25 minutos con descansos cortos. Ideal para mantener el foco y evitar el
-                agotamiento.</p>
-              <ul>
-                <li>25 min de estudio</li>
-                <li>5 min de descanso</li>
-                <li>Cada 4 pomodoros → descanso largo</li>
-              </ul>
+          <!-- Pasos a paso generados por la IA -->
+          <section class="plan-pasos">
+            <h2>Pasos para completar tu objetivo</h2>
+            <div id="lista-pasos-container">
+              <!-- Aquí el JS inyectará los pasos automáticamente -->
             </div>
+          </section>
 
-            <div class="metodo-card">
-              <div class="metodo-icono">🧠</div>
-              <h3>Active Recall</h3>
-              <p>En lugar de solo releer, intenta recordar la información. Es una de las técnicas más efectivas para
-                memorizar.</p>
-              <ul>
-                <li>Lee el tema</li>
-                <li>Cierra el material</li>
-                <li>Intenta explicarlo o escribirlo</li>
-              </ul>
-            </div>
-
-            <div class="metodo-card">
-              <div class="metodo-icono">💡</div>
-              <h3>Método Feynman</h3>
-              <p>Explica el tema con palabras simples, como si se lo enseñaras a un niño. Si no puedes, aún no lo
-                entiendes bien.</p>
-              <ul>
-                <li>Elige un concepto</li>
-                <li>Explícalo en voz alta o por escrito</li>
-                <li>Detecta lagunas y vuelve a estudiar</li>
-              </ul>
-            </div>
-
-            <div class="metodo-card">
-              <div class="metodo-icono">📅</div>
-              <h3>Spaced Repetition</h3>
-              <p>Repasa la información en intervalos crecientes. Ayuda a pasar el conocimiento a la memoria a largo
-                plazo.</p>
-              <ul>
-                <li>Repasa al día siguiente</li>
-                <li>Luego a los 3 días</li>
-                <li>Después a la semana</li>
-              </ul>
-            </div>
-
+          <!-- Botón de Enfoque Rápido (Modo Rayo ⚡) -->
+          <div class="plan-acciones-footer">
+            <button id="btn-modo-rayo" class="btn-rayo-enfoque">
+              ⚡ Iniciar Sesión de Enfoque Rápido
+            </button>
           </div>
 
-        </section>
+        </div>
       </main>
     </div>
   </div>
@@ -102,5 +61,4 @@
   <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/guia-detalle.js"></script>
 </body>
-
 </html>

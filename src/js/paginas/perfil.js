@@ -25,13 +25,22 @@ async function cargarDatosPerfil() {
   try {
     usuarioActual = await obtenerUsuarioActual();
     
-    // 1. Intentar cargar desde Backend
     let datosHorarios = [];
+    let datosPerfil = {};
+    let datosUsuario = {};
+
+    // 1. Intentar cargar desde Backend
     if (usuarioActual?.id) {
       const respuestaApi = await obtenerUsuarioConPerfil(usuarioActual.id);
-      const datosUsuario = respuestaApi?.usuario || respuestaApi || {};
-      const datosPerfil = respuestaApi?.perfil || respuestaApi?.perfil_estudio || respuestaApi || {};
-      datosHorarios = respuestaApi?.horarios || respuestaApi?.perfil?.horarios || [];
+      
+      datosUsuario = respuestaApi?.usuario || respuestaApi || {};
+      datosPerfil = respuestaApi?.perfil || respuestaApi?.perfil_estudio || respuestaApi || {};
+
+      // EXTRAER HORARIOS DE TODAS LAS ESTRUCTURAS POSIBLES DEL BACKEND
+      datosHorarios = respuestaApi?.horarios || 
+                      respuestaApi?.perfil?.horarios || 
+                      respuestaApi?.perfil_estudio?.horarios || 
+                      datosPerfil?.horarios || [];
 
       document.getElementById('perfil-nombre').value = datosPerfil?.nombre || datosUsuario?.nombre || usuarioActual.nombre || '';
       document.getElementById('perfil-apellido').value = datosPerfil?.apellido || datosUsuario?.apellido || usuarioActual.apellido || '';
@@ -43,21 +52,30 @@ async function cargarDatosPerfil() {
       document.getElementById('perfil-avatar').textContent = nombreDisplay.charAt(0).toUpperCase();
     }
 
-    // 2. Si el backend no tiene horarios, cargar de localStorage (Fallback)
+    // 2. Prioridad inteligente de horarios: localStorage vs Backend
     const localCache = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{}');
+    const horariosGuardadosLocal = localCache.horarios || [];
+
     if (Array.isArray(datosHorarios) && datosHorarios.length > 0) {
       horariosLocales = datosHorarios;
-    } else if (localCache.horarios && localCache.horarios.length > 0) {
-      horariosLocales = localCache.horarios;
+    } else if (Array.isArray(horariosGuardadosLocal) && horariosGuardadosLocal.length > 0) {
+      horariosLocales = horariosGuardadosLocal;
     } else {
       horariosLocales = [];
     }
 
     renderizarSemana();
-    guardarEnLocalStorage(); // Asegura sincronización inmediata
   } catch (error) {
     console.error('Error al cargar datos del perfil:', error);
-    mostrarErrorHorario('No se pudieron recuperar los datos completos.');
+    // En caso de fallo de red, intentar rescatar lo que haya en localStorage
+    try {
+      const localCache = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{}');
+      horariosLocales = localCache.horarios || [];
+      renderizarSemana();
+    } catch (e) {
+      horariosLocales = [];
+    }
+    mostrarErrorHorario('No se pudieron recuperar los datos completos del servidor (usando modo local).');
   }
 }
 
@@ -96,7 +114,7 @@ function agregarBloqueHorario() {
     finInput.value = '';
     
     renderizarSemana();
-    guardarEnLocalStorage(); // Persistencia inmediata
+    guardarEnLocalStorage(); // Persistencia inmediata local
   } catch (error) {
     mostrarErrorHorario(error.message);
   }
@@ -107,7 +125,7 @@ function eliminarBloqueHorario(index) {
   
   horariosLocales.splice(index, 1);
   renderizarSemana();
-  guardarEnLocalStorage(); // Persistencia inmediata
+  guardarEnLocalStorage(); // Persistencia inmediata local
 }
 
 function guardarEnLocalStorage() {
@@ -191,30 +209,47 @@ async function guardarPerfil(e) {
   if (!usuarioActual?.id) return;
 
   try {
-    btnGuardar.disabled = true;
-    estadoMsg.className = 'estado-mensaje';
-    estadoMsg.textContent = 'Guardando en servidor...';
+    if (btnGuardar) btnGuardar.disabled = true;
+    if (estadoMsg) {
+      estadoMsg.className = 'estado-mensaje';
+      estadoMsg.textContent = 'Guardando en servidor...';
+    }
 
     const nombre = document.getElementById('perfil-nombre').value.trim();
     const apellido = document.getElementById('perfil-apellido').value.trim();
     const objetivo = document.getElementById('perfil-objetivo').value.trim();
     const nivel_procrastinacion = parseInt(document.getElementById('perfil-procrastinacion').value, 10);
     const horas_disponibles = calcularHorasDisponibles(horariosLocales);
-    const horariosValidados = validarHorarios(horariosLocales);
+
+    const horariosPayload = horariosLocales.map(h => ({
+      dia: h.dia,
+      dia_semana: MAPA_INDICES_DIAS[h.dia] !== undefined ? MAPA_INDICES_DIAS[h.dia] : h.dia_semana,
+      hora_inicio: h.hora_inicio,
+      hora_fin: h.hora_fin
+    }));
 
     await guardarPerfilEstudio(usuarioActual.id, {
-      nombre, apellido, objetivo, nivel_procrastinacion, horas_disponibles, horarios: horariosValidados
+      nombre, 
+      apellido, 
+      objetivo, 
+      nivel_procrastinacion, 
+      horas_disponibles, 
+      horarios: horariosPayload
     });
 
-    estadoMsg.className = 'estado-mensaje exito';
-    estadoMsg.textContent = '✓ Guardado exitosamente.';
-    setTimeout(() => { estadoMsg.textContent = ''; }, 3000);
+    if (estadoMsg) {
+      estadoMsg.className = 'estado-mensaje exito';
+      estadoMsg.textContent = '✓ Guardado exitosamente en la nube.';
+      setTimeout(() => { estadoMsg.textContent = ''; }, 3000);
+    }
   } catch (error) {
     console.error('Error al guardar en backend:', error);
-    estadoMsg.className = 'estado-mensaje error';
-    estadoMsg.textContent = `Guardado localmente (${error.message})`;
+    if (estadoMsg) {
+      estadoMsg.className = 'estado-mensaje error';
+      estadoMsg.textContent = `Error al guardar (${error.message})`;
+    }
   } finally {
-    btnGuardar.disabled = false;
+    if (btnGuardar) btnGuardar.disabled = false;
   }
 }
 

@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configuración | LUMI</title>
 
+  <!-- Estilos globales -->
   <link rel="stylesheet" href="../css/global/reset.css">
   <link rel="stylesheet" href="../css/global/variables.css">
   <link rel="stylesheet" href="../css/global/global.css">
+
+  <!-- Componentes -->
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/componentes/navbar.css">
   <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de la página -->
   <link rel="stylesheet" href="../css/paginas/configuracion.css">
 </head>
 <body>
@@ -22,95 +27,125 @@
       <header id="navbar-container"></header>
 
       <main class="dashboard-content">
-        <section class="config-contenedor">
+        <div class="config-contenedor">
 
           <div class="config-encabezado">
             <h1>Configuración</h1>
-            <p>Personaliza tu experiencia en LUMI.</p>
+            <p>Personaliza tus preferencias de estudio, cuenta y notificaciones en LUMI.</p>
           </div>
 
-          <!-- Preferencias -->
-          <div class="config-seccion">
-            <h2>Preferencias</h2>
+          <form id="form-configuracion">
 
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Notificaciones</span>
-                <span class="config-desc">Recibir recordatorios de tareas y estudio</span>
+            <!-- PREFERENCIAS DE ESTUDIO -->
+            <section class="config-seccion">
+              <h2>🎯 Preferencias de Estudio</h2>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Método de estudio preferido</span>
+                  <span class="config-desc">La IA adaptará las sugerencias de estudio según tu elección</span>
+                </div>
+                <select id="metodo-defecto" class="config-input">
+                  <option value="sugerido">Sugerido por IA (LUMI)</option>
+                  <option value="pomodoro">Técnica Pomodoro (25 min)</option>
+                  <option value="feynman">Método Feynman</option>
+                  <option value="active-recall">Active Recall</option>
+                  <option value="spaced-repetition">Spaced Repetition</option>
+                </select>
               </div>
-              <label class="switch">
-                <input type="checkbox" id="notif-tareas" checked>
-                <span class="slider"></span>
-              </label>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Tiempo por sesión de enfoque</span>
+                  <span class="config-desc">Duración del bloque principal de trabajo</span>
+                </div>
+                <select id="duracion-pomodoro" class="config-input">
+                  <option value="25">25 minutos (Estándar)</option>
+                  <option value="45">45 minutos (Intenso)</option>
+                  <option value="60">60 minutos (Máximo)</option>
+                </select>
+              </div>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Sugerencias automáticas de IA</span>
+                  <span class="config-desc">Permitir que LUMI organice las entregas pendientes</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="ia-auto" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </section>
+
+            <!-- NOTIFICACIONES -->
+            <section class="config-seccion">
+              <h2>🔔 Notificaciones y Alertas</h2>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Recordatorios de tareas próximas</span>
+                  <span class="config-desc">Avisos 24 horas antes de la fecha límite</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="notif-tareas" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Alertas de racha diaria</span>
+                  <span class="config-desc">Notificarme para mantener mi racha activa de estudio</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="notif-racha" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="config-item">
+                <div class="config-info">
+                  <span class="config-titulo">Resumen semanal por correo</span>
+                  <span class="config-desc">Enviar estadísticas de rendimiento a mi email</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="notif-email">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </section>
+
+            <!-- SEGURIDAD -->
+            <section class="config-seccion">
+              <h2>🔐 Seguridad de la Cuenta</h2>
+
+              <div class="config-item config-item-vertical">
+                <div class="config-info">
+                  <span class="config-titulo">Cambiar contraseña</span>
+                  <span class="config-desc">Ingresa tu clave actual y la nueva para actualizarla</span>
+                </div>
+                <div class="config-campos-grupo">
+                  <input type="password" id="clave-actual" class="config-input" placeholder="Contraseña actual">
+                  <input type="password" id="clave-nueva" class="config-input" placeholder="Nueva contraseña">
+                  <input type="password" id="clave-confirmar" class="config-input" placeholder="Confirmar contraseña">
+                </div>
+              </div>
+            </section>
+
+            <!-- BOTÓN GUARDAR -->
+            <div class="config-acciones">
+              <button type="submit" class="boton-primario">Guardar cambios</button>
             </div>
 
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Recordatorios diarios</span>
-                <span class="config-desc">Recibir un aviso para iniciar tu sesión de estudio</span>
-              </div>
-              <label class="switch"><input type="checkbox" id="recordatorios-diarios" checked><span class="slider"></span></label>
-            </div>
+          </form>
 
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Inicio con biometría</span>
-                <span class="config-desc">Protege el acceso a tu cuenta en este dispositivo</span>
-              </div>
-              <label class="switch"><input type="checkbox" id="inicio-biometria"><span class="slider"></span></label>
-            </div>
-
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Modo oscuro</span>
-                <span class="config-desc">La interfaz ya usa tema oscuro por defecto</span>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="modo-oscuro" checked disabled>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Cuenta -->
-          <div class="config-seccion">
-            <h2>Cuenta</h2>
-
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Editar perfil</span>
-                <span class="config-desc">Nombre, objetivo y método de estudio</span>
-              </div>
-              <a href="perfil.html#editar" class="boton-secundario">Editar</a>
-            </div>
-
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Cerrar sesión</span>
-                <span class="config-desc">Salir de tu cuenta en este dispositivo</span>
-              </div>
-              <button class="boton-peligro" id="btn-cerrar-sesion">Cerrar sesión</button>
-            </div>
-          </div>
-
-          <div class="config-seccion">
-            <h2>Información y soporte</h2>
-            <div class="config-item">
-              <div class="config-info">
-                <span class="config-titulo">Privacidad, ayuda y acerca de LUMI</span>
-                <span class="config-desc">Consulta preguntas frecuentes, ayuda y gestión de datos</span>
-              </div>
-              <a href="informacion.html" class="boton-secundario">Abrir</a>
-            </div>
-          </div>
-
-        </section>
+        </div>
       </main>
     </div>
   </div>
 
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
-  <script type="module" src="../js/paginas/configuracion.js"></script>
 </body>
 </html>

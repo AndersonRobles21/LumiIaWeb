@@ -49,6 +49,19 @@ function construirFechaISO(anio, mes, dia) {
   return `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
 }
 
+// Función robusta para verificar si una tarea pertenece a un día específico del calendario
+function tareaCorrespondeADia(tarea, anio, mes, dia) {
+  // Buscar cualquier campo de fecha disponible en el objeto de la tarea
+  const fechaStr = tarea.fecha || tarea.fecha_entrega || tarea.fecha_limite || tarea.created_at || '';
+  if (!fechaStr) return false;
+
+  // Extraer solamente la parte YYYY-MM-DD independientemente de si incluye hora o formato UTC
+  const parteFecha = String(fechaStr).split('T')[0];
+  const fechaEsperada = construirFechaISO(anio, mes, dia);
+
+  return parteFecha === fechaEsperada;
+}
+
 function obtenerIndiceDiaSemana(anio, mes, dia) {
   const fecha = new Date(anio, mes - 1, dia);
   const diaSemana = fecha.getDay();
@@ -97,10 +110,8 @@ function renderizarCalendario() {
 
   const hoy = new Date();
   for (let dia = 1; dia <= diasEnMes; dia++) {
-    const fechaISO = construirFechaISO(anio, mes + 1, dia);
-    const tareasDelDia = tareasGuardadas.filter(t => 
-      (t.fecha || t.fecha_entrega || t.fecha_limite || '').startsWith(fechaISO)
-    );
+    // Filtrar tareas usando la función robusta (mes + 1 porque getMonth() va de 0 a 11)
+    const tareasDelDia = tareasGuardadas.filter(t => tareaCorrespondeADia(t, anio, mes + 1, dia));
     
     const indiceDiaSemana = obtenerIndiceDiaSemana(anio, mes + 1, dia);
     const esDiaEstudioPerfil = diasEstudioGuardados.includes(indiceDiaSemana);
@@ -157,13 +168,15 @@ function renderizarTimelineDia(fecha) {
 
   if (!tituloDia || !contenedorTimeline) return;
 
-  const fechaISO = construirFechaISO(fecha.getFullYear(), fecha.getMonth() + 1, fecha.getDate());
+  const anio = fecha.getFullYear();
+  const mes = fecha.getMonth() + 1;
+  const diaNum = fecha.getDate();
+
   const fechaTexto = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   tituloDia.textContent = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
 
-  const tareasDelDia = tareasGuardadas.filter(t => 
-    (t.fecha || t.fecha_entrega || t.fecha_limite || '').startsWith(fechaISO)
-  );
+  // Filtrar tareas correspondientes al timeline del día seleccionado
+  const tareasDelDia = tareasGuardadas.filter(t => tareaCorrespondeADia(t, anio, mes, diaNum));
 
   if (cantTareas) cantTareas.textContent = tareasDelDia.length;
   if (resumenTiempo) resumenTiempo.textContent = `${tareasDelDia.length * 1}h 0m`;
