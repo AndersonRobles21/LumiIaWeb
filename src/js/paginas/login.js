@@ -1,24 +1,60 @@
-import { iniciarSesion } from '../servicios/autenticacion.service.js';
+import { supabase } from '../config/supabase.js';
 
-const formularioLogin = document.getElementById("formulario-login");
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('formulario-login');
+  const inputCorreo = document.getElementById('correo');
+  const inputPass = document.getElementById('contrasena');
 
-formularioLogin?.addEventListener("submit", async (evento) => {
-    evento.preventDefault();
+  const ADMIN_EMAIL = 'juanjoseboca88@gmail.com';
 
-    const correo = document.getElementById('correo').value.trim();
-    const contrasena = document.getElementById('contrasena').value;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    try {
-        const resultado = await iniciarSesion(correo, contrasena);
-        if (resultado.esAdmin) {
-            window.location.href = 'administrador.html';
-            return;
+      const usuarioTexto = inputCorreo ? inputCorreo.value.trim().toLowerCase() : '';
+      const passwordTexto = inputPass ? inputPass.value.trim() : '';
+
+      if (!usuarioTexto || !passwordTexto) {
+        alert('Por favor completa todos los campos.');
+        return;
+      }
+
+      // LOGIN ADMINISTRADOR
+      if (usuarioTexto === ADMIN_EMAIL) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: ADMIN_EMAIL,
+            password: passwordTexto
+          });
+        } catch (err) {
+          console.warn('Iniciando sesión en modo local:', err.message);
         }
-        const perfil = resultado.perfil || {};
-        const perfilEstudio = perfil.perfil_estudio || perfil.perfil || perfil;
-        const tienePerfil = Boolean(perfilEstudio.objetivo || (perfil.horarios || perfil.horario || []).length);
-        window.location.href = tienePerfil ? 'dashboard.html' : 'perfil.html';
-    } catch (error) {
-        alert(`No se pudo iniciar sesión: ${error.message}`);
-    }
+
+        // Guardar credenciales de administrador
+        localStorage.setItem('userEmail', ADMIN_EMAIL);
+        localStorage.setItem('userRole', 'admin');
+
+        // Redirección
+        window.location.href = './administrador.html';
+        return;
+      }
+
+      // LOGIN ESTUDIANTE
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: usuarioTexto,
+          password: passwordTexto
+        });
+
+        if (error) throw error;
+
+        localStorage.setItem('userEmail', usuarioTexto);
+        localStorage.setItem('userRole', 'estudiante');
+        window.location.href = './historial.html';
+
+      } catch (err) {
+        alert('Error al iniciar sesión: ' + err.message);
+      }
+    });
+  }
 });

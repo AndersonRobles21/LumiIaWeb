@@ -1,18 +1,28 @@
 /* ===== ESTILOS GENERALES ===== */
 
+* {
+	box-sizing: border-box;
+}
+
 body {
-    font-family: var(--fuente-principal);
-    background-color: var(--color-fondo);
-    color: var(--color-texto);
-    line-height: 1.5;
-    min-height: 100vh;
+	font-family: var(--fuente-principal);
+	background: var(--gradiente-fondo);
+	color: var(--color-texto-principal);
+	line-height: 1.5;
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
 }
 
 /* ===== CONTENEDOR PRINCIPAL ===== */
 
 .contenedor {
-    width: min(100% - 32px, var(--contenido-maximo));
-    margin: 0 auto;
+	width: min(100% - 32px, var(--contenido-maximo));
+	margin: 0 auto;
 }
 
 /* ===== TÍTULOS ===== */
@@ -23,79 +33,175 @@ h3,
 h4,
 h5,
 h6 {
-    line-height: 1.2;
-    font-weight: 700;
+	line-height: 1.2;
+	font-weight: 700;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-size: var(--texto-titulo);
+}
+
+h2 {
+	font-size: var(--texto-xl);
+}
+
+h3 {
+	font-size: var(--texto-lg);
 }
 
 /* ===== TEXTO ===== */
 
 p {
-    color: var(--color-texto-secundario);
+	color: var(--color-texto-secundario);
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	color: var(--color-cyan);
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+
+a:hover {
+	color: var(--color-cyan-brillo);
 }
 
 /* ===== CLASES GENERALES ===== */
 
 .oculto {
-    display: none !important;
+	display: none !important;
 }
 
 .contenido-principal {
-    min-height: 100vh;
+	min-height: 100vh;
+}
+
+.error-contenedor {
+	padding: 2rem;
+	text-align: center;
+	color: var(--color-error);
+	background: rgba(255, 77, 109, 0.1);
+	border: 1px solid rgba(255, 77, 109, 0.3);
+	border-radius: 12px;
 }
 
 /* ===== ACCESIBILIDAD ===== */
 
 :focus-visible {
-    outline: 3px solid var(--color-secundario);
-    outline-offset: 3px;
+	outline: 3px solid var(--color-cyan);
+	outline-offset: 3px;
 }
+
+/* ===== TABLAS ===== */
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th,
+td {
+	padding: 1rem;
+	text-align: left;
+}
+
+/* ===== INPUTS ===== */
+
+input,
+select,
+textarea {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--color-texto-apagado);
+}
+
+/* ===== SCROLLBAR ===== */
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(39, 217, 255, 0.2);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(39, 217, 255, 0.4);
+}
+
 /* ===== PANTALLA DE INICIO ===== */
 
 .inicio {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
 }
 
 .inicio-contenido {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--espacio-xxl);
-    align-items: center;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--espacio-xxl);
+	align-items: center;
 }
 
 .inicio-texto {
-    max-width: 600px;
+	max-width: 600px;
 }
 
 .inicio-etiqueta {
-    color: var(--color-principal);
-    font-size: var(--texto-sm);
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: var(--espacio-md);
+	color: var(--color-cyan);
+	font-size: var(--texto-sm);
+	font-weight: 700;
+	letter-spacing: 2px;
+	margin-bottom: var(--espacio-md);
 }
 
 .inicio h1 {
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    margin-bottom: var(--espacio-lg);
+	font-size: clamp(2.8rem, 6vw, 5rem);
+	margin-bottom: var(--espacio-lg);
 }
 
 .inicio h1 span {
-    color: var(--color-principal);
+	color: var(--color-cyan);
 }
 
 .inicio-descripcion {
-    font-size: var(--texto-lg);
-    max-width: 550px;
-    margin-bottom: var(--espacio-xl);
+	font-size: var(--texto-lg);
+	max-width: 550px;
+	margin-bottom: var(--espacio-xl);
 }
 
 .inicio-acciones {
-    display: flex;
-    gap: var(--espacio-md);
-    flex-wrap: wrap;
+	display: flex;
+	gap: var(--espacio-md);
+	flex-wrap: wrap;
+}
+
+/* ===== BOTONES ===== */
+
+button {
+	cursor: pointer;
+	font-family: inherit;
+	transition: all 0.2s ease;
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 .boton {
