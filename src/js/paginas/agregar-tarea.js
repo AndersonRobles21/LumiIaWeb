@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    validarYGuardar();
+    validarYGuardar(form);
   });
 });
 
-async function validarYGuardar() {
+async function validarYGuardar(form) {
   const titulo = document.getElementById('titulo').value.trim();
   const descripcion = document.getElementById('descripcion').value.trim();
   const prioridad = document.getElementById('prioridad').value;
@@ -39,18 +39,17 @@ async function validarYGuardar() {
   }
 
   try {
+    const boton = form.querySelector('button[type="submit"]');
+    if (boton.disabled) return;
+    boton.disabled = true;
+    boton.dataset.textoOriginal = boton.textContent;
+    boton.textContent = 'Generando plan...';
     const usuario = await obtenerUsuarioActual();
     if (!usuario?.id) throw new Error('La sesión no está autenticada.');
 
     if (!fecha) {
       alert('Selecciona una fecha de entrega');
       document.getElementById('fecha').focus();
-      return;
-    }
-
-    if (!metodo) {
-      alert('Selecciona un método de estudio');
-      document.getElementById('metodo').focus();
       return;
     }
 
@@ -68,5 +67,8 @@ async function validarYGuardar() {
     window.location.href = `guia-detalle.html?plan_id=${encodeURIComponent(respuesta.plan_id)}`;
   } catch (error) {
     alert(`No se pudo guardar la tarea: ${error.message}`);
+  } finally {
+    const boton = form.querySelector('button[type="submit"]');
+    if (boton) { boton.disabled = false; boton.textContent = boton.dataset.textoOriginal || 'Generar plan'; }
   }
 }

@@ -10,13 +10,21 @@
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/componentes/navbar.css">
   <link rel="stylesheet" href="../css/paginas/dashboard.css">
+  <link rel="stylesheet" href="../css/paginas/gamificacion.css">
 </head>
 <body>
   <div class="dashboard-container"><aside id="sidebar-container"></aside><div class="dashboard-main"><header id="navbar-container"></header>
     <main class="dashboard-content"><section class="recompensas-contenedor">
-      <h1>Recompensas</h1><p>Tu constancia se convierte en progreso.</p>
-      <div class="estadisticas-grid"><article><strong id="puntos">0</strong><span>Puntos</span></article><article><strong id="nivel">1</strong><span>Nivel</span></article><article><strong id="progreso">0%</strong><span>Al siguiente nivel</span></article><article><strong id="completadas">0</strong><span>Tareas completadas</span></article></div>
-      <section><h2>Logros</h2><div id="logros"><p>Aún no hay logros registrados.</p></div></section><section><h2>Rachas</h2><p id="racha">Mantén tu racha de estudio activa.</p></section>
+      <div class="recompensas-encabezado"><div><span class="etiqueta-panel">Progreso personal</span><h1>Recompensas</h1><p>Tu constancia se convierte en progreso.</p></div><strong id="contador-logros">0/20 logros</strong></div>
+      <div class="gamificacion-grid">
+        <section class="gamificacion-columna gamificacion-resumen">
+          <div class="estadisticas-grid"><article><strong id="puntos">0</strong><span>Puntos</span></article><article><strong id="nivel">1</strong><span>Nivel</span></article><article><strong id="progreso">0%</strong><span>Al siguiente nivel</span></article><article><strong id="completadas">0</strong><span>Tareas completadas</span></article></div>
+          <section class="racha-card"><span class="etiqueta-panel">Racha activa</span><strong id="racha-dias">0 días</strong><p id="racha">Mantén tu racha de estudio activa.</p></section>
+          <section class="insignias-section"><div class="seccion-titulo"><h2>Insignias</h2><span id="insignias-contador"></span></div><div id="logros" class="insignias-carrusel"></div></section>
+          <div class="xp-bloque"><div><span>XP actual</span><strong id="xp-actual">0 XP</strong></div><div class="xp-barra"><span id="xp-barra-progreso"></span></div><small id="xp-siguiente">0 XP para el siguiente nivel</small></div>
+        </section>
+        <aside class="logro-inspector" aria-live="polite"><span class="etiqueta-panel">Inspector de logro</span><div id="inspector-insignia" class="inspector-insignia">✦</div><h2 id="inspector-nombre">Selecciona una insignia</h2><p id="inspector-descripcion">Aquí verás los detalles del logro seleccionado.</p><dl><div><dt>Recompensa</dt><dd id="inspector-recompensa">+50 XP</dd></div><div><dt>Obtenido</dt><dd id="inspector-fecha">Pendiente</dd></div><div><dt>Estado</dt><dd id="inspector-estado">Pendiente</dd></div></dl></aside>
+      </div>
     </section></main>
   </div></div>
   <script type="module" src="../js/componentes/sidebar.js"></script><script type="module" src="../js/componentes/navbar.js"></script><script type="module" src="../js/paginas/recompensas.js"></script>

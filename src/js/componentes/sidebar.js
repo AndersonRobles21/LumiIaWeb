@@ -34,6 +34,7 @@ export async function crearSidebar() {
     { nombre: 'Agregar tarea inteligente', href: 'agregar-tarea.html', icono: '➕' },
     { nombre: 'Historial de IA', href: 'historial.html', icono: '📊' },
     { nombre: 'Recompensas', href: 'recompensas.html', icono: '🏆' },
+    { nombre: 'Gamificación', href: 'gamificacion.html', icono: '⚡' },
     { nombre: 'Perfil', href: 'perfil.html', icono: '👤' },
     { nombre: 'Configuración', href: 'configuracion.html', icono: '⚙️' },
     { nombre: 'Ayuda y privacidad', href: 'informacion.html', icono: '❓' },

@@ -31,6 +31,52 @@
 
           <section id="detalle-plan" class="plan-detalle" hidden></section>
 
+          <section class="metodo-panel" aria-label="Herramientas de estudio">
+            <div class="metodo-panel-encabezado">
+              <div>
+                <span class="etiqueta-panel">Sesión activa</span>
+                <h2 id="metodo-activo-titulo">Elige un método</h2>
+              </div>
+              <select id="metodo-selector" aria-label="Método de estudio">
+                <option value="Pomodoro">Pomodoro</option>
+                <option value="Active Recall">Active Recall</option>
+                <option value="Técnica Feynman">Técnica Feynman</option>
+                <option value="Spaced Repetition">Spaced Repetition</option>
+              </select>
+              <button type="button" class="boton-secundario boton-rayo" id="regenerar-plan" title="Regenerar plan con IA">⚡ Regenerar</button>
+            </div>
+            <div id="metodo-pomodoro" class="herramienta-metodo">
+              <p class="metodo-modo" id="pomodoro-modo">Trabajo enfocado</p>
+              <strong id="pomodoro-tiempo" class="pomodoro-tiempo">25:00</strong>
+              <div class="pomodoro-controles">
+                <button type="button" class="boton-principal" id="pomodoro-iniciar">Iniciar</button>
+                <button type="button" class="boton-secundario" id="pomodoro-pausar">Pausar</button>
+                <button type="button" class="boton-secundario" id="pomodoro-reiniciar">Reiniciar</button>
+              </div>
+            </div>
+            <div id="metodo-feynman" class="herramienta-metodo" hidden>
+              <p>Explica el tema con palabras sencillas y detecta las partes que todavía necesitan estudio.</p>
+              <label for="feynman-explicacion">Tu explicación</label>
+              <textarea id="feynman-explicacion" rows="7" placeholder="Escribe la explicación como si se la contaras a otra persona..."></textarea>
+              <button type="button" class="boton-principal" id="feynman-confirmar">Revisar explicación</button>
+              <p id="feynman-feedback" class="metodo-feedback" role="status"></p>
+            </div>
+            <div id="metodo-recall" class="herramienta-metodo" hidden>
+              <div class="recall-progreso" id="recall-progreso">Tarjeta 1 de 1</div>
+              <h3 id="recall-pregunta">No hay preguntas cargadas todavía.</h3>
+              <div id="recall-respuesta" class="recall-respuesta" hidden></div>
+              <div class="pomodoro-controles">
+                <button type="button" class="boton-secundario" id="recall-mostrar">Mostrar respuesta</button>
+                <button type="button" class="boton-principal" id="recall-siguiente">Siguiente</button>
+              </div>
+            </div>
+            <div id="metodo-spaced" class="herramienta-metodo" hidden>
+              <div class="spaced-calendario" id="spaced-calendario"></div>
+              <p id="spaced-alerta" class="metodo-feedback"></p>
+              <ul id="spaced-lista" class="spaced-lista"></ul>
+            </div>
+          </section>
+
           <!-- Métodos -->
           <div class="metodos-grid">
 

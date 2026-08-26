@@ -97,3 +97,6 @@
     grid-template-columns: 1fr;
   }
 }
+
+.historial-subtareas { list-style: none; margin: 10px 0 0 46px; padding: 0; color: var(--color-texto-secundario); font-size: var(--texto-sm); }
+.historial-subtareas li { padding: 5px 0; }.historial-subtareas input { accent-color: var(--color-cyan); margin-right: 6px; }

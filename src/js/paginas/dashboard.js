@@ -19,12 +19,13 @@ async function actualizarResumen() {
       obtenerEstadisticas(usuario.id),
       obtenerTareasDelUsuario(usuario.id),
     ]);
-    const estadisticas = estadisticasRespuesta?.estadisticas || estadisticasRespuesta?.data || estadisticasRespuesta || {};
+    const estadisticas = estadisticasRespuesta?.estadisticas || estadisticasRespuesta?.data?.estadisticas || estadisticasRespuesta?.data || estadisticasRespuesta || {};
 
     const completadas = estadisticas.tareas_completadas ?? tareas.filter(t => t.completada).length;
     const pendientes = tareas.filter(t => !t.completada).length;
     const racha = estadisticas.racha ?? 0;
-    const puntos = completadas * 100;
+    const xpBackend = estadisticas.xp ?? estadisticas.XP ?? estadisticas.puntos ?? estadisticas.points ?? estadisticas.experiencia_total;
+    const puntos = xpBackend === undefined || xpBackend === null ? completadas * 50 : Number(xpBackend);
 
     const tarjetas = document.querySelectorAll('.tarjeta-resumen');
 
