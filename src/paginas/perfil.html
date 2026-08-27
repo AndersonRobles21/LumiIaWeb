@@ -94,14 +94,8 @@
             </div>
 
             <div class="campo">
-              <label for="perfil-procrastinacion">Nivel de procrastinación</label>
-              <select id="perfil-procrastinacion" name="nivel_procrastinacion">
-                <option value="1">1 - Bajo (Muy enfocado)</option>
-                <option value="2">2 - Leve</option>
-                <option value="3" selected>3 - Moderado</option>
-                <option value="4">4 - Alto</option>
-                <option value="5">5 - Muy alto (Suelo dejar todo para el final)</option>
-              </select>
+              <label for="perfil-procrastinacion">Nivel de procrastinación: <output id="nivel-procrastinacion-valor" for="perfil-procrastinacion">3</output></label>
+              <input type="range" id="perfil-procrastinacion" name="nivel_procrastinacion" min="1" max="10" step="1" value="3">
             </div>
           </section>
 

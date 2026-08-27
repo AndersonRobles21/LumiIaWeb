@@ -44,7 +44,6 @@ async function validarYGuardar() {
   const descripcion = descripcionInput?.value.trim() || '';
   const fecha = fechaInput?.value;
   const prioridad = prioridadInput?.value || 'Media';
-  const metodo = 'Sugerido por IA (LUMI)';
 
   if (!titulo || !fecha || fecha < obtenerFechaLocal()) {
     alert('Por favor completa el título y la fecha límite.');
@@ -66,11 +65,19 @@ async function validarYGuardar() {
     }
 
     let horasDisponibles = 0;
+    let objetivo = '';
+    let nivelProcrastinacion = 3;
+    let nombreUsuario = usuario.user_metadata?.full_name || usuario.email?.split('@')[0] || 'Estudiante';
     try {
       const respuestaPerfil = await obtenerUsuarioConPerfil(usuario.id);
       const datosPerfil = respuestaPerfil?.data || respuestaPerfil || {};
       const perfil = datosPerfil.perfil_estudio || datosPerfil.perfil || {};
       horasDisponibles = Number(perfil.horas_disponibles ?? datosPerfil.horas_disponibles ?? 0);
+      objetivo = perfil.objetivo ?? datosPerfil.objetivo ?? '';
+      nivelProcrastinacion = Number(perfil.nivel_procrastinacion ?? datosPerfil.nivel_procrastinacion ?? 3);
+      nombreUsuario = [datosPerfil.nombre, datosPerfil.apellido].filter(Boolean).join(' ')
+        || datosPerfil.user_metadata?.full_name
+        || nombreUsuario;
     } catch (error) {
       console.warn('No se pudo recuperar la disponibilidad del perfil:', error.message);
       try {
@@ -112,16 +119,19 @@ async function validarYGuardar() {
     if (btnGuardar) btnGuardar.textContent = 'Generando plan con IA...';
 
     const respuestaIA = await generarPlanIA({
-      usuario_id: usuario.id,
-      plan_id: registroBD.plan.id,
-      nombre: titulo,
+      usuarioId: usuario.id,
+      planId: registroBD.plan.id,
+      titulo,
       descripcion,
-      fecha_entrega: fecha,
-      metodo_estudio: metodo,
+      fechaEntrega: fecha,
+      metodoEstudio: 'Auto',
       dificultad: prioridad,
-      horas_disponibles: horasDisponibles,
-      dias_disponibles: diasDisponibles,
-      minutos_disponibles: horasDisponibles * 60 * diasDisponibles
+      nombreUsuario,
+      objetivo,
+      horasDisponibles,
+      nivelProcrastinacion,
+      diasRestantes: diasDisponibles,
+      minutosDisponibles: horasDisponibles * 60 * diasDisponibles,
     });
 
     console.log('respuestaIA.plan_id:', respuestaIA?.plan_id);

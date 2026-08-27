@@ -45,7 +45,9 @@ async function cargarDatosPerfil() {
       document.getElementById('perfil-nombre').value = datosUsuario?.nombre || usuarioActual.nombre || '';
       document.getElementById('perfil-apellido').value = datosUsuario?.apellido || usuarioActual.apellido || '';
       document.getElementById('perfil-objetivo').value = datosPerfil?.objetivo || '';
-      document.getElementById('perfil-procrastinacion').value = datosPerfil?.nivel_procrastinacion || '3';
+      const nivelProcrastinacion = Math.min(10, Math.max(1, Number(datosPerfil?.nivel_procrastinacion) || 3));
+      document.getElementById('perfil-procrastinacion').value = String(nivelProcrastinacion);
+      actualizarNivelProcrastinacion();
 
       const nombreDisplay = datosUsuario?.nombre || usuarioActual.nombre || 'Usuario';
       document.getElementById('avatar-nombre-display').textContent = nombreDisplay;
@@ -89,6 +91,7 @@ function inicializarEventos() {
   const btnCancelarNombre = document.getElementById('btn-cancelar-nombre');
   const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
   const inputFoto = document.getElementById('perfil-foto');
+  const inputProcrastinacion = document.getElementById('perfil-procrastinacion');
 
   if (btnAgregar) btnAgregar.addEventListener('click', agregarBloqueHorario);
   if (formulario) formulario.addEventListener('submit', guardarPerfil);
@@ -96,6 +99,13 @@ function inicializarEventos() {
   if (btnCancelarNombre) btnCancelarNombre.addEventListener('click', cancelarEdicionNombre);
   if (btnGuardarNombre) btnGuardarNombre.addEventListener('click', guardarNombreDesdeEditor);
   if (inputFoto) inputFoto.addEventListener('change', previsualizarFotoPerfil);
+  if (inputProcrastinacion) inputProcrastinacion.addEventListener('input', actualizarNivelProcrastinacion);
+}
+
+function actualizarNivelProcrastinacion() {
+  const input = document.getElementById('perfil-procrastinacion');
+  const salida = document.getElementById('nivel-procrastinacion-valor');
+  if (input && salida) salida.value = input.value;
 }
 
 function cargarFotoPerfil() {
@@ -350,7 +360,11 @@ function aplicarDatosPerfil(respuestaApi) {
   document.getElementById('perfil-nombre').value = datosUsuario?.nombre || '';
   document.getElementById('perfil-apellido').value = datosUsuario?.apellido || '';
   document.getElementById('perfil-objetivo').value = datosPerfil?.objetivo || '';
-  if (datosPerfil?.nivel_procrastinacion != null) document.getElementById('perfil-procrastinacion').value = datosPerfil.nivel_procrastinacion;
+  if (datosPerfil?.nivel_procrastinacion != null) {
+    const nivelProcrastinacion = Math.min(10, Math.max(1, Number(datosPerfil.nivel_procrastinacion) || 3));
+    document.getElementById('perfil-procrastinacion').value = String(nivelProcrastinacion);
+    actualizarNivelProcrastinacion();
+  }
   if (Array.isArray(datosHorarios)) horariosLocales = normalizarHorariosPerfil(datosHorarios);
   const nombre = datosUsuario?.nombre || '';
   document.getElementById('avatar-nombre-display').textContent = nombre || 'Usuario';
