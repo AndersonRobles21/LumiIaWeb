@@ -13,15 +13,21 @@ export async function crearNavbar() {
   }
 
   let nombre = '';
-  let fotoPerfil = normalizarFoto(localStorage.getItem('lumi_foto_perfil') || '');
+  let fotoPerfil = '';
   try {
     const usuario = await obtenerUsuarioActual();
     if (usuario?.id) {
       const respuesta = await obtenerUsuarioConPerfil(usuario.id);
       const envoltura = respuesta?.data || respuesta || {};
-      const datos = { ...usuario, ...(envoltura.usuario || envoltura.user || envoltura), ...(envoltura.perfil || envoltura.perfil_estudio || {}) };
+      const datosUsuario = envoltura.usuario || envoltura.user || {};
+      const datosPerfil = envoltura.perfil_estudio || envoltura.perfil || datosUsuario.perfil_estudio || datosUsuario.perfil || {};
+      const datos = { ...usuario, ...envoltura, ...datosUsuario, ...datosPerfil };
       nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ') || datos?.user_metadata?.full_name || '';
-      fotoPerfil = fotoPerfil || normalizarFoto(datos?.foto_perfil || '');
+      fotoPerfil = normalizarFoto(
+        datosPerfil.foto_perfil || datosPerfil.avatar_url ||
+        datosUsuario.foto_perfil || datosUsuario.avatar_url ||
+        envoltura.foto_perfil || envoltura.avatar_url || datos.foto_perfil || datos.avatar_url || ''
+      );
     }
   } catch (error) {
     console.warn('No se pudo cargar el usuario del navbar:', error.message);

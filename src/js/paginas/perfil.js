@@ -1,6 +1,6 @@
 /**
  * perfil.js
- * Gestión de perfil con persistencia local instantánea y sincronización backend.
+ * Gestión de perfil y sincronización con el backend.
  */
 
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
@@ -75,7 +75,7 @@ async function cargarDatosPerfil() {
     cargarFotoPerfil(fotoPerfilBase64);
   } catch (error) {
     console.error('Error al cargar datos del perfil:', error);
-    // En caso de fallo de red, intentar rescatar lo que haya en localStorage
+    // En caso de fallo de red, solo se conservan localmente los horarios.
     try {
       const localCache = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{}');
       horariosLocales = localCache.horarios || [];
@@ -83,7 +83,6 @@ async function cargarDatosPerfil() {
     } catch (e) {
       horariosLocales = [];
     }
-    cargarFotoPerfil();
     mostrarErrorHorario('No se pudieron recuperar los datos completos del servidor (usando modo local).');
   }
 }
@@ -113,8 +112,7 @@ function actualizarNivelProcrastinacion() {
 }
 
 function cargarFotoPerfil(fotoServidor = '') {
-  const fotoLocal = normalizarBase64(localStorage.getItem('lumi_foto_perfil') || '');
-  fotoPerfilBase64 = fotoServidor || fotoLocal;
+  fotoPerfilBase64 = fotoServidor;
   if (fotoPerfilBase64) {
     mostrarFotoPerfil(fotoPerfilBase64);
   }
@@ -138,7 +136,6 @@ async function previsualizarFotoPerfil(evento) {
 
     const dataUrl = canvas.toDataURL('image/jpeg', 0.4);
     fotoPerfilBase64 = normalizarBase64(dataUrl);
-    localStorage.setItem('lumi_foto_perfil', fotoPerfilBase64);
     mostrarFotoPerfil(fotoPerfilBase64);
   } catch (error) {
     console.error('No se pudo procesar la imagen:', error);
