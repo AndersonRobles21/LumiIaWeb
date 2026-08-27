@@ -11,8 +11,7 @@ function renderSidebar() {
     { href: 'calendario.html', icono: '📅', texto: 'Calendario', active: ruta.includes('calendario') },
     { href: 'agregar-tarea.html', icono: '➕', texto: 'Agregar tarea', active: ruta.includes('agregar-tarea') },
     { href: 'historial.html', icono: '📊', texto: 'Historial de IA', active: ruta.includes('historial') },
-    { href: 'gamificacion.html', icono: '✦', texto: 'Gamificación', active: ruta.includes('gamificacion') },
-    { href: 'recompensas.html', icono: '🏆', texto: 'Recompensas', active: ruta.includes('recompensas') },
+    { href: 'gamificacion.html', icono: '✦', texto: 'Tu Progreso', active: ruta.includes('gamificacion') || ruta.includes('recompensas') },
     { href: 'app-movil.html', icono: '📱', texto: 'App móvil', active: ruta.includes('app-movil') },
     { href: 'perfil.html', icono: '👤', texto: 'Perfil', active: ruta.includes('perfil') },
     { href: 'configuracion.html', icono: '⚙️', texto: 'Configuración', active: ruta.includes('configuracion') },
@@ -22,10 +21,7 @@ function renderSidebar() {
   sidebarContainer.innerHTML = `
     <aside class="lumi-sidebar" aria-label="Navegación principal">
       <div class="sidebar-logo">
-        <div class="logo-icon-glow">
-          <span class="logo-letra">L</span>
-        </div>
-        <span class="logo-texto">LUMI</span>
+        <img src="../assets/Lumi-logo.png" alt="Logo LUMI" class="sidebar-logo-img">
       </div>
 
       <nav class="sidebar-menu">

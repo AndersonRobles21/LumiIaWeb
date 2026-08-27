@@ -185,7 +185,7 @@
 }
 
 .punto-categoria.entrega, .item-leyenda.entrega .dot { background: #c084fc; }
-.punto-categoria.examen, .item-leyenda.examen .dot { background: #f472b6; }
+.punto-categoria.examen, .item-leyenda.examen .dot { background: #ef4444; }
 .punto-categoria.clase, .item-leyenda.clase .dot { background: #38bdf8; }
 .punto-categoria.proyecto, .item-leyenda.proyecto .dot { background: #fbbf24; }
 .punto-categoria.otro, .item-leyenda.otro .dot { background: #94a3b8; }
@@ -368,7 +368,7 @@
 }
 
 .linea-indicador.entrega { background: #c084fc; }
-.linea-indicador.examen { background: #f472b6; }
+.linea-indicador.examen { background: #ef4444; }
 .linea-indicador.clase { background: #38bdf8; }
 .linea-indicador.proyecto { background: #fbbf24; }
 

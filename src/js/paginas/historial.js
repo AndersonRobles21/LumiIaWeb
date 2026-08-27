@@ -1,7 +1,7 @@
 import { supabase } from '../config/supabase.js';
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { completarPaso, completarTareaLocal, estaPasoCompletado, estaTareaCompletada, obtenerPasosCompletados, todosLosPasosCompletados } from '../utilidades/progreso-tareas.js';
+import { completarPaso, completarTareaLocal, estaPasoCompletado, estaTareaCompletada, obtenerPasosCompletados, reiniciarProgresoPlan, todosLosPasosCompletados } from '../utilidades/progreso-tareas.js';
 
 let listaPlanesGlobal = [];
 let planSeleccionado = null;
@@ -36,8 +36,8 @@ export async function initHistorial() {
 
     if (listaPlanesGlobal.length > 0) {
       renderizarListaPlanes(listaPlanesGlobal, contenedorLista);
-      // Seleccionar automáticamente el primer plan
-      seleccionarPlan(listaPlanesGlobal[0]);
+      const planIdSolicitado = new URLSearchParams(window.location.search).get('plan_id');
+      seleccionarPlan(listaPlanesGlobal.find(plan => String(plan.id) === String(planIdSolicitado)) || listaPlanesGlobal[0]);
     } else {
       contenedorLista.innerHTML = `<p style="padding: 1rem; color: #8a8f9d;">No tienes tareas registradas en la base de datos.</p>`;
     }
@@ -85,7 +85,7 @@ function renderizarListaPlanes(planes, contenedor) {
 
     const itemHTML = `
       <div class="item-conversacion ${esActiva}" data-id="${escapar(plan.id)}" data-index="${index}">
-        <div class="avatar-lumi-sm">🤖</div>
+        <img class="avatar-lumi-sm" src="../assets/chat_ia.png" alt="LUMI">
         <div class="info-conversacion">
           <h4>${escapar(titulo)}</h4>
           <p>${escapar(descripcion)}</p>
@@ -131,7 +131,9 @@ function seleccionarPlan(plan) {
   const contenedorPasos = document.getElementById('contenedor-pasos-historial');
 
   if (elTitulo) elTitulo.textContent = plan.nombre || 'Plan de Estudio';
-  if (elMetodo) elMetodo.textContent = plan.metodo_estudio || 'Pomodoro (Sugerido por IA)';
+  const metodo = obtenerMetodoPlan(plan);
+  if (elMetodo) elMetodo.textContent = metodo;
+  actualizarImagenMetodo(metodo);
   
   if (elSaludo) {
     elSaludo.textContent = `¡Hola! Aquí tienes los detalles y actividades registradas para "${plan.nombre}". ¿Quieres repasar algún punto?`;
@@ -201,10 +203,31 @@ function configurarChipsSugerencias() {
 
   const botonRayo = document.getElementById('btn-metodo-metrica');
   const botonCambiar = document.getElementById('btn-cambiar-metodo');
+  const botonReiniciar = document.getElementById('btn-reiniciar-pasos-historial');
+  botonReiniciar?.addEventListener('click', () => {
+    if (!planSeleccionado?.id || !confirm('¿Reiniciar el progreso de los pasos de esta tarea?')) return;
+    reiniciarProgresoPlan(planSeleccionado.id);
+    seleccionarPlan(planSeleccionado);
+  });
   [botonRayo, botonCambiar].forEach(boton => boton?.addEventListener('click', () => {
     if (!planSeleccionado?.id) return;
-    window.location.href = `guia-detalle.html?plan_id=${encodeURIComponent(planSeleccionado.id)}`;
+    const metodo = obtenerMetodoPlan(planSeleccionado);
+    const modo = boton === botonRayo ? '&modo=interactivo' : '';
+    const destino = boton === botonRayo ? `${obtenerRutaMetodo(metodo)}.html` : 'metodos.html';
+    window.location.href = `${destino}?plan_id=${encodeURIComponent(planSeleccionado.id)}&metodo=${encodeURIComponent(metodo)}${modo}`;
   }));
+}
+
+function obtenerMetodoPlan(plan) {
+  return localStorage.getItem(`lumi_metodo_plan_${plan?.id}`) || plan?.metodo_estudio || 'Pomodoro';
+}
+
+function obtenerRutaMetodo(metodo) {
+  const clave = String(metodo).toLowerCase();
+  if (clave.includes('feyn')) return 'metodo-feynman';
+  if (clave.includes('recall')) return 'metodo-active-recall';
+  if (clave.includes('spaced') || clave.includes('repetition')) return 'metodo-spaced-repetition';
+  return 'metodo-pomodoro';
 }
 
 // Inicialización
@@ -282,4 +305,16 @@ function completarTareaGeneral(plan) {
   boton.textContent = 'Guardando...';
   completarTareaLocal(plan.id);
   renderizarCompletarTarea(plan);
+}
+
+function actualizarImagenMetodo(metodo) {
+  const imagen = document.getElementById('imagen-metodo-activo');
+  if (!imagen) return;
+  const clave = String(metodo).toLowerCase();
+  const metodos = clave.includes('feyn') ? ['feyman.png', 'Feynman']
+    : clave.includes('active') || clave.includes('recall') ? ['active_recall.png', 'Active Recall']
+      : clave.includes('spaced') || clave.includes('repetition') ? ['spaced_repetition.png', 'Spaced Repetition']
+        : ['pomodoro.png', 'Pomodoro'];
+  imagen.src = `../assets/${metodos[0]}`;
+  imagen.alt = metodos[1];
 }

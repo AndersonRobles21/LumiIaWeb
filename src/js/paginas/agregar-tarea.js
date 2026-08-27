@@ -6,6 +6,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('formulario-tarea');
   if (!form) return;
 
+  const fechaInput = document.getElementById('fecha');
+  if (fechaInput) {
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.min = hoy;
+    fechaInput.addEventListener('change', () => {
+      const esPasada = fechaInput.value && fechaInput.value < hoy;
+      fechaInput.setCustomValidity(esPasada ? 'Selecciona una fecha de hoy o posterior.' : '');
+      fechaInput.classList.toggle('campo-invalido', Boolean(esPasada));
+    });
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     validarYGuardar();
@@ -78,7 +89,7 @@ async function validarYGuardar() {
     });
 
     if (respuestaIA?.plan_id) {
-      window.location.href = `guia-detalle.html?plan_id=${encodeURIComponent(respuestaIA.plan_id)}`;
+      window.location.href = `historial.html?plan_id=${encodeURIComponent(respuestaIA.plan_id)}`;
       return;
     }
 

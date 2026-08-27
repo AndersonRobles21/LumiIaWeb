@@ -122,3 +122,9 @@
     border-bottom: var(--borde-cristal, 1px solid rgba(255, 255, 255, 0.1));
   }
 }
+
+.sidebar-logo-img { width: 132px; height: 48px; object-fit: contain; }
+
+@media (max-width: 768px) {
+  .sidebar-logo-img { width: 42px; height: 42px; }
+}

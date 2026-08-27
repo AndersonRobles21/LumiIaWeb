@@ -66,3 +66,14 @@ export async function obtenerPlanesUsuarioBD(usuario_id) {
     return [];
   }
 }
+
+export async function actualizarMetodoPlanBD(planId, metodo_estudio) {
+  const { data, error } = await supabase
+    .from('planes_estudio')
+    .update({ metodo_estudio })
+    .eq('id', planId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}

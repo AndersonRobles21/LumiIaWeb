@@ -19,9 +19,9 @@ export async function crearNavbar() {
     'dashboard.html': { titulo: 'Dashboard', subtitulo: 'Resumen de tu productividad' },
     'tareas.html': { titulo: 'Calendario', subtitulo: 'Organiza tus tareas por fecha' },
     'agregar-tarea.html': { titulo: 'Agregar tarea inteligente', subtitulo: 'Crea un plan de estudio personalizado' },
-    'guia-detalle.html': { titulo: 'Guía de Estudio', subtitulo: 'Métodos y técnicas' },
+    'metodos.html': { titulo: 'Métodos de estudio', subtitulo: 'Elige tu técnica de aprendizaje' },
     'historial.html': { titulo: 'Historial', subtitulo: 'Tu progreso a lo largo del tiempo' },
-    'recompensas.html': { titulo: 'Recompensas', subtitulo: 'Celebra tus avances' },
+    'gamificacion.html': { titulo: 'Tu Progreso', subtitulo: 'Celebra tus avances' },
     'app-movil.html': { titulo: 'App móvil', subtitulo: 'LUMI contigo donde estés' },
     'perfil.html': { titulo: 'Mi Perfil', subtitulo: 'Información personal' },
     'configuracion.html': { titulo: 'Configuración', subtitulo: 'Ajustes de la aplicación' },
@@ -42,11 +42,16 @@ export async function crearNavbar() {
     console.warn('No se pudo cargar el usuario del navbar:', error.message);
   }
 
-  contenedor.innerHTML = `
+ contenedor.innerHTML = `
     <div class="navbar">
-      <div class="navbar-titulo">
-        <h2>${info.titulo}</h2>
-        <span>${info.subtitulo}</span>
+      <div class="navbar-brand-section">
+        <a href="dashboard.html" class="navbar-logo-link" aria-label="Ir al Dashboard">
+          <img src="../assets/Lumi-logo.png" alt="Logo LUMI" class="navbar-logo-img">
+        </a>
+        <div class="navbar-titulo">
+          <h2>${info.titulo}</h2>
+          <span>${info.subtitulo}</span>
+        </div>
       </div>
 
       <div class="navbar-acciones">
@@ -63,7 +68,7 @@ export async function crearNavbar() {
     </div>
   `;
 
-  console.log('Navbar insertado correctamente');
+  console.log('Navbar insertado correctamente con logo oficial');
 }
 
 // Ejecutar cuando el DOM esté listo

@@ -102,6 +102,8 @@ body {
   border-color: #a855f7;
 }
 
+.campo input[type="date"].campo-invalido { border-color: #fb7185; box-shadow: 0 0 0 2px rgba(251, 113, 133, .16); }
+
 .campo-descripcion {
   position: relative;
 }
@@ -285,3 +287,5 @@ body {
     max-width: 100%;
   }
 }
+
+.consejo-tarea-img { display: block; width: 100%; max-width: 220px; height: auto; object-fit: contain; }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,7 @@
   <!-- Estilos de esta página -->
   <link rel="stylesheet" href="../css/paginas/perfil.css">
 </head>
+
 <body>
 
   <div class="dashboard-container">
@@ -53,35 +55,42 @@
               <div class="avatar-info">
                 <h3 id="avatar-nombre-display">Usuario</h3>
                 <span class="rol-badge">Estudiante ADSO</span>
+                <label class="boton-secundario boton-foto" for="perfil-foto">Cambiar foto</label>
+                <input id="perfil-foto" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                <img id="perfil-foto-preview" class="perfil-foto-preview" alt="Previsualización de foto de perfil" hidden>
               </div>
             </div>
 
             <div class="datos-basicos-usuario">
-              <div class="dato-usuario"><span>Nombre</span><strong id="nombre-usuario-visible">No disponible</strong></div>
-              <div class="dato-usuario"><span>Apellido</span><strong id="apellido-usuario-visible">No disponible</strong></div>
+              <div class="dato-usuario"><span>Nombre</span><strong id="nombre-usuario-visible">No disponible</strong>
+              </div>
+              <div class="dato-usuario"><span>Apellido</span><strong id="apellido-usuario-visible">No
+                  disponible</strong></div>
               <button type="button" id="btn-editar-nombre" class="boton-secundario">Editar nombre</button>
             </div>
 
             <div id="editor-nombre" hidden>
-            <div class="campo">
-              <label for="perfil-nombre">Nombre</label>
-              <input type="text" id="perfil-nombre" name="nombre" placeholder="Tu nombre" required>
-            </div>
+              <div class="campo">
+                <label for="perfil-nombre">Nombre</label>
+                <input type="text" id="perfil-nombre" name="nombre" placeholder="Tu nombre" required>
+              </div>
 
-            <div class="campo">
-              <label for="perfil-apellido">Apellido</label>
-              <input type="text" id="perfil-apellido" name="apellido" placeholder="Tu apellido">
-            </div>
+              <div class="campo">
+                <label for="perfil-apellido">Apellido</label>
+                <input type="text" id="perfil-apellido" name="apellido" placeholder="Tu apellido">
+              </div>
 
-            <div class="acciones-nombre" id="acciones-nombre">
-              <button type="button" id="btn-cancelar-nombre" class="boton-secundario">Cancelar</button>
-              <button type="button" id="btn-guardar-nombre" class="boton-principal boton-principal-compacto">Guardar</button>
-            </div>
+              <div class="acciones-nombre" id="acciones-nombre">
+                <button type="button" id="btn-cancelar-nombre" class="boton-secundario">Cancelar</button>
+                <button type="button" id="btn-guardar-nombre"
+                  class="boton-principal boton-principal-compacto">Guardar</button>
+              </div>
             </div>
 
             <div class="campo">
               <label for="perfil-objetivo">Objetivo de estudio</label>
-              <input type="text" id="perfil-objetivo" name="objetivo" placeholder="Ej: Desarrollar el proyecto LUMI" required>
+              <input type="text" id="perfil-objetivo" name="objetivo" placeholder="Ej: Desarrollar el proyecto LUMI"
+                required>
             </div>
 
             <div class="campo">
@@ -96,75 +105,53 @@
             </div>
           </section>
 
-          <!-- TARJETA 2: Disponibilidad y Tiempo Libre Semanal -->
+          <!-- TARJETA 2: Horarios Libres de Estudio -->
           <section class="card-perfil card-horarios">
-
-            <!-- Mascot Banner -->
             <div class="mascota-bocadillo-contenedor">
-              <div class="mascota-icono">🤖</div>
-              <div class="bocadillo-chat">
-                ¡Hola! Agrega tus <strong>bloques de tiempo libre</strong>. Usaré esta disponibilidad para distribuirte las tareas en el <strong>calendario de forma equilibrada</strong>.
-              </div>
+              <div class="mascota-icono"><img src="../assets/chat_ia.png" alt="Mascota IA"></div>
+              <p>Agrega tus <strong>horarios libres de estudio</strong> para organizar tu calendario.</p>
             </div>
 
             <div class="card-header flex-header">
-              <h2>🗓️ Disponibilidad Semanal</h2>
+              <h2>Horarios Libres de Estudio</h2>
               <span class="horas-promedio-tag" id="horas-promedio-tag">0 hrs/día disp.</span>
             </div>
 
-            <!-- Formulario para ingresar horarios -->
             <div class="agregar-horario-bar">
               <div class="campo-horario">
                 <label for="horario-dia">Día</label>
                 <select id="horario-dia">
-                  <option value="Lunes">Lunes</option>
-                  <option value="Martes">Martes</option>
-                  <option value="Miércoles">Miércoles</option>
-                  <option value="Jueves">Jueves</option>
-                  <option value="Viernes">Viernes</option>
-                  <option value="Sábado">Sábado</option>
-                  <option value="Domingo">Domingo</option>
+                  <option value="Lunes">Lunes</option><option value="Martes">Martes</option><option value="Miércoles">Miércoles</option><option value="Jueves">Jueves</option><option value="Viernes">Viernes</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option>
                 </select>
               </div>
-
-              <div class="campo-horario">
-                <label for="horario-inicio">Hora Inicio</label>
-                <input type="time" id="horario-inicio" >
+              <div class="campo-horario campo-hora">
+                <label for="horario-inicio">Hora de inicio</label>
+                <div class="selector-hora"><select id="horario-inicio" aria-label="Hora de inicio"><option value="07">07:00</option><option value="08">08:00</option><option value="09">09:00</option><option value="10">10:00</option><option value="11">11:00</option><option value="12">12:00</option><option value="01">01:00</option><option value="02">02:00</option><option value="03">03:00</option><option value="04">04:00</option><option value="05">05:00</option><option value="06">06:00</option></select><select id="horario-inicio-periodo" aria-label="Periodo de inicio"><option value="AM">AM</option><option value="PM">PM</option></select></div>
               </div>
-
-              <div class="campo-horario">
-                <label for="horario-fin">Hora Fin</label>
-                <input type="time" id="horario-fin" >
+              <div class="campo-horario campo-hora">
+                <label for="horario-fin">Hora de fin</label>
+                <div class="selector-hora"><select id="horario-fin" aria-label="Hora de fin"><option value="08">08:00</option><option value="09">09:00</option><option value="10">10:00</option><option value="11">11:00</option><option value="12">12:00</option><option value="01">01:00</option><option value="02">02:00</option><option value="03">03:00</option><option value="04">04:00</option><option value="05">05:00</option><option value="06">06:00</option><option value="07">07:00</option></select><select id="horario-fin-periodo" aria-label="Periodo de fin"><option value="AM">AM</option><option value="PM" selected>PM</option></select></div>
               </div>
-
-              <button type="button" id="btn-agregar-horario" class="boton-agregar">
-                + Agregar
-              </button>
+              <button type="button" id="btn-agregar-horario" class="boton-agregar">+ Agregar</button>
             </div>
 
-            <!-- Alertas de validación -->
             <p id="error-horario" class="mensaje-error-horario" hidden></p>
-
-            <!-- Grid de días (Lunes a Domingo) -->
-            <div class="semana-grid" id="contenedor-semana">
-              <!-- Renderizado dinámico desde perfil.js -->
-            </div>
-
+            <div class="semana-grid" id="contenedor-semana"></div>
           </section>
 
-          <!-- Acciones Globales -->
-          <div class="perfil-acciones-footer">
-            <span id="estado-guardado" class="estado-mensaje" role="status"></span>
-            <button type="submit" id="btn-guardar-perfil" class="boton-principal">
-              Guardar Perfil y Horarios
-            </button>
-          </div>
+  <!-- Acciones Globales -->
+  <div class="perfil-acciones-footer">
+    <span id="estado-guardado" class="estado-mensaje" role="status"></span>
+    <button type="submit" id="btn-guardar-perfil" class="boton-principal">
+      Guardar Perfil y Horarios
+    </button>
+  </div>
 
-        </form>
+  </form>
 
-      </main>
+  </main>
 
-    </div>
+  </div>
 
   </div>
 
@@ -175,4 +162,5 @@
   <script type="module" src="../js/componentes/tema.js"></script>
 
 </body>
+
 </html>

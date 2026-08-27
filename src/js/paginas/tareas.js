@@ -74,7 +74,7 @@ function renderizarTareas() {
     return `
       <div class="tarea-card ${completadaClass}" data-id="${tarea.id}">
         <div class="tarea-check">
-          <input type="checkbox" ${tarea.completada ? 'checked' : ''} onchange="toggleCompletada(${JSON.stringify(tarea.id)})">
+          <input class="tarea-check-input" type="checkbox" ${tarea.completada ? 'checked' : ''} aria-label="${tarea.completada ? 'Tarea completada' : 'Marcar tarea como completada'}" onchange="toggleCompletada(${JSON.stringify(tarea.id)})">
         </div>
         <div class="tarea-contenido">
           <h3 class="tarea-titulo">${tarea.nombre}</h3>

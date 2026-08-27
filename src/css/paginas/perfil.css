@@ -10,13 +10,19 @@
   color: var(--color-texto-principal, #ffffff);
 }
 
+
 .dashboard-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
-
+.mascota-icono img {
+    width: 1em;
+    height: 1em;
+    object-fit: contain;
+    vertical-align: middle;
+}
 .dashboard-content {
   flex: 1;
   padding: var(--espacio-xl, 2rem);
@@ -116,6 +122,10 @@
   font-weight: 700;
   margin-bottom: 4px;
 }
+
+.boton-foto { display: inline-block; margin-top: .55rem; cursor: pointer; }
+.perfil-foto-preview { display: block; width: 42px; height: 42px; margin-top: .5rem; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-cyan); }
+.avatar-badge.avatar-con-foto { background-size: cover; background-position: center; color: transparent; }
 
 .rol-badge {
   font-size: 0.75rem;
@@ -253,6 +263,10 @@
   font-size: 0.85rem;
   outline: none;
 }
+
+.campo-hora { min-width: 0; }
+.selector-hora { display: grid; grid-template-columns: minmax(0, 1fr) 4.2rem; gap: .35rem; }
+.selector-hora select { min-width: 0; }
 
 .campo-horario input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
@@ -423,6 +437,18 @@
   .semana-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+@media (max-width: 720px) {
+  .agregar-horario-bar { grid-template-columns: 1fr 1fr; }
+  .agregar-horario-bar .boton-agregar { grid-column: 1 / -1; }
+  .semana-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px) {
+  .agregar-horario-bar { grid-template-columns: 1fr; }
+  .agregar-horario-bar .boton-agregar { grid-column: auto; }
+  .semana-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {

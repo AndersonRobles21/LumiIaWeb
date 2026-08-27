@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,10 +13,11 @@
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/paginas/calendario.css">
 </head>
+
 <body>
 
   <div class="dashboard-container">
-    
+
     <!-- Sidebar -->
     <div id="sidebar-container"></div>
 
@@ -34,10 +36,10 @@
 
         <!-- Layout 2 columnas -->
         <div class="calendario-grid-main">
-          
+
           <!-- Columna Izquierda: Mes y Métricas -->
           <div class="columna-izquierda">
-            
+
             <div class="card-calendario-mes">
               <div class="header-mes">
                 <button type="button" class="btn-nav-mes" id="btn-mes-prev" aria-label="Mes anterior">&lt;</button>
@@ -81,7 +83,7 @@
 
           <!-- Columna Derecha: Timeline y LUMI -->
           <div class="columna-derecha">
-            
+
             <div class="card-timeline-dia">
               <div class="timeline-header">
                 <h2 id="titulo-dia-seleccionado">Cargando...</h2>
@@ -94,7 +96,9 @@
                 <h3>Asistente LUMI</h3>
                 <p>Selecciona un día para visualizar el plan de estudio generado.</p>
               </div>
-              <div class="lumii-avatar">🤖</div>
+              <div class="lumii-avatar">
+                <img src="../assets/chat_ia.png" alt="Chat IA">
+              </div>
             </div>
 
           </div>
@@ -110,4 +114,5 @@
   <script type="module" src="../js/paginas/calendario.js"></script>
   <script type="module" src="../js/componentes/tema.js"></script>
 </body>
+
 </html>

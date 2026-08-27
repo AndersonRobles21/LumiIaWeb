@@ -20,6 +20,20 @@ export function estaTareaCompletada(planId) {
   return Boolean(obtenerProgresoTareas()[String(planId)]?.completada);
 }
 
+export function obtenerEstadoTareaLocal(tareaId, estadoPredeterminado = false) {
+  if (tareaId == null || tareaId === '') return Boolean(estadoPredeterminado);
+  const estados = leerObjeto('lumi_estados_tareas');
+  return Object.prototype.hasOwnProperty.call(estados, String(tareaId)) ? Boolean(estados[String(tareaId)]) : Boolean(estadoPredeterminado);
+}
+
+export function guardarEstadoTareaLocal(tareaId, completada) {
+  if (tareaId == null || tareaId === '') return;
+  const estados = leerObjeto('lumi_estados_tareas');
+  estados[String(tareaId)] = Boolean(completada);
+  localStorage.setItem('lumi_estados_tareas', JSON.stringify(estados));
+  window.dispatchEvent(new CustomEvent('lumi:tarea-estado-actualizado', { detail: { tareaId: String(tareaId), completada: Boolean(completada) } }));
+}
+
 export function obtenerPasosCompletados(planId) {
   if (planId == null || planId === '') return [];
   const pasos = obtenerProgresoTareas()[String(planId)]?.pasos_completados;
@@ -28,6 +42,21 @@ export function obtenerPasosCompletados(planId) {
 
 export function estaPasoCompletado(planId, numeroPaso) {
   return obtenerPasosCompletados(planId).includes(Number(numeroPaso));
+}
+
+export function reiniciarProgresoPlan(planId) {
+  if (planId == null || planId === '') return false;
+  const clavePlan = String(planId);
+  const progreso = obtenerProgresoTareas();
+  if (!progreso[clavePlan]?.pasos_completados) return false;
+
+  const estadoPlan = { ...progreso[clavePlan] };
+  delete estadoPlan.pasos_completados;
+  if (Object.keys(estadoPlan).length) progreso[clavePlan] = estadoPlan;
+  else delete progreso[clavePlan];
+  guardarObjeto(CLAVE_PROGRESO, progreso);
+  window.dispatchEvent(new CustomEvent('lumi:pasos-reiniciados', { detail: { planId: clavePlan } }));
+  return true;
 }
 
 export function completarPaso(planId, numeroPaso) {

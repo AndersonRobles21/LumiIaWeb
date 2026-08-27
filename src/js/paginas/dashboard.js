@@ -1,7 +1,7 @@
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
 import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
-import { estaTareaCompletada, obtenerGamificacionLocal } from '../utilidades/progreso-tareas.js';
+import { estaTareaCompletada, obtenerEstadoTareaLocal, obtenerGamificacionLocal } from '../utilidades/progreso-tareas.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await inicializarDashboard();
@@ -83,7 +83,7 @@ function renderizarPlanesEstudio(planes) {
   contenedorLista.innerHTML = planesUnicos.map(plan => {
     const planId = plan.id || plan.plan_id;
     const titulo = plan.nombre || plan.titulo || 'Tarea de estudio';
-    const completadaLocal = estaTareaCompletada(planId);
+    const completadaLocal = estaTareaCompletada(planId) || obtenerEstadoTareaLocal(planId, plan.completada);
     const progreso = completadaLocal ? 100 : plan.progreso ?? plan.porcentaje ?? 0;
     const estado = completadaLocal ? '✅ Completada' : plan.estado || 'PENDIENTE';
 
@@ -124,12 +124,12 @@ function renderizarPlanesEstudio(planes) {
     `;
   }).join('');
 
-  // Asignar eventos de clic a las flechas para navegar a la guía de detalle
+  // Asignar eventos de clic a las flechas para abrir el plan en Historial IA
   contenedorLista.querySelectorAll('.btn-flecha-tarea').forEach(boton => {
     boton.addEventListener('click', (e) => {
       const id = e.currentTarget.getAttribute('data-plan-id');
       if (id) {
-        window.location.href = `guia-detalle.html?plan_id=${id}`;
+        window.location.href = `historial.html?plan_id=${encodeURIComponent(id)}`;
       }
     });
   });
@@ -147,6 +147,17 @@ function actualizarIndicadoresLocales() {
     const elemento = document.getElementById(id);
     if (elemento) elemento.textContent = valor;
   });
+  actualizarDiasRacha(datos.racha);
+}
+
+function actualizarDiasRacha(racha) {
+  const dias = document.querySelectorAll('.dias-racha-grid .dia-item');
+  const diasActivos = Math.min(7, Math.max(0, Number(racha) || 0));
+  dias.forEach((dia, indice) => {
+    dia.classList.toggle('activo', indice >= 7 - diasActivos);
+    dia.querySelector('.circulo-fuego')?.classList.toggle('inactivo', indice < 7 - diasActivos);
+  });
 }
 
 window.addEventListener('lumi:progreso-actualizado', actualizarIndicadoresLocales);
+window.addEventListener('lumi:tarea-estado-actualizado', () => inicializarDashboard());

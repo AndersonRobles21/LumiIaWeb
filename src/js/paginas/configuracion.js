@@ -20,31 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formConfig) {
     formConfig.addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const claveActual = document.getElementById('clave-actual')?.value;
-      const claveNueva = document.getElementById('clave-nueva')?.value;
-      const claveConfirmar = document.getElementById('clave-confirmar')?.value;
-
-      if (claveNueva || claveConfirmar) {
-        if (claveNueva !== claveConfirmar) {
-          alert('La nueva contraseña y su confirmación no coinciden.');
-          return;
-        }
-
-        if (claveNueva.length < 6) {
-          alert('La contraseña debe tener al menos 6 caracteres.');
-          return;
-        }
-
-        try {
-          // Aquí conectas tu llamada al backend/servicio de Supabase
-          // await actualizarContrasena(claveNueva);
-          alert('Contraseña actualizada correctamente.');
-          formConfig.reset();
-        } catch (error) {
-          alert(`Error al actualizar la contraseña: ${error.message}`);
-        }
-      }
+      // Aquí puedes manejar el guardado de preferencias de estudio en el futuro
+      alert('Preferencias guardadas correctamente.');
     });
   }
 });

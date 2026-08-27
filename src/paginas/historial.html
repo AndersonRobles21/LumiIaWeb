@@ -47,21 +47,24 @@
           <main class="card-chat-tutor">
             <header class="chat-header">
               <div class="chat-header-info">
-                <div class="avatar-lumi-md">🤖</div>
+                <img class="avatar-lumi-md" src="../assets/chat_ia.png" alt="LUMI">
                 <div>
                   <h2 id="chat-titulo-tarea">Selecciona una tarea</h2>
                   <p class="chat-consejo">
-                    💡 <strong>Método activo:</strong> <span id="nombre-metodo-activo">Cargando...</span>
+                    <span class="etiqueta-metodo">Método activo:</span> <img id="imagen-metodo-activo" class="imagen-metodo-activo" src="../assets/pomodoro.png" alt="Pomodoro"> <span id="nombre-metodo-activo">Cargando...</span>
                   </p>
                 </div>
               </div>
-              <button class="btn-rayo-metodo" id="btn-metodo-metrica" title="Ver método de estudio">⚡</button>
+              <div class="acciones-chat-header">
+                <button class="btn-rayo-metodo" id="btn-metodo-metrica" title="Ver método de estudio" aria-label="Ver método de estudio">⚡</button>
+                <button class="btn-reiniciar-pasos" id="btn-reiniciar-pasos-historial" type="button" title="Reiniciar pasos" aria-label="Reiniciar pasos">↻</button>
+              </div>
             </header>
 
             <div class="chat-body-stream" id="chat-body-stream">
               <!-- Mensaje de LUMI -->
               <div class="mensaje-lumi">
-                <div class="avatar-lumi-sm">🤖</div>
+                <img class="avatar-lumi-sm" src="../assets/chat_ia.png" alt="LUMI">
                 <div class="burbuja-lumi">
                   <p id="texto-saludo-lumi">
                     ¡Hola! Selecciona una tarea del panel izquierdo para revisar su plan de estudio y actividades.

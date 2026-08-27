@@ -51,7 +51,9 @@ async function cargarDisponibilidad() {
     const datos = respuesta?.data || respuesta || {};
     const perfil = datos.perfil || datos.perfil_estudio || {};
     const horarios = datos.horarios || perfil.horarios || perfil.horario || [];
-    localStorage.setItem('lumi_horarios_estudio', JSON.stringify({ dias: obtenerDiasDisponibles(horarios), horarios }));
+    if (Array.isArray(horarios) && horarios.length > 0) {
+      localStorage.setItem('lumi_horarios_estudio', JSON.stringify({ dias: obtenerDiasDisponibles(horarios), horarios }));
+    }
   } catch {
     // Mantener el último respaldo local si el backend no responde.
   }
@@ -122,12 +124,16 @@ function obtenerIndiceDiaSemana(anio, mes, dia) {
   return diaSemana === 0 ? 6 : diaSemana - 1;
 }
 
-function normalizarCategoria(cat) {
-  if (!cat) return 'entrega';
-  const c = String(cat).toLowerCase();
-  if (c.includes('examen') || c.includes('evaluacion') || c.includes('parcial')) return 'examen';
+function normalizarCategoria(evento) {
+  const texto = typeof evento === 'object'
+    ? [evento.titulo, evento.nombre, evento.descripcion, evento.detalle, evento.categoria, evento.tipo, evento.prioridad].filter(Boolean).join(' ')
+    : evento;
+  if (!texto) return 'entrega';
+  const c = String(texto).toLocaleLowerCase('es');
+  if (c.includes('examen') || c.includes('evaluacion') || c.includes('evaluación') || c.includes('prueba') || c.includes('parcial')) return 'examen';
+  if (c.includes('proyecto')) return 'proyecto';
   if (c.includes('clase') || c.includes('estudio')) return 'clase';
-  if (c.includes('proyecto') || c.includes('taller')) return 'proyecto';
+  if (c.includes('taller')) return 'proyecto';
   return 'entrega';
 }
 
@@ -203,7 +209,7 @@ function generarPuntosCategorias(tareas, esDiaEstudioPerfil) {
   }
 
   tareas.forEach(tarea => {
-    const cat = normalizarCategoria(tarea.categoria || tarea.prioridad);
+    const cat = normalizarCategoria(tarea);
     categorias.add(cat);
   });
 
@@ -245,7 +251,7 @@ function renderizarTimelineDia(fecha) {
   }
 
   contenedorTimeline.innerHTML = tareasDelDia.map(tarea => {
-    const cat = normalizarCategoria(tarea.categoria || tarea.prioridad);
+    const cat = normalizarCategoria(tarea);
     const hora = tarea.hora || '09:00 AM';
 
     return `
@@ -256,7 +262,7 @@ function renderizarTimelineDia(fecha) {
         <div class="linea-indicador ${cat}"></div>
         <div class="card-tarea-timeline">
           <div class="header-tarea-item">
-            <h3>${(tarea.plan_id || tarea.id) ? `<a href="guia-detalle.html?plan_id=${encodeURIComponent(tarea.plan_id || tarea.id)}">${escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</a>` : escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</h3>
+            <h3>${(tarea.plan_id || tarea.id) ? `<a href="historial.html?plan_id=${encodeURIComponent(tarea.plan_id || tarea.id)}">${escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</a>` : escapar(tarea.titulo || tarea.nombre || 'Tarea sin título')}</h3>
             <span class="badge-cat ${cat}">${escapar(cat)}</span>
           </div>
           ${tarea.descripcion ? `<p class="desc-tarea">${escapar(tarea.descripcion)}</p>` : ''}

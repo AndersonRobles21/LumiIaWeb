@@ -58,7 +58,7 @@ async function cargarDatosPerfil() {
     const localCache = JSON.parse(localStorage.getItem('lumi_horarios_estudio') || '{}');
     const horariosGuardadosLocal = localCache.horarios || [];
 
-    if (usuarioActual?.id && Array.isArray(datosHorarios)) {
+    if (usuarioActual?.id && Array.isArray(datosHorarios) && datosHorarios.length > 0) {
       horariosLocales = normalizarHorariosPerfil(datosHorarios);
     } else if (Array.isArray(horariosGuardadosLocal) && horariosGuardadosLocal.length > 0) {
       horariosLocales = horariosGuardadosLocal;
@@ -67,6 +67,7 @@ async function cargarDatosPerfil() {
     }
 
     renderizarSemana();
+    cargarFotoPerfil();
   } catch (error) {
     console.error('Error al cargar datos del perfil:', error);
     // En caso de fallo de red, intentar rescatar lo que haya en localStorage
@@ -87,12 +88,39 @@ function inicializarEventos() {
   const btnEditarNombre = document.getElementById('btn-editar-nombre');
   const btnCancelarNombre = document.getElementById('btn-cancelar-nombre');
   const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
+  const inputFoto = document.getElementById('perfil-foto');
 
   if (btnAgregar) btnAgregar.addEventListener('click', agregarBloqueHorario);
   if (formulario) formulario.addEventListener('submit', guardarPerfil);
   if (btnEditarNombre) btnEditarNombre.addEventListener('click', () => alternarEditorNombre(true));
   if (btnCancelarNombre) btnCancelarNombre.addEventListener('click', cancelarEdicionNombre);
   if (btnGuardarNombre) btnGuardarNombre.addEventListener('click', guardarNombreDesdeEditor);
+  if (inputFoto) inputFoto.addEventListener('change', previsualizarFotoPerfil);
+}
+
+function cargarFotoPerfil() {
+  const foto = localStorage.getItem('lumi_foto_perfil');
+  if (foto) mostrarFotoPerfil(foto);
+}
+
+function previsualizarFotoPerfil(evento) {
+  const archivo = evento.target.files?.[0];
+  if (!archivo) return;
+  if (!archivo.type.startsWith('image/')) return;
+  const lector = new FileReader();
+  lector.addEventListener('load', () => {
+    const foto = String(lector.result);
+    localStorage.setItem('lumi_foto_perfil', foto);
+    mostrarFotoPerfil(foto);
+  });
+  lector.readAsDataURL(archivo);
+}
+
+function mostrarFotoPerfil(foto) {
+  const avatar = document.getElementById('perfil-avatar');
+  const preview = document.getElementById('perfil-foto-preview');
+  if (avatar) { avatar.textContent = ''; avatar.style.backgroundImage = `url("${foto}")`; avatar.classList.add('avatar-con-foto'); }
+  if (preview) { preview.src = foto; preview.hidden = false; }
 }
 
 function alternarEditorNombre(visible) {
@@ -126,10 +154,12 @@ function agregarBloqueHorario() {
   const diaSelect = document.getElementById('horario-dia');
   const inicioInput = document.getElementById('horario-inicio');
   const finInput = document.getElementById('horario-fin');
+  const inicioPeriodo = document.getElementById('horario-inicio-periodo');
+  const finPeriodo = document.getElementById('horario-fin-periodo');
 
   const dia = diaSelect.value;
-  const hora_inicio = inicioInput.value;
-  const hora_fin = finInput.value;
+  const hora_inicio = convertirHora24(inicioInput.value, inicioPeriodo.value);
+  const hora_fin = convertirHora24(finInput.value, finPeriodo.value);
 
   if (!hora_inicio || !hora_fin) {
     mostrarErrorHorario('Selecciona una hora de inicio y fin válidas.');
@@ -142,6 +172,7 @@ function agregarBloqueHorario() {
   try {
     validarHorarios(horariosSimulados);
     horariosLocales = horariosSimulados;
+    guardarEnLocalStorage();
     
     inicioInput.value = '';
     finInput.value = '';
@@ -156,7 +187,15 @@ function eliminarBloqueHorario(index) {
   if (!window.confirm('¿Eliminar este bloque de horario?')) return;
   
   horariosLocales.splice(index, 1);
+  guardarEnLocalStorage();
   renderizarSemana();
+}
+
+function convertirHora24(hora12, periodo) {
+  let hora = Number(hora12);
+  if (hora === 12) hora = 0;
+  if (periodo === 'PM') hora += 12;
+  return `${String(hora).padStart(2, '0')}:00`;
 }
 
 function guardarEnLocalStorage() {
