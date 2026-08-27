@@ -1,82 +1,60 @@
-/**
- * sidebar.js
- * Componente reutilizable del Sidebar de LUMI
- */
+function renderSidebar() {
+  const sidebarContainer = document.getElementById('sidebar-container');
+  if (!sidebarContainer) return;
 
-import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
+  const ruta = window.location.pathname;
+  // Si está en la raíz o en index, asigna dashboard como activo por defecto
+  const esDashboard = ruta.includes('dashboard') || ruta === '/' || ruta.endsWith('/index.html');
 
-export async function crearSidebar() {
-  const contenedor = document.getElementById('sidebar-container');
-
-  if (!contenedor) {
-    return;
-  }
-
-  const paginaActual = window.location.pathname.split('/').pop() || 'dashboard.html';
-  let nombreCompleto = '';
-  let rol = '';
-  try {
-    const usuario = await obtenerUsuarioActual();
-    if (usuario?.id) {
-      const respuesta = await obtenerUsuarioConPerfil(usuario.id);
-      const datos = respuesta?.usuario || respuesta?.user || respuesta;
-      nombreCompleto = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ');
-      rol = datos?.rol || datos?.rol_nombre || (datos?.rol_id ? `Rol ${datos.rol_id}` : '');
-    }
-  } catch (error) {
-    console.warn('No se pudo cargar el usuario del sidebar:', error.message);
-  }
-
-  const menu = [
-    { nombre: 'Dashboard', href: 'dashboard.html', icono: '🏠' },
-    { nombre: 'Calendario', href: 'tareas.html', icono: '📅' },
-    { nombre: 'Agregar tarea inteligente', href: 'agregar-tarea.html', icono: '➕' },
-    { nombre: 'Historial de IA', href: 'historial.html', icono: '📊' },
-    { nombre: 'Recompensas', href: 'recompensas.html', icono: '🏆' },
-    { nombre: 'Perfil', href: 'perfil.html', icono: '👤' },
-    { nombre: 'Configuración', href: 'configuracion.html', icono: '⚙️' },
-    { nombre: 'Ayuda y privacidad', href: 'informacion.html', icono: '❓' },
+  const menuItems = [
+    { href: 'dashboard.html', icono: '🏠', texto: 'Dashboard', active: esDashboard },
+    { href: 'calendario.html', icono: '📅', texto: 'Calendario', active: ruta.includes('calendario') },
+    { href: 'agregar-tarea.html', icono: '➕', texto: 'Agregar tarea', active: ruta.includes('agregar-tarea') },
+    { href: 'historial.html', icono: '📊', texto: 'Historial de IA', active: ruta.includes('historial') },
+    { href: 'gamificacion.html', icono: '✦', texto: 'Tu Progreso', active: ruta.includes('gamificacion') || ruta.includes('recompensas') },
+    { href: 'app-movil.html', icono: '📱', texto: 'App móvil', active: ruta.includes('app-movil') },
+    { href: 'perfil.html', icono: '👤', texto: 'Perfil', active: ruta.includes('perfil') },
+    { href: 'configuracion.html', icono: '⚙️', texto: 'Configuración', active: ruta.includes('configuracion') },
+    { href: 'informacion.html', icono: '❓', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') }
   ];
 
-  const linksHTML = menu.map(item => {
-    const activo = paginaActual === item.href ? 'activo' : '';
-    return `
-      <a href="${item.href}" class="sidebar-link ${activo}">
-        <span class="icono">${item.icono}</span>
-        <span>${item.nombre}</span>
-      </a>
-    `;
-  }).join('');
-
-  contenedor.innerHTML = `
-    <div class="sidebar">
+  sidebarContainer.innerHTML = `
+    <aside class="lumi-sidebar" aria-label="Navegación principal">
       <div class="sidebar-logo">
-        <div class="logo-icon">L</div>
-        <div class="logo-texto">LUMI</div>
+        <img src="../assets/Lumi-logo.png" alt="Logo LUMI" class="sidebar-logo-img">
       </div>
 
-      <nav class="sidebar-nav">
-        ${linksHTML}
+      <nav class="sidebar-menu">
+        ${menuItems.map(item => `
+          <a href="${item.href}" 
+             class="menu-item ${item.active ? 'active' : ''}" 
+             ${item.active ? 'aria-current="page"' : ''}>
+            <span class="item-icono" aria-hidden="true">${item.icono}</span>
+            <span class="item-texto">${item.texto}</span>
+          </a>
+        `).join('')}
       </nav>
 
       <div class="sidebar-footer">
-        <div class="sidebar-usuario">
-          <div class="avatar">${nombreCompleto ? nombreCompleto.charAt(0).toUpperCase() : ''}</div>
-          <div class="info">
-            <span class="nombre">${nombreCompleto}</span>
-            <span class="rol">${rol}</span>
-          </div>
-        </div>
+        <button id="btn-logout" class="menu-item btn-cerrar-sesion" type="button">
+          <span class="item-icono" aria-hidden="true">🚪</span>
+          <span class="item-texto">Cerrar sesión</span>
+        </button>
       </div>
-    </div>
+    </aside>
   `;
 
+  // Evento para cerrar sesión
+  document.getElementById('btn-logout')?.addEventListener('click', () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
 }
 
-// Ejecutar cuando el DOM esté listo
+// Ejecución segura sin importar cómo o cuándo se cargue el script
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', crearSidebar);
+  document.addEventListener('DOMContentLoaded', renderSidebar);
 } else {
-  crearSidebar();
+  renderSidebar();
 }

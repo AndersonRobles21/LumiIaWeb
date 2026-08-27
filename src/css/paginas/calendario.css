@@ -1,0 +1,472 @@
+/* ============================================================
+   ESTRUCTURA GENERAL DEL DASHBOARD
+   ============================================================ */
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.dashboard-content {
+  padding: 24px;
+  flex: 1;
+}
+
+/* ============================================================
+   HEADER DE CALENDARIO
+   ============================================================ */
+
+.calendario-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.calendario-header-top h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.calendario-header-top p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.badge-hoy {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+/* ============================================================
+   LAYOUT EN 2 COLUMNAS
+   ============================================================ */
+
+.calendario-grid-main {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .calendario-grid-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   COLUMNA IZQUIERDA: CALENDARIO Y MÉTRICAS
+   ============================================================ */
+
+.card-calendario-mes {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.header-mes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-mes {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.btn-nav-mes {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-nav-mes:hover {
+  background: rgba(192, 132, 252, 0.2);
+  border-color: #c084fc;
+}
+
+/* Grid de días */
+.grid-dias-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-weight: 700;
+  color: #cbd5e1; /* Mayor contraste para los nombres de los días */
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.grid-dias-mes {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.dia-cell {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.dia-cell:hover:not(.inactivo) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dia-cell.inactivo {
+  color: #475569;
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.dia-cell.seleccionado {
+  background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+  border: 1px solid #c084fc;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.puntos-dia {
+  display: flex;
+  gap: 3px;
+  position: absolute;
+  bottom: 6px;
+}
+
+.punto-categoria {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.punto-categoria.entrega, .item-leyenda.entrega .dot { background: #c084fc; }
+.punto-categoria.examen, .item-leyenda.examen .dot { background: #ef4444; }
+.punto-categoria.clase, .item-leyenda.clase .dot { background: #38bdf8; }
+.punto-categoria.proyecto, .item-leyenda.proyecto .dot { background: #fbbf24; }
+.punto-categoria.otro, .item-leyenda.otro .dot { background: #94a3b8; }
+
+.leyenda-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.item-leyenda {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.item-leyenda .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Métricas del día */
+.card-metricas-dia {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricas-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono-metricas {
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.metricas-info h3 {
+  font-size: 1.4rem;
+  margin: 0;
+  color: #ffffff;
+}
+
+.metricas-info p {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.tiempo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tiempo-info span {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.tiempo-info strong {
+  font-size: 0.95rem;
+  color: #e2e8f0;
+}
+
+.progreso-circular-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progreso-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: conic-gradient(#c084fc var(--porcentaje), rgba(255, 255, 255, 0.1) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.progreso-ring::before {
+  content: '';
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+.progreso-ring span {
+  position: relative;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.label-completado {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   COLUMNA DERECHA: TIMELINE Y LUMII
+   ============================================================ */
+
+.card-timeline-dia {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  min-height: 320px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.timeline-header h2 {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.btn-icono-cal {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.contenedor-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Item Timeline */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 70px 4px 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.hora-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.linea-indicador {
+  width: 4px;
+  border-radius: 4px;
+  background: #475569;
+}
+
+.linea-indicador.entrega { background: #c084fc; }
+.linea-indicador.examen { background: #ef4444; }
+.linea-indicador.clase { background: #38bdf8; }
+.linea-indicador.proyecto { background: #fbbf24; }
+
+.card-tarea-timeline {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.header-tarea-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.header-tarea-item h3 {
+  font-size: 0.95rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.badge-cat {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.badge-cat.entrega { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+.badge-cat.examen { background: rgba(244, 114, 182, 0.15); color: #f472b6; }
+.badge-cat.clase { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+.badge-cat.proyecto { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+.desc-tarea {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0 0 6px 0;
+}
+
+.materia-sub {
+  font-size: 0.7rem;
+  color: #64748b;
+  display: block;
+}
+
+.tareas-vacio-cal {
+  text-align: center;
+  padding: 40px 10px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Widget Lumii */
+.card-asistente-lumii {
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.6) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lumii-content h3 {
+  font-size: 1rem;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+.lumii-content p {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  margin: 0 0 14px 0;
+}
+
+.btn-lumii-accion {
+  background: #c084fc;
+  color: #0f172a;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.btn-lumii-accion:hover {
+  transform: scale(1.03);
+}
+
+.lumii-avatar {
+  font-size: 2.5rem;
+}
+
+.puntos-dia small { display: block; margin-top: 0.25rem; font-size: 0.65rem; color: var(--color-texto-secundario, #94a3b8); }
+.card-tarea-timeline h3 a { color: inherit; text-decoration: none; }
+.card-tarea-timeline h3 a:hover { color: var(--color-cyan-neon); }
+.timeline-item.completada, .timeline-item.completed { opacity: 0.65; }

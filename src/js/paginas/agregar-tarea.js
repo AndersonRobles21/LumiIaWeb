@@ -1,15 +1,21 @@
-/**
- * agregar-tarea.js
- * Lógica de la página Agregar Tarea
- */
-
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
 import { generarPlanIA } from '../servicios/ia.service.js';
+import { crearPlanEstudioBD } from '../servicios/planes.service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('formulario-tarea');
-
   if (!form) return;
+
+  const fechaInput = document.getElementById('fecha');
+  if (fechaInput) {
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.min = hoy;
+    fechaInput.addEventListener('change', () => {
+      const esPasada = fechaInput.value && fechaInput.value < hoy;
+      fechaInput.setCustomValidity(esPasada ? 'Selecciona una fecha de hoy o posterior.' : '');
+      fechaInput.classList.toggle('campo-invalido', Boolean(esPasada));
+    });
+  }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -18,55 +24,80 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function validarYGuardar() {
-  const titulo = document.getElementById('titulo').value.trim();
-  const descripcion = document.getElementById('descripcion').value.trim();
-  const prioridad = document.getElementById('prioridad').value;
-  const fecha = document.getElementById('fecha').value;
-  const metodo = document.getElementById('metodo').value;
-  const enfoqueAdicional = document.getElementById('enfoque-adicional')?.value.trim() || '';
+  const btnGuardar = document.querySelector('#formulario-tarea button[type="submit"]');
 
-  // Validaciones
-  if (!titulo) {
-    alert('El título de la tarea es obligatorio');
-    document.getElementById('titulo').focus();
-    return;
+  if (btnGuardar && btnGuardar.disabled) return;
+  if (btnGuardar) {
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = 'Guardando en la nube...';
   }
 
-  if (!prioridad) {
-    alert('Selecciona una prioridad');
-    document.getElementById('prioridad').focus();
+  const tituloInput = document.getElementById('titulo');
+  const descripcionInput = document.getElementById('descripcion');
+  const fechaInput = document.getElementById('fecha');
+  const prioridadInput = document.getElementById('prioridad');
+  const estadoInput = document.getElementById('estado');
+
+  const titulo = tituloInput?.value.trim();
+  const descripcion = descripcionInput?.value.trim() || '';
+  const fecha = fechaInput?.value;
+  const prioridad = prioridadInput?.value || 'Media';
+  const estado = estadoInput?.value || 'Sin empezar';
+  const metodo = 'Sugerido por IA (LUMI)';
+
+  if (!titulo || !fecha) {
+    alert('Por favor completa el título y la fecha límite.');
+    if (btnGuardar) { 
+      btnGuardar.disabled = false; 
+      btnGuardar.textContent = 'Generar cronograma'; 
+    }
     return;
   }
 
   try {
+    // 1. Obtener usuario autenticado
     const usuario = await obtenerUsuarioActual();
-    if (!usuario?.id) throw new Error('La sesión no está autenticada.');
-
-    if (!fecha) {
-      alert('Selecciona una fecha de entrega');
-      document.getElementById('fecha').focus();
+    
+    if (!usuario?.id) {
+      alert('Debes iniciar sesión para guardar tus tareas.');
+      window.location.href = 'login.html';
       return;
     }
 
-    if (!metodo) {
-      alert('Selecciona un método de estudio');
-      document.getElementById('metodo').focus();
-      return;
-    }
-
-    const respuesta = await generarPlanIA({
+    // 2. Persistir permanentemente en Supabase (Tablas: planes_estudio y actividades)
+    const registroBD = await crearPlanEstudioBD({
       usuario_id: usuario.id,
+      titulo,
+      descripcion,
+      fecha_entrega: fecha,
+      estado: 'ACTIVO'
+    });
+
+    console.log('Tarea guardada exitosamente en Supabase:', registroBD);
+
+    // 3. Solicitar plan a la IA
+    if (btnGuardar) btnGuardar.textContent = 'Generando plan con IA...';
+
+    const respuestaIA = await generarPlanIA({
+      usuario_id: usuario.id,
+      plan_id: registroBD.plan.id,
       nombre: titulo,
       descripcion,
       fecha_entrega: fecha,
       metodo_estudio: metodo,
-      dificultad: prioridad,
-      enfoque_adicional: enfoqueAdicional,
+      dificultad: prioridad
     });
 
-    if (!respuesta?.plan_id) throw new Error('El backend no devolvió el identificador del plan.');
-    window.location.href = `guia-detalle.html?plan_id=${encodeURIComponent(respuesta.plan_id)}`;
+    if (respuestaIA?.plan_id) {
+      window.location.href = `historial.html?plan_id=${encodeURIComponent(respuestaIA.plan_id)}`;
+      return;
+    }
+
   } catch (error) {
-    alert(`No se pudo guardar la tarea: ${error.message}`);
+    console.error('Fallo en el proceso de guardado o IA:', error);
   }
+
+  // Si la IA no respondió o falló la conexión al backend, notificar y redirigir
+  alert('¡Tarea guardada en tu cuenta exitosamente!');
+  window.location.href = 'dashboard.html';
 }

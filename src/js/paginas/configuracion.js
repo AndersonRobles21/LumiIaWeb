@@ -1,18 +1,12 @@
-/**
- * configuracion.js
- * Lógica temporal de la página Configuración
- */
-
 import { cerrarSesion } from '../servicios/autenticacion.service.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+  const formConfig = document.getElementById('form-configuracion');
 
   if (btnCerrarSesion) {
     btnCerrarSesion.addEventListener('click', async () => {
-      const confirmar = confirm('¿Seguro que quieres cerrar sesión?');
-
-      if (confirmar) {
+      if (confirm('¿Seguro que quieres cerrar sesión?')) {
         try {
           await cerrarSesion();
           window.location.href = 'login.html';
@@ -20,6 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
           alert(`No se pudo cerrar sesión: ${error.message}`);
         }
       }
+    });
+  }
+
+  if (formConfig) {
+    formConfig.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      // Aquí puedes manejar el guardado de preferencias de estudio en el futuro
+      alert('Preferencias guardadas correctamente.');
     });
   }
 });

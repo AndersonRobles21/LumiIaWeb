@@ -16,12 +16,36 @@
 	z-index: 100;
 }
 
-.navbar-contenido {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 2rem;
+/* Sección izquierda: Logo + Títulos */
+.navbar-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-logo-img {
+  width: 118px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: var(--radio-medio, 8px);
+  transition: transform var(--transicion-rapida);
+}
+
+.navbar-logo-img:hover {
+  transform: scale(1.05);
+}
+
+/* Título de la página actual */
+.navbar-titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 /* Logo del navbar */
@@ -61,16 +85,35 @@
 	font-size: 0.95rem;
 }
 
-.btn-cerrar-sesion {
-	padding: 0.6rem 1.2rem;
-	background: rgba(255, 77, 109, 0.2);
-	color: var(--color-error);
-	border: 1px solid rgba(255, 77, 109, 0.4);
-	border-radius: 6px;
-	font-weight: 600;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	font-size: 0.9rem;
+.navbar-btn-inactivo,
+.navbar-btn-inactivo:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.navbar-btn-inactivo:hover,
+.navbar-btn-inactivo:disabled:hover {
+  border-color: var(--color-borde);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: none;
+}
+
+/* Avatar del usuario en el navbar */
+.navbar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gradiente-principal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color var(--transicion-rapida);
+  text-decoration: none;
 }
 
 .btn-cerrar-sesion:hover {
@@ -79,23 +122,14 @@
 	transform: translateY(-2px);
 }
 
-/* Responsive */
+/* Ajustes responsivos para pantallas pequeñas */
 @media (max-width: 768px) {
-	.navbar {
-		padding: 0 1rem;
-		height: 60px;
-	}
+  .navbar-titulo span {
+    display: none; /* Oculta el subtítulo en móviles para ahorrar espacio horizontal */
+  }
 
-	.navbar-logo {
-		gap: 0.5rem;
-	}
-
-	.navbar-logo span {
-		display: none;
-	}
-
-	.navbar-nombre {
-		display: none;
-	}
+  .navbar-logo-img {
+    width: 88px;
+    height: 38px;
+  }
 }
-

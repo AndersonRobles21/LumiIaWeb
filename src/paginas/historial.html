@@ -3,65 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Historial | LUMI</title>
-
+  <title>Historial IA - LUMI</title>
+  
+  <!-- Estilos globales y de componentes -->
   <link rel="stylesheet" href="../css/global/reset.css">
   <link rel="stylesheet" href="../css/global/variables.css">
   <link rel="stylesheet" href="../css/global/global.css">
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
   <link rel="stylesheet" href="../css/componentes/navbar.css">
-  <link rel="stylesheet" href="../css/componentes/botones.css">
+
+  <!-- Estilos de la página -->
+  <link rel="stylesheet" href="../css/paginas/dashboard.css">
   <link rel="stylesheet" href="../css/paginas/historial.css">
 </head>
-<body>
-
+<body class="historial-body">
   <div class="dashboard-container">
+    
+    <!-- Sidebar lateral de navegación -->
     <aside id="sidebar-container"></aside>
 
+    <!-- Contenido Principal -->
     <div class="dashboard-main">
+
+      <!-- Header / Navbar -->
       <header id="navbar-container"></header>
 
       <main class="dashboard-content">
-        <section class="historial-contenedor">
-
-          <div class="historial-encabezado">
-            <h1>Historial</h1>
-            <p>Revisa tu progreso y actividad reciente.</p>
-          </div>
-
-          <!-- Resumen rápido -->
-          <div class="historial-resumen">
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-completadas">0</span>
-              <span class="resumen-etiqueta">Tareas completadas</span>
+        <div class="historial-grid-main">
+          
+          <!-- COLUMNA IZQUIERDA: Tareas reales cargadas desde Supabase -->
+          <aside class="card-historial-sidebar">
+            <div class="buscador-historial">
+              <span class="icono-buscar">🔍</span>
+              <input type="text" id="input-buscar-historial" placeholder="Buscar conversaciones con Lumi..." />
             </div>
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-racha">0</span>
-              <span class="resumen-etiqueta">Racha actual</span>
-            </div>
-            <div class="resumen-card">
-              <span class="resumen-numero" id="hist-horas">0h</span>
-              <span class="resumen-etiqueta">Horas de estudio</span>
-            </div>
-          </div>
 
-          <!-- Lista de actividad -->
-          <div class="historial-lista">
-            <h2>Actividad reciente</h2>
-            <div id="lista-historial">
-              <div class="historial-vacio">
-                <p>Aún no hay actividad registrada.</p>
+            <div class="lista-conversaciones" id="lista-conversaciones">
+              <p style="padding: 1rem; color: var(--texto-secundario, #8a8f9d); font-size: 0.9rem;">Cargando tareas...</p>
+            </div>
+          </aside>
+
+          <!-- COLUMNA DERECHA: Detalle del plan seleccionado -->
+          <main class="card-chat-tutor">
+            <header class="chat-header">
+              <div class="chat-header-info">
+                <img class="avatar-lumi-md" src="../assets/chat_ia.png" alt="LUMI">
+                <div>
+                  <h2 id="chat-titulo-tarea">Selecciona una tarea</h2>
+                  <p class="chat-consejo">
+                    <span class="etiqueta-metodo">Método activo:</span> <img id="imagen-metodo-activo" class="imagen-metodo-activo" src="../assets/pomodoro.png" alt="Pomodoro"> <span id="nombre-metodo-activo">Cargando...</span>
+                  </p>
+                </div>
+              </div>
+              <div class="acciones-chat-header">
+                <button class="btn-rayo-metodo" id="btn-metodo-metrica" title="Ver método de estudio" aria-label="Ver método de estudio">⚡</button>
+                <button class="btn-reiniciar-pasos" id="btn-reiniciar-pasos-historial" type="button" title="Reiniciar pasos" aria-label="Reiniciar pasos">↻</button>
+              </div>
+            </header>
+
+            <div class="chat-body-stream" id="chat-body-stream">
+              <!-- Mensaje de LUMI -->
+              <div class="mensaje-lumi">
+                <img class="avatar-lumi-sm" src="../assets/chat_ia.png" alt="LUMI">
+                <div class="burbuja-lumi">
+                  <p id="texto-saludo-lumi">
+                    ¡Hola! Selecciona una tarea del panel izquierdo para revisar su plan de estudio y actividades.
+                  </p>
+                  <span class="meta-hora" id="hora-plan">--:--</span>
+                </div>
+              </div>
+
+              <!-- Contenedor dinámico de actividades / pasos del plan -->
+              <div id="contenedor-pasos-historial" style="margin-top: 1rem;"></div>
+              <div id="contenedor-resumen-historial" class="resumen-historial" hidden></div>
+              <div id="contenedor-paso-actual" class="paso-actual-historial" hidden></div>
+              <div id="contenedor-completar-tarea" class="completar-tarea-historial" hidden></div>
+
+              <!-- Tarjeta de Acción: Cambiar Método -->
+              <div class="card-accion-chat" id="card-metodo-estudio" style="margin-top: 1.5rem;">
+                <div class="info-card-accion">
+                  <span class="icono-card">⚙️</span>
+                  <div class="texto-card-accion">
+                    <strong>Cambiar método</strong>
+                    <small>de estudio</small>
+                  </div>
+                </div>
+                <button class="btn-flecha-accion" id="btn-cambiar-metodo">➔</button>
               </div>
             </div>
-          </div>
 
-        </section>
+            <!-- Sugerencias -->
+            <footer class="chat-footer-sugerencias">
+              <span class="label-sugerencias">Sugerencias</span>
+              <div class="contenedor-chips-sugerencias" id="contenedor-chips">
+                <button class="chip-btn" data-accion="paso_a_paso">Paso a paso</button>
+                <button class="chip-btn" data-accion="explica_tarea">Mostrar resumen</button>
+                <button class="chip-btn" data-accion="mas_opciones" disabled title="No hay más acciones disponibles para este plan">Más opciones</button>
+              </div>
+            </footer>
+          </main>
+
+        </div>
       </main>
     </div>
   </div>
 
+  <!-- Scripts de Componentes y Lógica -->
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
   <script type="module" src="../js/paginas/historial.js"></script>
+  <script type="module" src="../js/componentes/tema.js"></script>
 </body>
 </html>

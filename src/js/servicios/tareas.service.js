@@ -16,6 +16,7 @@
  */
 
 import { apiGet, apiPut } from '../api.js';
+import { obtenerEstadoTareaLocal, guardarEstadoTareaLocal } from '../utilidades/progreso-tareas.js';
 
 /**
  * Obtener todas las tareas de un usuario
@@ -31,7 +32,7 @@ export async function obtenerTareasDelUsuario(usuarioId) {
     estado: tarea.estado ?? (tarea.completada ? 'completada' : 'pendiente'),
     fecha_creacion: tarea.fecha_creacion ?? null,
     fecha_entrega: tarea.fecha_entrega ?? null,
-    completada: Boolean(tarea.completada) || tarea.estado === 'COMPLETADA',
+    completada: obtenerEstadoTareaLocal(tarea.id, Boolean(tarea.completada) || tarea.estado === 'COMPLETADA'),
   }));
 }
 
@@ -39,6 +40,7 @@ export async function obtenerTareasDelUsuario(usuarioId) {
  * Marcar tarea como completada / pendiente
  */
 export async function actualizarEstadoTarea(tareaId, completada) {
+  guardarEstadoTareaLocal(tareaId, completada);
   return apiPut(`/tareas/${tareaId}/completar`, { completada });
 }
 
