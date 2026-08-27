@@ -1,8 +1,19 @@
-import { cerrarSesion } from '../servicios/autenticacion.service.js';
+import { cerrarSesion, obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
+import { comprobarAdmin } from '../servicios/administrador.service.js';
 
-function renderSidebar() {
+async function renderSidebar() {
   const sidebarContainer = document.getElementById('sidebar-container');
   if (!sidebarContainer) return;
+
+  let esAdmin = false;
+  try {
+    const usuario = await obtenerUsuarioActual();
+    if (usuario?.id) {
+      esAdmin = Boolean((await comprobarAdmin(usuario.id))?.admin);
+    }
+  } catch (error) {
+    if (error.status !== 403) console.warn('No se pudo comprobar el rol:', error.message);
+  }
 
   const ruta = window.location.pathname;
   // Si está en la raíz o en index, asigna dashboard como activo por defecto
@@ -18,7 +29,8 @@ function renderSidebar() {
     { href: 'app-movil.html', icono: 'A', texto: 'App móvil', active: ruta.includes('app-movil') },
     { href: 'perfil.html', icono: 'P', texto: 'Perfil', active: ruta.includes('perfil') },
     { href: 'configuracion.html', icono: 'C', texto: 'Configuración', active: ruta.includes('configuracion') },
-    { href: 'informacion.html', icono: '?', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') }
+    { href: 'informacion.html', icono: '?', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') },
+    ...(esAdmin ? [{ href: 'administrador.html', icono: 'A', texto: 'Administrador', active: ruta.includes('administrador') }] : [])
   ];
 
   sidebarContainer.innerHTML = `

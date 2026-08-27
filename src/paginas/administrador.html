@@ -54,9 +54,9 @@
             <section id="vista-dashboard" class="vista-seccion">
                 <header class="header-bienvenida">
                     <div class="header-texto">
-                        <span class="fecha-hoy">Agosto 24, 2026</span>
+                        <span class="fecha-hoy" id="fecha-hoy"></span>
                         <p class="subtitulo">Panel de control - Administrador</p>
-                        <h1>Bienvenido otra vez, Juan</h1>
+                        <h1 id="saludo-admin">Bienvenido otra vez</h1>
                         <p class="resumen">Monitoreo del sistema de LUMI a tiempo real</p>
                     </div>
                     <div class="header-ilustracion">
@@ -65,41 +65,24 @@
                 </header>
 
                 <div class="tarjetas-metricas">
-                    <div class="tarjeta">
+                    <div class="tarjeta tarjeta-metrica-real" id="tarjeta-total-usuarios" hidden>
                         <div class="tarjeta-head">
                             <span>Estudiantes totales</span>
                             <span class="icon">P</span>
                         </div>
-                        <h2>48</h2>
+                        <h2 id="metricas-total-usuarios">-</h2>
                         <span class="badge-sub">Registrados</span>
                     </div>
 
-                    <div class="tarjeta">
+                    <div class="tarjeta tarjeta-metrica-real" id="tarjeta-total-admins" hidden>
                         <div class="tarjeta-head">
-                            <span>Estudiantes activos</span>
+                            <span>Administradores totales</span>
                             <span class="icon">A</span>
                         </div>
-                        <h2>32</h2>
-                        <span class="badge-sub">En línea ahora</span>
+                        <h2 id="metricas-total-admins">-</h2>
+                        <span class="badge-sub">Protegidos</span>
                     </div>
 
-                    <div class="tarjeta">
-                        <div class="tarjeta-head">
-                            <span>Planes Generados</span>
-                            <span class="icon">P</span>
-                        </div>
-                        <h2>156</h2>
-                        <span class="badge-sub">IA activa</span>
-                    </div>
-
-                    <div class="tarjeta">
-                        <div class="tarjeta-head">
-                            <span>Estado del sistema</span>
-                            <span class="icon">U</span>
-                        </div>
-                        <h2>Óptimo</h2>
-                        <span class="badge-sub">Latencia: 42ms</span>
-                    </div>
                 </div>
 
                 <div class="seccion-tabla">
@@ -108,29 +91,26 @@
                         <div class="buscador">
                             <input type="text" id="input-buscar" placeholder="Buscar por nombre o gmail...">
                         </div>
+                        <label class="orden-usuarios" for="orden-usuarios">Ordenar
+                            <select id="orden-usuarios">
+                                <option value="nombre-asc">Nombre: A-Z</option>
+                                <option value="nombre-desc">Nombre: Z-A</option>
+                                <option value="reciente">Más reciente</option>
+                                <option value="antiguo">Más antiguo</option>
+                            </select>
+                        </label>
                     </div>
 
                     <table>
                         <thead>
                             <tr>
-                                <th>ESTUDIANTE</th>
-                                <th>CORREO</th>
-                                <th>ESTADO</th>
-                                <th>PROGRAMA</th>
+                                <th>USUARIO</th>
+                                <th>TIPO</th>
                                 <th>ACCIONES</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-body-estudiantes">
-                            <tr>
-                                <td>Juan Perez</td>
-                                <td>Juan@gmail.com</td>
-                                <td><span class="badge-activo">Activo</span></td>
-                                <td>ADSO</td>
-                                <td>
-                                    <button class="btn-desactivar">Desactivar</button>
-                                    <button class="btn-eliminar">Eliminar</button>
-                                </td>
-                            </tr>
+                            <tr><td colspan="3">Cargando usuarios...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -140,7 +120,7 @@
             <section id="vista-reportes" class="vista-seccion" style="display: none;">
                 <header class="header-bienvenida">
                     <div class="header-texto">
-                        <span class="fecha-hoy">Agosto 24, 2026</span>
+                        <span class="fecha-hoy" id="fecha-hoy-reportes"></span>
                         <p class="subtitulo">Panel de control - Administrador</p>
                         <h1>Reportes y Estadísticas</h1>
                         <p class="resumen">Visualiza el rendimiento y uso de la plataforma en tiempo real</p>

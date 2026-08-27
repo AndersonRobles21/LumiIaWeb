@@ -34,6 +34,8 @@
         href="../css/global/global.css"
     >
 
+    <link rel="stylesheet" href="../css/paginas/carga.css">
+
     <!-- ESTILOS DE LA PÁGINA -->
 
     <link
@@ -45,6 +47,16 @@
 
 
 <body>
+
+    <div class="carga-detalle" id="carga-detalle" aria-live="polite">
+        <div class="carga-detalle-contenido">
+            <img src="../assets/lumii.png" alt="LUMI Mascota" class="carga-detalle-robot">
+            <img src="../assets/Lumi-logo.png" alt="Logo LUMI" class="carga-detalle-logo">
+            <p>Tu compañero inteligente para aprender <span>sin límites</span></p>
+            <strong>CARGANDO...</strong>
+            <div class="carga-detalle-barra"><span></span></div>
+        </div>
+    </div>
 
     <main class="dashboard-content" id="detalle-usuario">
 
@@ -130,7 +142,7 @@
                     </button>
 
                 </form>
-                <a href="usuarios.html">Volver a la lista de usuarios</a>
+                <a href="administrador.html">Volver al panel de administrador</a>
                 <button type="button" class="boton-peligro" id="eliminar-usuario">Eliminar usuario</button>
 
             </div>
