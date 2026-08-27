@@ -1,3 +1,23 @@
+
+.sidebar {
+  width: 70px;
+  background-color: #141024;
+  border-right: 1px solid rgba(124, 58, 237, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  min-height: 100vh;
+}
+
+.logo {
+  margin-bottom: 30px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 .lumi-sidebar {
   width: 250px;
   height: 100vh;
