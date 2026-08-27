@@ -12,24 +12,8 @@ export async function crearNavbar() {
     return;
   }
 
-  // Título según la página actual
-  const paginaActual = window.location.pathname.split('/').pop() || 'dashboard.html';
-
-  const titulos = {
-    'dashboard.html': { titulo: 'Dashboard', subtitulo: 'Resumen de tu productividad' },
-    'tareas.html': { titulo: 'Calendario', subtitulo: 'Organiza tus tareas por fecha' },
-    'agregar-tarea.html': { titulo: 'Agregar tarea inteligente', subtitulo: 'Crea un plan de estudio personalizado' },
-    'metodos.html': { titulo: 'Métodos de estudio', subtitulo: 'Elige tu técnica de aprendizaje' },
-    'historial.html': { titulo: 'Historial', subtitulo: 'Tu progreso a lo largo del tiempo' },
-    'gamificacion.html': { titulo: 'Tu Progreso', subtitulo: 'Celebra tus avances' },
-    'app-movil.html': { titulo: 'App móvil', subtitulo: 'LUMI contigo donde estés' },
-    'perfil.html': { titulo: 'Mi Perfil', subtitulo: 'Información personal' },
-    'configuracion.html': { titulo: 'Configuración', subtitulo: 'Ajustes de la aplicación' },
-    'informacion.html': { titulo: 'Información, ayuda y privacidad', subtitulo: 'Conoce y controla tu experiencia en LUMI' },
-  };
-
-  const info = titulos[paginaActual] || { titulo: 'LUMI', subtitulo: 'Tu asistente de estudio' };
   let nombre = '';
+  let fotoPerfil = localStorage.getItem('lumi_foto_perfil') || '';
   try {
     const usuario = await obtenerUsuarioActual();
     if (usuario?.id) {
@@ -37,6 +21,7 @@ export async function crearNavbar() {
       const envoltura = respuesta?.data || respuesta || {};
       const datos = { ...usuario, ...(envoltura.usuario || envoltura.user || envoltura), ...(envoltura.perfil || envoltura.perfil_estudio || {}) };
       nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ') || datos?.user_metadata?.full_name || '';
+      fotoPerfil = fotoPerfil || datos?.foto_perfil || '';
     }
   } catch (error) {
     console.warn('No se pudo cargar el usuario del navbar:', error.message);
@@ -44,25 +29,12 @@ export async function crearNavbar() {
 
  contenedor.innerHTML = `
     <div class="navbar">
-      <div class="navbar-brand-section">
-        <a href="dashboard.html" class="navbar-logo-link" aria-label="Ir al Dashboard">
-          <img src="../assets/Lumi-logo.png" alt="Logo LUMI" class="navbar-logo-img">
-        </a>
-        <div class="navbar-titulo">
-          <h2>${info.titulo}</h2>
-          <span>${info.subtitulo}</span>
-        </div>
-      </div>
-
       <div class="navbar-acciones">
-        <button class="navbar-btn navbar-btn-inactivo" type="button" title="Notificaciones no disponibles" aria-disabled="true" disabled>
-          🔔
-        </button>
         <a class="navbar-btn" href="informacion.html" title="Ayuda" aria-label="Abrir ayuda">
-          ❓
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.9 1.9c-1 .7-1.6 1.1-1.6 2.6M12 17h.01"/></svg>
         </a>
-        <a class="navbar-avatar" href="perfil.html" title="Abrir perfil${nombre ? ` de ${nombre}` : ''}" aria-label="Abrir perfil">
-          ${nombre ? nombre.charAt(0).toUpperCase() : ''}
+        <a class="navbar-avatar${fotoPerfil ? ' navbar-avatar-con-foto' : ''}" href="perfil.html" title="Abrir perfil${nombre ? ` de ${nombre}` : ''}" aria-label="Abrir perfil"${fotoPerfil ? ` style="background-image: url('${fotoPerfil.replace(/'/g, '%27')}')"` : ''}>
+          ${fotoPerfil ? '' : (nombre ? nombre.charAt(0).toUpperCase() : '')}
         </a>
       </div>
     </div>

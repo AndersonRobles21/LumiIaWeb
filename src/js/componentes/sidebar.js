@@ -1,3 +1,5 @@
+import { cerrarSesion } from '../servicios/autenticacion.service.js';
+
 function renderSidebar() {
   const sidebarContainer = document.getElementById('sidebar-container');
   if (!sidebarContainer) return;
@@ -7,15 +9,16 @@ function renderSidebar() {
   const esDashboard = ruta.includes('dashboard') || ruta === '/' || ruta.endsWith('/index.html');
 
   const menuItems = [
-    { href: 'dashboard.html', icono: '🏠', texto: 'Dashboard', active: esDashboard },
-    { href: 'calendario.html', icono: '📅', texto: 'Calendario', active: ruta.includes('calendario') },
-    { href: 'agregar-tarea.html', icono: '➕', texto: 'Agregar tarea', active: ruta.includes('agregar-tarea') },
-    { href: 'historial.html', icono: '📊', texto: 'Historial de IA', active: ruta.includes('historial') },
-    { href: 'gamificacion.html', icono: '✦', texto: 'Tu Progreso', active: ruta.includes('gamificacion') || ruta.includes('recompensas') },
-    { href: 'app-movil.html', icono: '📱', texto: 'App móvil', active: ruta.includes('app-movil') },
-    { href: 'perfil.html', icono: '👤', texto: 'Perfil', active: ruta.includes('perfil') },
-    { href: 'configuracion.html', icono: '⚙️', texto: 'Configuración', active: ruta.includes('configuracion') },
-    { href: 'informacion.html', icono: '❓', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') }
+    { href: 'dashboard.html', icono: 'D', texto: 'Dashboard', active: esDashboard },
+    { href: 'calendario.html', icono: 'C', texto: 'Calendario', active: ruta.includes('calendario') },
+    { href: 'tareas.html', icono: '✓', texto: 'Tareas', active: ruta.includes('tareas') },
+    { href: 'agregar-tarea.html', icono: '+', texto: 'Agregar tarea', active: ruta.includes('agregar-tarea') },
+    { href: 'historial.html', icono: 'H', texto: 'Historial de IA', active: ruta.includes('historial') },
+    { href: 'gamificacion.html', icono: '*', texto: 'Tu Progreso', active: ruta.includes('gamificacion') || ruta.includes('recompensas') },
+    { href: 'app-movil.html', icono: 'A', texto: 'App móvil', active: ruta.includes('app-movil') },
+    { href: 'perfil.html', icono: 'P', texto: 'Perfil', active: ruta.includes('perfil') },
+    { href: 'configuracion.html', icono: 'C', texto: 'Configuración', active: ruta.includes('configuracion') },
+    { href: 'informacion.html', icono: '?', texto: 'Ayuda y privacidad', active: ruta.includes('informacion') }
   ];
 
   sidebarContainer.innerHTML = `
@@ -37,7 +40,7 @@ function renderSidebar() {
 
       <div class="sidebar-footer">
         <button id="btn-logout" class="menu-item btn-cerrar-sesion" type="button">
-          <span class="item-icono" aria-hidden="true">🚪</span>
+          <span class="item-icono" aria-hidden="true">↪</span>
           <span class="item-texto">Cerrar sesión</span>
         </button>
       </div>
@@ -45,8 +48,14 @@ function renderSidebar() {
   `;
 
   // Evento para cerrar sesión
-  document.getElementById('btn-logout')?.addEventListener('click', () => {
-    localStorage.clear();
+  document.getElementById('btn-logout')?.addEventListener('click', async () => {
+    try {
+      await cerrarSesion();
+    } catch (error) {
+      console.warn('No se pudo cerrar la sesión en Supabase:', error.message);
+    }
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
     sessionStorage.clear();
     window.location.href = 'login.html';
   });

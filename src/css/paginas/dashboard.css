@@ -102,6 +102,16 @@ body {
   padding: 1rem 1.25rem;
 }
 
+.item-tarea.tarea-completada {
+  border-color: rgba(74, 222, 128, .55);
+  background: rgba(22, 101, 52, .24);
+}
+
+.item-tarea.tarea-completada .info-tarea h3,
+.item-tarea.tarea-completada .estado-texto {
+  color: #86efac;
+}
+
 .icono-tarea {
   width: 42px;
   height: 42px;
@@ -198,7 +208,10 @@ body {
 }
 
 .icono-fuego-main {
-  font-size: 2.2rem;
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .header-racha h2 {
@@ -247,6 +260,12 @@ body {
   border-color: rgba(255, 255, 255, 0.1);
   filter: grayscale(1);
   opacity: 0.4;
+}
+
+.circulo-fuego img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .dia-item.corona .circulo-fuego {

@@ -1,3 +1,4 @@
+  <script type="module" src="../js/paginas/historial.js?v=estado-compartido"></script>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,7 +35,7 @@
           <!-- COLUMNA IZQUIERDA: Tareas reales cargadas desde Supabase -->
           <aside class="card-historial-sidebar">
             <div class="buscador-historial">
-              <span class="icono-buscar">🔍</span>
+              <span class="icono-buscar">Buscar</span>
               <input type="text" id="input-buscar-historial" placeholder="Buscar conversaciones con Lumi..." />
             </div>
 
@@ -82,13 +83,13 @@
               <!-- Tarjeta de Acción: Cambiar Método -->
               <div class="card-accion-chat" id="card-metodo-estudio" style="margin-top: 1.5rem;">
                 <div class="info-card-accion">
-                  <span class="icono-card">⚙️</span>
+                  <span class="icono-card">Método</span>
                   <div class="texto-card-accion">
                     <strong>Cambiar método</strong>
                     <small>de estudio</small>
                   </div>
                 </div>
-                <button class="btn-flecha-accion" id="btn-cambiar-metodo">➔</button>
+                <button class="btn-flecha-accion" id="btn-cambiar-metodo" aria-label="Cambiar método">&gt;</button>
               </div>
             </div>
 
@@ -98,7 +99,6 @@
               <div class="contenedor-chips-sugerencias" id="contenedor-chips">
                 <button class="chip-btn" data-accion="paso_a_paso">Paso a paso</button>
                 <button class="chip-btn" data-accion="explica_tarea">Mostrar resumen</button>
-                <button class="chip-btn" data-accion="mas_opciones" disabled title="No hay más acciones disponibles para este plan">Más opciones</button>
               </div>
             </footer>
           </main>
@@ -111,7 +111,7 @@
   <!-- Scripts de Componentes y Lógica -->
   <script type="module" src="../js/componentes/sidebar.js"></script>
   <script type="module" src="../js/componentes/navbar.js"></script>
-  <script type="module" src="../js/paginas/historial.js"></script>
+  <script type="module" src="../js/paginas/historial.js?v=historial-completado"></script>
   <script type="module" src="../js/componentes/tema.js"></script>
 </body>
 </html>

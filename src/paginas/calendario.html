@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../css/global/reset.css">
   <link rel="stylesheet" href="../css/global/global.css">
   <link rel="stylesheet" href="../css/componentes/sidebar.css">
+  <link rel="stylesheet" href="../css/componentes/navbar.css">
   <link rel="stylesheet" href="../css/paginas/calendario.css">
 </head>
 
@@ -23,6 +24,7 @@
 
     <!-- Área de contenido principal -->
     <main class="dashboard-main">
+      <header id="navbar-container"></header>
       <div class="dashboard-content">
 
         <!-- Header -->
@@ -59,7 +61,7 @@
             <!-- Métricas -->
             <div class="card-metricas-dia">
               <div class="metricas-info">
-                <div class="icono-metricas">📊</div>
+                <div class="icono-metricas">M</div>
                 <div>
                   <h3 id="resumen-cant-tareas">0</h3>
                   <p>Tareas asignadas</p>
@@ -111,7 +113,8 @@
 
   <!-- Scripts -->
   <script type="module" src="../js/componentes/sidebar.js"></script>
-  <script type="module" src="../js/paginas/calendario.js"></script>
+  <script type="module" src="../js/componentes/navbar.js"></script>
+  <script type="module" src="../js/paginas/calendario.js?v=fecha-seleccionada"></script>
   <script type="module" src="../js/componentes/tema.js"></script>
 </body>
 

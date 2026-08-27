@@ -6,8 +6,7 @@ export function generarPlanIA(datos) {
 
 export async function obtenerHistorialIA(usuarioId) {
 	const respuesta = await apiGet(`/ia/historial/${usuarioId}`);
-	const historial = respuesta?.historial || respuesta;
-	return Array.isArray(historial) ? historial : [];
+	return Array.isArray(respuesta) ? respuesta : [];
 }
 
 export function obtenerPlanIA(planId) {

@@ -85,17 +85,20 @@
 	font-size: 0.95rem;
 }
 
-.navbar-btn-inactivo,
-.navbar-btn-inactivo:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+.navbar-acciones {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
 }
 
-.navbar-btn-inactivo:hover,
-.navbar-btn-inactivo:disabled:hover {
-  border-color: var(--color-borde);
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: none;
+.navbar-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Avatar del usuario en el navbar */
@@ -114,6 +117,13 @@
   border: 2px solid transparent;
   transition: border-color var(--transicion-rapida);
   text-decoration: none;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.navbar-avatar-con-foto {
+  color: transparent;
 }
 
 .btn-cerrar-sesion:hover {

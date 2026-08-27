@@ -1,7 +1,9 @@
 import { supabase } from '../config/supabase.js';
-import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
+import { marcarPlanCompletadoBD, obtenerPlanesUsuarioBD, reabrirPlanBD } from '../servicios/planes.service.js';
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { completarPaso, completarTareaLocal, estaPasoCompletado, estaTareaCompletada, obtenerPasosCompletados, reiniciarProgresoPlan, todosLosPasosCompletados } from '../utilidades/progreso-tareas.js';
+import { obtenerHistorialIA, obtenerPlanIA } from '../servicios/ia.service.js';
+import { actualizarEstadoTarea } from '../servicios/tareas.service.js';
+import { completarPaso, completarPlan, estaPasoCompletado, obtenerPasosCompletados, obtenerProgresoTareas, reiniciarProgresoPlan, todosLosPasosCompletados } from '../utilidades/progreso-tareas.js?v=reinicio-plan';
 
 let listaPlanesGlobal = [];
 let planSeleccionado = null;
@@ -30,14 +32,41 @@ export async function initHistorial() {
       return;
     }
 
-    // Consulta real a Supabase (tablas planes_estudio y actividades)
-    const planes = await obtenerPlanesUsuarioBD(usuarioId);
-    listaPlanesGlobal = deduplicarPlanes(planes, usuarioId);
+    const planesIA = await obtenerHistorialIA(usuarioId);
+    const planesBD = await obtenerPlanesUsuarioBD(usuarioId);
+    const actividadIds = planesBD.flatMap(plan => (plan.actividades || []).map(actividad => actividad.id)).filter(Boolean);
+    let tareas = [];
+    if (actividadIds.length > 0) {
+      const { data, error } = await supabase
+        .from('tareas')
+        .select('id, actividad_id, completada, titulo, descripcion')
+        .in('actividad_id', actividadIds);
+      if (error) throw error;
+      tareas = data || [];
+    }
+    planesBD.forEach(plan => (plan.actividades || []).forEach(actividad => {
+      actividad.tareas = tareas.filter(tarea => tarea.actividad_id === actividad.id);
+    }));
+    listaPlanesGlobal = deduplicarPlanes(planesIA.map(planIA => ({
+      ...planIA,
+      planBD: planesBD.find(plan => String(plan.id) === String(planIA.id)) || null,
+    })), usuarioId);
 
     if (listaPlanesGlobal.length > 0) {
       renderizarListaPlanes(listaPlanesGlobal, contenedorLista);
       const planIdSolicitado = new URLSearchParams(window.location.search).get('plan_id');
-      seleccionarPlan(listaPlanesGlobal.find(plan => String(plan.id) === String(planIdSolicitado)) || listaPlanesGlobal[0]);
+      console.log('plan_id recibido desde URL:', planIdSolicitado);
+      console.log('IDs de planes devueltos por el historial IA:', listaPlanesGlobal.map(plan => plan.id));
+      if (planIdSolicitado) {
+        const planSolicitado = listaPlanesGlobal.find(plan => String(plan.id) === String(planIdSolicitado));
+        if (!planSolicitado) {
+          contenedorLista.innerHTML = '<p class="ia-error">El plan solicitado no existe en el historial</p>';
+          return;
+        }
+        await seleccionarPlan(planSolicitado);
+      } else {
+        await seleccionarPlan(listaPlanesGlobal[0]);
+      }
     } else {
       contenedorLista.innerHTML = `<p style="padding: 1rem; color: #8a8f9d;">No tienes tareas registradas en la base de datos.</p>`;
     }
@@ -49,23 +78,23 @@ export async function initHistorial() {
 }
 
 function deduplicarPlanes(planes, usuarioId) {
-  const vistos = new Set();
-  return (Array.isArray(planes) ? planes : []).filter(plan => {
+  const grupos = new Map();
+  (Array.isArray(planes) ? planes : []).forEach(plan => {
     const clave = obtenerClavePlan(plan, usuarioId);
-    if (vistos.has(clave)) return false;
-    vistos.add(clave);
-    return true;
+    const existente = grupos.get(clave);
+    if (!existente || tieneDetalleIA(plan)) grupos.set(clave, plan);
   });
+  return [...grupos.values()];
 }
 
 function obtenerClavePlan(plan, usuarioId) {
-  if (plan?.id != null && plan.id !== '') return `plan:${plan.id}`;
-  const tareaId = obtenerIdTareaGeneral(plan);
-  if (tareaId) return `tarea:${tareaId}`;
   const nombre = normalizarClave(plan?.nombre || plan?.titulo);
-  const fecha = normalizarClave(plan?.fecha_creacion || plan?.fecha_entrega || plan?.fecha);
   const descripcion = normalizarClave(plan?.descripcion);
-  return `sin-id:${usuarioId}:${nombre}:${fecha}:${descripcion}`;
+  return `plan:${usuarioId}:${nombre}:${descripcion}`;
+}
+
+function tieneDetalleIA(plan) {
+  return Boolean(plan?.metodo_estudio || plan?.tiempo_estimado_total || plan?.resumen_final);
 }
 
 function normalizarClave(valor) {
@@ -77,6 +106,7 @@ function renderizarListaPlanes(planes, contenedor) {
 
   planes.forEach((plan, index) => {
     const esActiva = index === 0 ? 'activa' : '';
+    const esCompletada = plan.completada || plan.estado === 'COMPLETADO' || obtenerProgresoTareas()[String(plan.id)]?.completada;
     const titulo = plan.nombre || 'Tarea sin nombre';
     const descripcion = plan.descripcion || 'Sin descripción';
     const hora = plan.fecha_creacion 
@@ -84,12 +114,13 @@ function renderizarListaPlanes(planes, contenedor) {
       : 'Hoy';
 
     const itemHTML = `
-      <div class="item-conversacion ${esActiva}" data-id="${escapar(plan.id)}" data-index="${index}">
+      <div class="item-conversacion ${esActiva} ${esCompletada ? 'completada' : ''}" data-id="${escapar(plan.id)}" data-index="${index}">
         <img class="avatar-lumi-sm" src="../assets/chat_ia.png" alt="LUMI">
         <div class="info-conversacion">
           <h4>${escapar(titulo)}</h4>
           <p>${escapar(descripcion)}</p>
         </div>
+        ${esCompletada ? '<span class="estado-conversacion-completada">Completada</span>' : ''}
         <span class="hora-item">${hora}</span>
       </div>
     `;
@@ -116,8 +147,25 @@ function configurarEventosSeleccion() {
   });
 }
 
-function seleccionarPlan(plan) {
+async function seleccionarPlan(plan) {
+  if (!plan?.id) return;
   planSeleccionado = plan;
+  const contenedorPasos = document.getElementById('contenedor-pasos-historial');
+  if (contenedorPasos) contenedorPasos.innerHTML = '<p class="ia-cargando">Cargando plan generado por IA...</p>';
+
+  let detalle;
+  try {
+    detalle = await obtenerPlanIA(plan.id);
+  } catch (error) {
+    if (error.status === 404) {
+      detalle = plan;
+    } else {
+      if (contenedorPasos) contenedorPasos.innerHTML = `<p class="ia-error">No se pudo cargar el detalle de IA: ${escapar(error.message)}</p>`;
+      return;
+    }
+  }
+  planSeleccionado = { ...plan, ...detalle, actividades: plan.planBD?.actividades || [] };
+  plan = planSeleccionado;
   const pasoActual = document.getElementById('contenedor-paso-actual');
   const resumen = document.getElementById('contenedor-resumen-historial');
   const pasosVisibles = document.getElementById('contenedor-pasos-historial');
@@ -128,7 +176,7 @@ function seleccionarPlan(plan) {
   const elSaludo = document.getElementById('texto-saludo-lumi');
   const elMetodo = document.getElementById('nombre-metodo-activo');
   const elHora = document.getElementById('hora-plan');
-  const contenedorPasos = document.getElementById('contenedor-pasos-historial');
+  const contenedorDetalle = document.getElementById('contenedor-resumen-historial');
 
   if (elTitulo) elTitulo.textContent = plan.nombre || 'Plan de Estudio';
   const metodo = obtenerMetodoPlan(plan);
@@ -139,19 +187,26 @@ function seleccionarPlan(plan) {
     elSaludo.textContent = `¡Hola! Aquí tienes los detalles y actividades registradas para "${plan.nombre}". ¿Quieres repasar algún punto?`;
   }
 
+  if (contenedorDetalle) {
+    contenedorDetalle.hidden = false;
+    contenedorDetalle.innerHTML = renderizarDetalleIA(plan);
+  }
+
   if (elHora && plan.fecha_creacion) {
     elHora.textContent = new Date(plan.fecha_creacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  // Renderizar actividades asociadas de la base de datos
+  // Renderizar actividades y tareas asociadas de la base de datos
   if (contenedorPasos) {
-    const actividades = plan.actividades || plan.fases || plan.pasos || plan.tareas || [];
+    const actividades = Array.isArray(plan.pasos) && plan.pasos.length
+      ? plan.pasos
+      : plan.actividades || plan.fases || plan.tareas || [];
       if (actividades.length > 0) {
         renderizarPasosHistorial(plan, actividades, contenedorPasos);
     } else {
       contenedorPasos.innerHTML = `
         <div style="padding: 0.85rem; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 0.88rem; color: #b0b5c0;">
-          📌 <strong>Descripción registrada:</strong> ${escapar(plan.descripcion || 'Sin información adicional del plan.')}
+          <strong>Descripción registrada:</strong> ${escapar(plan.descripcion || 'Sin información adicional del plan.')}
         </div>
       `;
     }
@@ -161,17 +216,55 @@ function seleccionarPlan(plan) {
   function renderizarPasosHistorial(plan, actividades, contenedor) {
     const totalPasos = actividades.length;
     const completados = obtenerPasosCompletados(plan.id).length;
+    const todosCompletados = todosLosPasosCompletados(plan.id, totalPasos);
+    const planCompletado = Boolean(obtenerProgresoTareas()[String(plan.id)]?.completada);
     contenedor.innerHTML = `<p class="progreso-pasos">Progreso: ${completados}/${totalPasos} pasos</p>${actividades.map((actividad, indice) => {
       const completado = estaPasoCompletado(plan.id, indice + 1);
       const disponible = !completado && (indice === 0 || estaPasoCompletado(plan.id, indice));
       const contenido = actividad.descripcion || actividad.contenido || actividad.detalle;
-      return `<article class="paso-ia ${completado ? 'completado' : disponible ? 'disponible' : 'bloqueado'}"><strong>${completado ? '✓' : disponible ? indice + 1 : '🔒'} PASO ${indice + 1}: ${escapar(actividad.titulo || actividad.nombre || `Fase ${indice + 1}`)}</strong>${contenido ? `<p>${escapar(contenido)}</p>` : '<p>Sin descripción disponible</p>'}${completado ? '<span class="paso-mensaje">✓ Paso completado</span>' : disponible ? `<button type="button" class="btn-confirmar-paso" data-paso="${indice + 1}">✓ Confirmar paso</button>` : '<span class="paso-mensaje">Completa el paso anterior</span>'}</article>`;
-    }).join('')}`;
+      const tareas = Array.isArray(actividad.tareas) ? actividad.tareas : [];
+      const subpasos = Array.isArray(actividad.subpasos) ? actividad.subpasos : actividad.subtareas;
+      const subpasosHTML = renderizarSubpasos(subpasos);
+      const tareasHTML = tareas.map(tarea => `<div class="tarea-backend-control"><span>${escapar(tarea.titulo)}</span><button type="button" class="btn-completar-tarea" data-tarea-id="${escapar(tarea.id)}" data-completada="${tarea.completada}">${tarea.completada ? 'Completada' : 'Completar tarea'}</button></div>`).join('');
+      return `<article class="paso-ia ${completado ? 'completado' : disponible ? 'disponible' : 'bloqueado'}"><strong>${completado ? 'OK' : disponible ? indice + 1 : 'Bloqueado'} PASO ${actividad.numero || indice + 1}: ${escapar(actividad.titulo || actividad.nombre || `Fase ${indice + 1}`)}</strong>${contenido ? `<p>${escapar(contenido)}</p>` : '<p>Sin descripción disponible</p>'}${subpasosHTML}${completado ? '<span class="paso-mensaje">Paso completado</span>' : disponible ? `<button type="button" class="btn-confirmar-paso" data-paso="${indice + 1}">Confirmar paso</button>` : '<span class="paso-mensaje">Completa el paso anterior</span>'}${tareasHTML}</article>`;
+    }).join('')}${todosCompletados ? `<button type="button" class="btn-completar-plan${planCompletado ? ' guardado' : ''}"${planCompletado ? ' disabled' : ''}>${planCompletado ? 'Tareas completadas' : 'Completar tareas'}</button>` : ''}`;
     contenedor.querySelectorAll('.btn-confirmar-paso').forEach(boton => boton.addEventListener('click', () => {
       const numeroPaso = Number(boton.dataset.paso);
       if (completarPaso(plan.id, numeroPaso)) seleccionarPlan(plan);
     }));
+    contenedor.querySelectorAll('[data-tarea-id]').forEach(boton => boton.addEventListener('click', async () => {
+      const tarea = actividades.flatMap(actividad => actividad.tareas || []).find(item => String(item.id) === boton.dataset.tareaId);
+      if (!tarea || boton.disabled) return;
+      boton.disabled = true;
+      try {
+        const completada = !tarea.completada;
+        await actualizarEstadoTarea(tarea.id, completada);
+        tarea.completada = completada;
+        seleccionarPlan(plan);
+      } catch (error) {
+        boton.disabled = false;
+        alert(`No se pudo actualizar la tarea: ${error.message}`);
+      }
+    }));
+      contenedor.querySelector('.btn-completar-plan')?.addEventListener('click', async () => {
+        try {
+          await marcarPlanCompletadoBD(plan.id);
+          if (completarPlan(plan.id)) seleccionarPlan(plan);
+        } catch (error) {
+          alert(`No se pudo guardar la tarea completada: ${error.message}`);
+        }
+      });
   }
+
+function renderizarSubpasos(subpasos) {
+  if (!Array.isArray(subpasos) || subpasos.length === 0) return '';
+  return `<div class="ia-subpasos"><strong>Subpasos</strong><ul>${subpasos.map(subpaso => {
+    const texto = subpaso?.texto || subpaso?.titulo || subpaso?.descripcion || subpaso;
+    const completado = Boolean(subpaso?.completado ?? subpaso?.completada);
+    return `<li class="${completado ? 'completado' : ''}"><span>${completado ? 'OK' : '-'}</span>${escapar(texto)}</li>`;
+  }).join('')}</ul></div>`;
+}
+
 function configurarBuscador() {
   const inputBuscador = document.getElementById('input-buscar-historial');
   if (!inputBuscador) return;
@@ -204,8 +297,14 @@ function configurarChipsSugerencias() {
   const botonRayo = document.getElementById('btn-metodo-metrica');
   const botonCambiar = document.getElementById('btn-cambiar-metodo');
   const botonReiniciar = document.getElementById('btn-reiniciar-pasos-historial');
-  botonReiniciar?.addEventListener('click', () => {
+  botonReiniciar?.addEventListener('click', async () => {
     if (!planSeleccionado?.id || !confirm('¿Reiniciar el progreso de los pasos de esta tarea?')) return;
+    try {
+      await reabrirPlanBD(planSeleccionado.id);
+    } catch (error) {
+      alert(`No se pudo reiniciar la tarea: ${error.message}`);
+      return;
+    }
     reiniciarProgresoPlan(planSeleccionado.id);
     seleccionarPlan(planSeleccionado);
   });
@@ -269,42 +368,27 @@ function mostrarResumenPlan() {
 function renderizarPasoPendiente() {
   const contenedor = document.getElementById('contenedor-paso-actual');
   if (!contenedor || !planSeleccionado) return;
-  const actividades = planSeleccionado.actividades || [];
+  const actividades = planSeleccionado.pasos || planSeleccionado.actividades || [];
   const pasosVisibles = document.getElementById('contenedor-pasos-historial');
   if (pasosVisibles) pasosVisibles.hidden = true;
-  const indice = actividades.findIndex(actividad => !estaCompletada(actividad));
+  const indice = actividades.findIndex((actividad, indiceActividad) => !estaPasoCompletado(planSeleccionado.id, indiceActividad + 1) && !estaCompletada(actividad));
   contenedor.hidden = false;
   if (indice === -1) {
-    contenedor.innerHTML = '<strong>🎉 ¡Has completado todos los pasos de esta tarea!</strong><p>Progreso: 100%</p>';
+    contenedor.innerHTML = '<strong>Has completado todos los pasos de esta tarea.</strong><p>Progreso: 100%</p><button type="button" class="btn-completar-plan">Completar tareas</button>';
+    contenedor.querySelector('.btn-completar-plan')?.addEventListener('click', () => {
+      if (completarPlan(planSeleccionado.id)) seleccionarPlan(planSeleccionado);
+    });
     return;
   }
   const actividad = actividades[indice];
-  contenedor.innerHTML = `<p class="eyebrow">PASO ${indice + 1} DE ${actividades.length}</p><h3>${escapar(actividad.titulo || actividad.nombre || 'Actividad')}</h3>${actividad.descripcion ? `<p>${escapar(actividad.descripcion)}</p>` : ''}${actividad.duracion != null || actividad.duracion_minutos != null ? `<small>Duración: ${escapar(actividad.duracion ?? actividad.duracion_minutos)} minutos</small>` : ''}${actividad.metodo_estudio || planSeleccionado.metodo_estudio ? `<small>Método: ${escapar(actividad.metodo_estudio || planSeleccionado.metodo_estudio)}</small>` : ''}<p>El estado se actualiza al completar el plan completo.</p>`;
+  contenedor.innerHTML = `<p class="eyebrow">PASO ${indice + 1} DE ${actividades.length}</p><h3>${escapar(actividad.titulo || actividad.nombre || 'Actividad')}</h3>${actividad.descripcion ? `<p>${escapar(actividad.descripcion)}</p>` : ''}${actividad.duracion != null || actividad.duracion_minutos != null ? `<small>Duración: ${escapar(actividad.duracion ?? actividad.duracion_minutos)} minutos</small>` : ''}${actividad.metodo_estudio || planSeleccionado.metodo_estudio ? `<small>Método: ${escapar(actividad.metodo_estudio || planSeleccionado.metodo_estudio)}</small>` : ''}<p>Confirma este paso para continuar con el siguiente.</p><button type="button" class="btn-confirmar-paso" data-paso="${indice + 1}">Completar paso</button>`;
+  contenedor.querySelector('.btn-confirmar-paso')?.addEventListener('click', () => {
+    if (completarPaso(planSeleccionado.id, indice + 1)) renderizarPasoPendiente();
+  });
 }
 
 function estaCompletada(actividad) {
   return Boolean(actividad.completada ?? actividad.completed ?? ['completada', 'completado', 'realizada', 'realizado', 'completed'].includes(String(actividad.estado || '').toLowerCase()));
-}
-
-function renderizarCompletarTarea(plan) {
-  const contenedor = document.getElementById('contenedor-completar-tarea');
-  if (!contenedor) return;
-  const planId = plan?.id;
-  const completada = estaTareaCompletada(planId);
-  contenedor.hidden = false;
-  const totalPasos = Array.isArray(plan?.actividades) ? plan.actividades.length : 0;
-  const pasosCompletos = todosLosPasosCompletados(planId, totalPasos);
-  contenedor.innerHTML = `<span class="estado-plan ${completada ? 'completada' : ''}">${completada ? '✅ Completada' : 'Pendiente'}</span><button type="button" class="btn-completar-tarea" id="btn-completar-tarea-historial" ${planId && pasosCompletos && !completada ? '' : 'disabled'}>${completada ? '✅ Tarea completada' : '✅ Completar tarea'}</button>${!completada && !pasosCompletos ? '<small>Completa todos los pasos para finalizar la tarea.</small>' : ''}`;
-  document.getElementById('btn-completar-tarea-historial')?.addEventListener('click', () => completarTareaGeneral(plan));
-}
-
-function completarTareaGeneral(plan) {
-  const boton = document.getElementById('btn-completar-tarea-historial');
-  if (!plan?.id || estaTareaCompletada(plan.id) || !boton || boton.disabled) return;
-  boton.disabled = true;
-  boton.textContent = 'Guardando...';
-  completarTareaLocal(plan.id);
-  renderizarCompletarTarea(plan);
 }
 
 function actualizarImagenMetodo(metodo) {
@@ -317,4 +401,26 @@ function actualizarImagenMetodo(metodo) {
         : ['pomodoro.png', 'Pomodoro'];
   imagen.src = `../assets/${metodos[0]}`;
   imagen.alt = metodos[1];
+}
+
+function renderizarDetalleIA(plan) {
+  const consejos = renderizarListaIA(plan.consejos, 'No hay consejos disponibles.');
+  const recursos = renderizarListaIA(plan.recursos, 'No hay recursos disponibles.');
+  const conceptos = renderizarListaIA(plan.conceptos_clave, 'No hay conceptos clave disponibles.');
+  const preguntas = renderizarListaIA(plan.preguntas_recall, 'No hay preguntas de Active Recall disponibles.');
+  return `<div class="ia-detalle-grid">
+    <section class="ia-bloque ia-identidad"><h3>${escapar(plan.nombre || 'Plan de estudio')}</h3><p>${escapar(plan.descripcion || 'Sin descripción disponible.')}</p></section>
+    <section class="ia-bloque"><strong>Método de estudio</strong><p>${escapar(plan.metodo_estudio || 'No especificado')}</p><strong>Justificación</strong><p>${escapar(plan.justificacion || 'No disponible')}</p></section>
+    <section class="ia-bloque ia-tiempo"><strong>Tiempo estimado</strong><p>${plan.tiempo_estimado_total != null ? `${escapar(plan.tiempo_estimado_total)} minutos` : 'No disponible'}</p><strong>Dificultad</strong><p>${escapar(plan.dificultad || 'No especificada')}</p><strong>Fecha de entrega</strong><p>${escapar(plan.fecha_entrega || 'No disponible')}</p></section>
+    <section class="ia-bloque"><strong>Resumen final</strong><p>${escapar(plan.resumen_final || 'No hay resumen disponible.')}</p></section>
+    <section class="ia-bloque"><strong>Consejos</strong>${consejos}</section>
+    <section class="ia-bloque"><strong>Recursos</strong>${recursos}</section>
+    <section class="ia-bloque"><strong>Conceptos clave</strong>${conceptos}</section>
+    <section class="ia-bloque"><strong>Preguntas de Active Recall</strong>${preguntas}</section>
+  </div>`;
+}
+
+function renderizarListaIA(valores, vacio) {
+  if (!Array.isArray(valores) || valores.length === 0) return `<p class="ia-vacio">${vacio}</p>`;
+  return `<ul class="ia-lista">${valores.map(valor => `<li>${escapar(typeof valor === 'object' ? valor.texto || valor.nombre || valor.titulo || JSON.stringify(valor) : valor)}</li>`).join('')}</ul>`;
 }

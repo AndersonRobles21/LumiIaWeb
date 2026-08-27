@@ -1,6 +1,8 @@
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
-import { obtenerGamificacionLocal } from '../utilidades/progreso-tareas.js';
+import { obtenerEstadisticas } from '../servicios/estadisticas.service.js';
+import { obtenerHistorialIA } from '../servicios/ia.service.js';
+import { obtenerProgresoTareas } from '../utilidades/progreso-tareas.js?v=reinicio-plan';
 
 const DEFINICIONES_LOGROS = [
   ['trofeo_bronce.png', 'Primer paso', 'Completa tu primera tarea.', datos => datos.tareasCompletadas >= 1],
@@ -26,39 +28,57 @@ let logrosDisponibles = [];
 document.addEventListener('DOMContentLoaded', inicializarProgreso);
 
 async function inicializarProgreso() {
-  const local = obtenerGamificacionLocal();
   let planes = [];
+  let historialIA = [];
+  let estadisticas = {};
   try {
     const usuario = await obtenerUsuarioActual();
-    if (usuario?.id) planes = await obtenerPlanesUsuarioBD(usuario.id);
+    if (usuario?.id) {
+      planes = await obtenerPlanesUsuarioBD(usuario.id);
+      historialIA = await obtenerHistorialIA(usuario.id);
+      const respuesta = await obtenerEstadisticas(usuario.id);
+      estadisticas = respuesta?.estadisticas || respuesta?.data || respuesta || {};
+    }
   } catch (error) {
     console.warn('No se pudieron cargar los planes para Tu Progreso:', error.message);
   }
 
-  const datosBase = { tareasCompletadas: local.tareas_completadas, racha: local.racha, totalPlanes: planes.length || obtenerPlanesLocales(), ...obtenerHorasGuardadas() };
-  const desbloqueadosIniciales = DEFINICIONES_LOGROS.filter(([, , , criterio]) => criterio({ ...datosBase, nivel: 1 })).length;
-  let xpTotal = (datosBase.tareasCompletadas * 20) + (datosBase.racha * 15) + (datosBase.totalPlanes * 25) + (desbloqueadosIniciales * 35);
-  let nivel = Math.floor(xpTotal / 100) + 1;
-  const totalDesbloqueados = DEFINICIONES_LOGROS.filter(([, , , criterio]) => criterio({ ...datosBase, nivel })).length;
-  xpTotal = (datosBase.tareasCompletadas * 20) + (datosBase.racha * 15) + (datosBase.totalPlanes * 25) + (totalDesbloqueados * 35);
-  nivel = Math.floor(xpTotal / 100) + 1;
-  const datos = { ...datosBase, xpTotal, nivel };
+  const tareasCompletadasLocal = Object.values(obtenerProgresoTareas()).filter(estado => estado?.completada).length;
+  const tareasCompletadasBackend = Number(estadisticas.tareas_completadas ?? 0);
+  const horasLocales = obtenerHorasGuardadas();
+  const planesConDetalleIA = planes.map(plan => ({ ...plan, ...(historialIA.find(detalle => String(detalle.id) === String(plan.id)) || {}) }));
+  const horasPlanesCompletados = obtenerHorasPlanesCompletados(planesConDetalleIA);
+  const datosBase = { tareasCompletadas: Math.max(tareasCompletadasBackend, tareasCompletadasLocal), racha: estadisticas.racha ?? 0, totalPlanes: planes.length, horas: Math.max(Number(estadisticas.horas ?? 0), horasLocales.horas + horasPlanesCompletados), horasNocturnas: Math.max(Number(estadisticas.horas_nocturnas ?? 0), horasLocales.horasNocturnas) };
+  const experienciaTareasLocal = tareasCompletadasLocal * 10;
+  const experienciaBackend = Number(estadisticas.xp ?? estadisticas.xp_total ?? estadisticas.puntos ?? 0);
+  const experienciaTotal = Math.max(experienciaBackend, experienciaTareasLocal);
+  let datos = { ...datosBase, puntos: experienciaTotal, xpTotal: experienciaTotal, nivel: Math.floor(experienciaTotal / 100) + 1 };
 
   renderizarMetricas(datos);
   renderizarGraficoSemanal(datos.horas);
-  renderizarLogros(DEFINICIONES_LOGROS.map(([imagen, nombre, descripcion, criterio], index) => ({ imagen, nombre, descripcion, desbloqueado: criterio(datos), xp: 35, index })));
+  const logros = DEFINICIONES_LOGROS.map(([imagen, nombre, descripcion, criterio], index) => ({ imagen, nombre, descripcion, desbloqueado: criterio(datos), xp: 35, index }));
+  const experienciaMedallas = logros.filter(logro => logro.desbloqueado).reduce((total, logro) => total + logro.xp, 0);
+  const experienciaFinal = datos.xpTotal + experienciaMedallas;
+  datos = { ...datos, puntos: experienciaFinal, xpTotal: experienciaFinal, nivel: Math.floor(experienciaFinal / 100) + 1 };
+  renderizarMetricas(datos);
+  renderizarLogros(logros);
 }
 
 function renderizarMetricas(datos) {
   establecerTexto('completadas', datos.tareasCompletadas);
+  establecerTexto('puntos', datos.puntos);
   establecerTexto('tareas-faltantes', Math.max(0, datos.totalPlanes - datos.tareasCompletadas));
   establecerTexto('horas-estudio', `${datos.horas.toFixed(1)}h`);
   establecerTexto('racha-numero', datos.racha);
   establecerTexto('nivel', datos.nivel);
-  establecerTexto('xp-actual', `${datos.xpTotal % 100} XP`);
+  const xpEnNivel = datos.xpTotal % 100;
+  const xpFaltante = xpEnNivel === 0 && datos.xpTotal > 0 ? 100 : 100 - xpEnNivel;
+  establecerTexto('xp-actual', `${xpFaltante} XP para subir`);
+  establecerTexto('mensaje-nivel', `Cada 100 XP subes al siguiente nivel. Te faltan ${xpFaltante} XP.`);
+  establecerTexto('progreso', `${xpEnNivel}%`);
   establecerTexto('mensaje-motivacional', datos.tareasCompletadas ? 'Tu constancia está dando frutos.' : 'Tu primer avance empieza hoy.');
   const barra = document.getElementById('barra-progreso');
-  if (barra) barra.value = datos.xpTotal % 100;
+  if (barra) barra.value = xpEnNivel;
 }
 
 function renderizarGraficoSemanal(horas) {
@@ -76,7 +96,7 @@ function renderizarLogros(logros) {
   logrosDisponibles = logros;
   const desbloqueados = logros.filter(logro => logro.desbloqueado).length;
   if (contador) contador.textContent = `${desbloqueados}/${logros.length}`;
-  contenedor.innerHTML = logros.map(logro => `<button class="insignia ${logro.desbloqueado ? '' : 'bloqueada'}" type="button" data-logro-index="${logro.index}" aria-pressed="false"><span class="insignia-icono"><img src="../assets/logros/${logro.imagen}" alt=""></span><strong>${escapar(logro.nombre)}</strong><small>${logro.desbloqueado ? 'Desbloqueada' : '🔒 Bloqueada'}</small></button>`).join('');
+  contenedor.innerHTML = logros.map(logro => `<button class="insignia ${logro.desbloqueado ? '' : 'bloqueada'}" type="button" data-logro-index="${logro.index}" aria-pressed="false"><span class="insignia-icono"><img src="../assets/logros/${logro.imagen}" alt=""></span><strong>${escapar(logro.nombre)}</strong><small>${logro.desbloqueado ? 'Desbloqueada' : 'Bloqueada'}</small></button>`).join('');
   contenedor.querySelectorAll('[data-logro-index]').forEach(insignia => insignia.addEventListener('click', () => seleccionarLogro(Number(insignia.dataset.logroIndex))));
 }
 
@@ -91,10 +111,6 @@ function seleccionarLogro(indice) {
   establecerTexto('inspector-xp', `XP: ${logro.xp}`);
 }
 
-function obtenerPlanesLocales() {
-  try { return JSON.parse(localStorage.getItem('lumi_tareas') || '[]').length; } catch { return 0; }
-}
-
 function obtenerHorasGuardadas() {
   let horas = 0;
   try {
@@ -103,6 +119,20 @@ function obtenerHorasGuardadas() {
   } catch { /* Usa el respaldo cero si el almacenamiento no es válido. */ }
   horas += Number(localStorage.getItem('lumi_horas_estudio') || 0);
   return { horas, horasNocturnas: Number(localStorage.getItem('lumi_horas_nocturnas') || 0) };
+}
+
+function obtenerHorasPlanesCompletados(planes) {
+  const progreso = obtenerProgresoTareas();
+  return (Array.isArray(planes) ? planes : []).reduce((total, plan) => {
+    if (!progreso[String(plan.id)]?.completada && !plan.completada) return total;
+    const duracionPlan = Number(plan.tiempo_estimado_total ?? plan.duracion_minutos ?? plan.duracion);
+    if (Number.isFinite(duracionPlan) && duracionPlan > 0) return total + duracionPlan / 60;
+    const duracionActividades = (Array.isArray(plan.actividades) ? plan.actividades : []).reduce((suma, actividad) => {
+      const duracion = Number(actividad.duracion_minutos ?? actividad.duracion);
+      return suma + (Number.isFinite(duracion) && duracion > 0 ? duracion : 0);
+    }, 0);
+    return total + duracionActividades / 60;
+  }, 0);
 }
 
 function establecerTexto(id, valor) {

@@ -77,3 +77,94 @@ html[data-theme="light"] .config-info,
 html[data-theme="light"] .dashboard-saludo p,
 html[data-theme="light"] .plan-header p,
 html[data-theme="light"] .actividad-plan p { color: var(--color-texto-secundario); }
+
+html[data-theme="light"] body,
+html[data-theme="light"] .dashboard-container,
+html[data-theme="light"] .dashboard-main,
+html[data-theme="light"] .dashboard-content,
+html[data-theme="light"] body.historial-body,
+html[data-theme="light"] .historial-body,
+html[data-theme="light"] .app-movil,
+html[data-theme="light"] .calendario-body,
+html[data-theme="light"] .agregar-tarea-body { background-color: var(--fondo-base) !important; color: var(--color-texto-principal) !important; }
+
+html[data-theme="light"] .lumi-sidebar,
+html[data-theme="light"] .navbar,
+html[data-theme="light"] .app-hero,
+html[data-theme="light"] .app-descarga,
+html[data-theme="light"] .app-cierre,
+html[data-theme="light"] .card-historial-sidebar,
+html[data-theme="light"] .card-chat-tutor,
+html[data-theme="light"] .card-calendario-mes,
+html[data-theme="light"] .card-metricas-dia,
+html[data-theme="light"] .card-timeline-dia,
+html[data-theme="light"] .card-asistente-lumii,
+html[data-theme="light"] .tarjeta-panel,
+html[data-theme="light"] .config-seccion,
+html[data-theme="light"] .config-item,
+html[data-theme="light"] .card-perfil,
+html[data-theme="light"] .tarea-card,
+html[data-theme="light"] .ia-bloque { background: var(--fondo-tarjeta) !important; color: var(--color-texto-principal) !important; border-color: rgba(23, 33, 43, .16) !important; }
+
+html[data-theme="light"] .chat-body-stream { background: rgba(255, 255, 255, .72) !important; }
+html[data-theme="light"] .sidebar-logo-img,
+html[data-theme="light"] .navbar-logo-img { background: transparent !important; }
+html[data-theme="light"] .menu-item,
+html[data-theme="light"] .navbar-titulo h2,
+html[data-theme="light"] .dashboard-saludo h1,
+html[data-theme="light"] .tarjeta-panel h2,
+html[data-theme="light"] .card-chat-tutor h2,
+html[data-theme="light"] .card-historial-sidebar h4,
+html[data-theme="light"] .tarea-titulo,
+html[data-theme="light"] .ia-bloque h3,
+html[data-theme="light"] .ia-bloque strong { color: var(--color-texto-principal) !important; }
+
+html[data-theme="light"] .campo input,
+html[data-theme="light"] .campo textarea,
+html[data-theme="light"] .campo select,
+html[data-theme="light"] .config-input,
+html[data-theme="light"] .buscador-historial,
+html[data-theme="light"] .buscador-historial input,
+html[data-theme="light"] .chip-btn { background: #ffffff !important; color: var(--color-texto-principal) !important; border-color: rgba(23, 33, 43, .2) !important; }
+
+html[data-theme="light"] .info-conversacion p,
+html[data-theme="light"] .dashboard-saludo p,
+html[data-theme="light"] .tarea-descripcion,
+html[data-theme="light"] .ia-bloque p,
+html[data-theme="light"] .app-hero p:not(.eyebrow),
+html[data-theme="light"] .app-cierre p,
+html[data-theme="light"] .app-descarga p,
+html[data-theme="light"] .chat-consejo,
+html[data-theme="light"] .etiqueta-metodo { color: var(--color-texto-secundario) !important; }
+
+html[data-theme="light"] .app-hero h1,
+html[data-theme="light"] .app-descarga h2,
+html[data-theme="light"] .app-cierre h2 { color: var(--color-texto-principal) !important; }
+
+html[data-theme="light"] .proximamente { color: var(--color-texto-principal) !important; }
+
+html[data-theme="light"] .calendario-header-top h1,
+html[data-theme="light"] .titulo-mes,
+html[data-theme="light"] .btn-nav-mes,
+html[data-theme="light"] .metricas-info h3,
+html[data-theme="light"] .timeline-header h2,
+html[data-theme="light"] .header-tarea-item h3 { color: var(--color-texto-principal) !important; }
+
+html[data-theme="light"] .calendario-header-top p,
+html[data-theme="light"] .badge-hoy,
+html[data-theme="light"] .grid-dias-semana,
+html[data-theme="light"] .dia-cell,
+html[data-theme="light"] .metricas-info p,
+html[data-theme="light"] .tiempo-info span,
+html[data-theme="light"] .tiempo-info strong,
+html[data-theme="light"] .hora-col,
+html[data-theme="light"] .desc-tarea,
+html[data-theme="light"] .item-leyenda { color: var(--color-texto-secundario) !important; }
+
+html[data-theme="light"] .card-timeline-dia,
+html[data-theme="light"] .card-tarea-timeline,
+html[data-theme="light"] .dia-cell,
+html[data-theme="light"] .badge-hoy,
+html[data-theme="light"] .icono-metricas { background: rgba(255, 255, 255, .72) !important; border-color: rgba(23, 33, 43, .14) !important; }
+
+html[data-theme="light"] .progreso-ring::before { background: #ffffff !important; }

@@ -50,7 +50,7 @@ export const almacenamiento = {
    */
   limpiar() {
     try {
-      localStorage.clear();
+      Object.values(CLAVES).forEach(clave => localStorage.removeItem(clave));
     } catch (error) {
       console.error('Error al limpiar LocalStorage:', error);
     }

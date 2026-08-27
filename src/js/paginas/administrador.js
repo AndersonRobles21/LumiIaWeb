@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLogout.addEventListener('click', () => {
             const confirmar = confirm('¿Estás seguro de que deseas cerrar sesión?');
             if (confirmar) {
-                // Limpia el almacenamiento local/sesión
-                localStorage.clear();
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userRole');
                 sessionStorage.clear();
                 // Redirige al login
                 window.location.href = 'login.html';

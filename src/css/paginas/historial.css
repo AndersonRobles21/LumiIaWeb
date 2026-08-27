@@ -364,6 +364,9 @@ body.historial-body,
 .checklist-subtareas input { accent-color: #00f0ff; }
 .resumen-historial, .paso-actual-historial { margin-top: 1rem; padding: 1rem; border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 10px; background: rgba(0, 240, 255, 0.06); color: #cbd5e1; }
 .progreso-pasos { margin: 0 0 .8rem; color: var(--color-cyan-neon); font-weight: 700; }
+.item-conversacion.completada { border-color: rgba(74, 222, 128, .45); background: rgba(22, 101, 52, .2); }
+.item-conversacion.completada h4 { color: #86efac; }
+.estado-conversacion-completada { color: #86efac; font-size: .68rem; font-weight: 700; white-space: nowrap; }
 .estado-plan { display: block; margin-bottom: .55rem; color: var(--color-texto-secundario); font-size: .85rem; font-weight: 700; }
 .estado-plan.completada { color: #4ade80; }
 .paso-ia { display: grid; gap: .55rem; margin-bottom: .7rem; padding: .9rem; border: 1px solid rgba(255,255,255,.1); border-left: 4px solid #64748b; border-radius: 8px; background: rgba(255,255,255,.04); }
@@ -373,6 +376,8 @@ body.historial-body,
 .paso-ia p { margin: .2rem 0; color: var(--color-texto-secundario); }
 .paso-mensaje { color: var(--color-texto-secundario); font-size: .85rem; }
 .btn-confirmar-paso { width: fit-content; margin-top: .35rem; padding: .6rem .85rem; border: 1px solid var(--color-cyan-neon); border-radius: 8px; color: #fff; background: rgba(0,240,255,.12); }
+.btn-completar-plan { width: fit-content; margin-top: .5rem; padding: .7rem 1rem; border: 1px solid #4ade80; border-radius: 8px; color: #fff; background: rgba(74,222,128,.16); font-weight: 700; }
+.btn-completar-plan.guardado { cursor: default; opacity: .82; }
 .resumen-historial strong, .paso-actual-historial h3 { color: #fff; }
 .resumen-historial p { margin: 0.3rem 0 0.8rem; }
 .paso-actual-historial h3 { margin: 0.35rem 0; }
@@ -380,3 +385,20 @@ body.historial-body,
 .paso-actual-historial button { margin-top: 1rem; padding: 0.7rem 1rem; border: 1px solid #00f0ff; border-radius: 8px; background: rgba(0,240,255,.12); color: #fff; cursor: pointer; }
 .paso-actual-historial button:hover { background: rgba(0,240,255,.24); }
 .paso-actual-historial button:disabled { opacity: .55; cursor: not-allowed; }
+.ia-cargando, .ia-error, .ia-vacio { color: #94a3b8; }
+.ia-error { color: #fca5a5; }
+.ia-detalle-grid { display: grid; gap: .75rem; }
+.ia-bloque { padding: .85rem; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; background: rgba(255,255,255,.035); }
+.ia-bloque strong { color: #67e8f9; }
+.ia-bloque h3 { margin: 0 0 .35rem; color: #fff; }
+.ia-bloque p { margin: .3rem 0 .7rem; color: #cbd5e1; }
+.ia-bloque p:last-child { margin-bottom: 0; }
+.ia-lista, .ia-subpasos ul { display: grid; gap: .35rem; margin: .55rem 0 0; padding-left: 1.15rem; color: #cbd5e1; }
+.ia-lista li::marker { color: #67e8f9; }
+.ia-subpasos { margin-top: .7rem; padding: .65rem .75rem; border-left: 2px solid rgba(0,240,255,.45); background: rgba(0,240,255,.04); }
+.ia-subpasos strong { color: #cbd5e1; font-size: .85rem; }
+.ia-subpasos li { display: flex; gap: .45rem; align-items: flex-start; list-style: none; padding-left: 0; }
+.ia-subpasos li > span { color: #67e8f9; }
+.ia-subpasos li.completado { color: #86efac; text-decoration: line-through; }
+.tarea-backend-control { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: .7rem; padding-top: .65rem; border-top: 1px solid rgba(255,255,255,.08); color: #e2e8f0; }
+.tarea-backend-control button { padding: .45rem .65rem; border: 1px solid rgba(0,240,255,.45); border-radius: 6px; color: #fff; background: rgba(0,240,255,.1); cursor: pointer; }

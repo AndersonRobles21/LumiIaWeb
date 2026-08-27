@@ -1,7 +1,9 @@
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
+import { obtenerTareasDelUsuario } from '../servicios/tareas.service.js';
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
 import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
-import { estaTareaCompletada, obtenerEstadoTareaLocal, obtenerGamificacionLocal } from '../utilidades/progreso-tareas.js';
+import { obtenerEstadisticas, registrarRacha } from '../servicios/estadisticas.service.js';
+import { obtenerProgresoTareas } from '../utilidades/progreso-tareas.js?v=reinicio-plan';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await inicializarDashboard();
@@ -23,14 +25,15 @@ async function inicializarDashboard() {
       const planes = await obtenerPlanesUsuarioBD(usuario.id);
       renderizarPlanesEstudio(planes);
     } else {
-      // Fallback: cargar desde localStorage si aún no hay sesión activa en Supabase
-      const tareasLocales = JSON.parse(localStorage.getItem('lumi_tareas') || '[]');
-      renderizarPlanesEstudio(tareasLocales);
+      renderizarPlanesEstudio([]);
     }
-    actualizarIndicadoresLocales();
+    await actualizarIndicadoresBackend(usuario);
 
   } catch (error) {
     console.error('Error al inicializar el Dashboard:', error);
+    if (error.message === 'Auth session missing!') {
+      window.location.href = 'login.html';
+    }
   }
 }
 
@@ -83,9 +86,9 @@ function renderizarPlanesEstudio(planes) {
   contenedorLista.innerHTML = planesUnicos.map(plan => {
     const planId = plan.id || plan.plan_id;
     const titulo = plan.nombre || plan.titulo || 'Tarea de estudio';
-    const completadaLocal = estaTareaCompletada(planId) || obtenerEstadoTareaLocal(planId, plan.completada);
-    const progreso = completadaLocal ? 100 : plan.progreso ?? plan.porcentaje ?? 0;
-    const estado = completadaLocal ? '✅ Completada' : plan.estado || 'PENDIENTE';
+    const completada = Boolean(plan.completada || plan.estado === 'COMPLETADO' || obtenerProgresoTareas()[String(planId)]?.completada);
+    const progreso = completada ? 100 : plan.progreso ?? plan.porcentaje ?? 0;
+    const estado = completada ? 'Completada' : plan.estado || 'PENDIENTE';
 
     // SVG según el estado o tipo
     const svgIcono = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>`;
@@ -107,7 +110,7 @@ function renderizarPlanesEstudio(planes) {
     }
 
     return `
-      <div class="item-tarea ${completadaLocal ? 'tarea-completada' : ''}" data-id="${planId}">
+      <div class="item-tarea ${completada ? 'tarea-completada' : ''}" data-id="${planId}">
         <div class="icono-tarea">
           ${svgIcono}
         </div>
@@ -135,13 +138,22 @@ function renderizarPlanesEstudio(planes) {
   });
 }
 
-function actualizarIndicadoresLocales() {
-  const datos = obtenerGamificacionLocal();
+async function actualizarIndicadoresBackend(usuario) {
+  let datos = {};
+  if (usuario?.id) {
+    try {
+      await actualizarRachaDiaria(usuario.id);
+      const respuesta = await obtenerEstadisticas(usuario.id);
+      datos = respuesta?.estadisticas || respuesta?.data || respuesta || {};
+    } catch (error) {
+      console.warn('No se pudieron cargar las estadísticas:', error.message);
+    }
+  }
   const indicadores = {
-    'dashboard-completadas': datos.tareas_completadas,
-    'dashboard-puntos': datos.puntos,
-    'dashboard-racha': datos.racha,
-    'dashboard-mejor-racha': datos.mejor_racha
+    'dashboard-completadas': datos.tareas_completadas ?? 0,
+    'dashboard-puntos': Math.max(Number(datos.puntos ?? 0), obtenerPuntosLocales()),
+    'dashboard-racha': datos.racha ?? 0,
+    'dashboard-mejor-racha': datos.mejor_racha ?? 0
   };
   Object.entries(indicadores).forEach(([id, valor]) => {
     const elemento = document.getElementById(id);
@@ -150,14 +162,35 @@ function actualizarIndicadoresLocales() {
   actualizarDiasRacha(datos.racha);
 }
 
+function obtenerPuntosLocales() {
+  return Object.values(obtenerProgresoTareas()).reduce((total, estado) => total + (estado?.completada ? Number(estado.puntos) || 10 : 0), 0);
+}
+
+async function actualizarRachaDiaria(usuarioId) {
+  const clave = `lumi_racha_actualizada_${usuarioId}`;
+  const fecha = new Date();
+  const hoy = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')}`;
+  if (localStorage.getItem(clave) === hoy) return;
+
+  try {
+    await registrarRacha(usuarioId);
+    localStorage.setItem(clave, hoy);
+  } catch (error) {
+    console.warn('No se pudo actualizar la racha:', error.message);
+  }
+}
+
 function actualizarDiasRacha(racha) {
   const dias = document.querySelectorAll('.dias-racha-grid .dia-item');
   const diasActivos = Math.min(7, Math.max(0, Number(racha) || 0));
+  const diaActual = (new Date().getDay() + 6) % 7;
   dias.forEach((dia, indice) => {
-    dia.classList.toggle('activo', indice >= 7 - diasActivos);
-    dia.querySelector('.circulo-fuego')?.classList.toggle('inactivo', indice < 7 - diasActivos);
+    const distancia = (diaActual - indice + 7) % 7;
+    const activo = diasActivos > 0 && distancia < diasActivos;
+    const circulo = dia.querySelector('.circulo-fuego');
+    if (!circulo) return;
+    dia.classList.toggle('activo', activo);
+    circulo.classList.toggle('inactivo', !activo);
+    circulo.innerHTML = activo ? '<img src="../assets/racha.png" alt="Día de racha activo">' : '';
   });
 }
-
-window.addEventListener('lumi:progreso-actualizado', actualizarIndicadoresLocales);
-window.addEventListener('lumi:tarea-estado-actualizado', () => inicializarDashboard());

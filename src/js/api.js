@@ -1,3 +1,5 @@
+import { supabase } from './config/supabase.js';
+
 const API_BASE_URL = (globalThis.LUMI_CONFIG?.API_BASE_URL || 'http://localhost:3000/api').replace(/\/$/, '');
 
 const MENSAJES_HTTP = {
@@ -11,6 +13,16 @@ const MENSAJES_HTTP = {
 async function solicitar(endpoint, opciones = {}) {
   const headers = new Headers(opciones.headers || {});
   headers.set('Accept', 'application/json');
+
+  if (!headers.has('Authorization')) {
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data?.session?.access_token;
+      if (token) headers.set('Authorization', `Bearer ${token}`);
+    } catch {
+      // Algunas peticiones públicas no requieren sesión.
+    }
+  }
 
   if (opciones.body !== undefined) {
     headers.set('Content-Type', 'application/json');

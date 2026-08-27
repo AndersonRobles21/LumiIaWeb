@@ -6,7 +6,6 @@
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
 import { obtenerUsuarioConPerfil } from '../servicios/usuario.service.js';
 import { obtenerPlanesUsuarioBD } from '../servicios/planes.service.js';
-import { estaTareaCompletada } from '../utilidades/progreso-tareas.js';
 
 let fechaSeleccionada = new Date();
 let tareasGuardadas = [];
@@ -24,7 +23,7 @@ async function cargarTareasPersistentes() {
     const planes = await obtenerPlanesUsuarioBD(usuario.id);
     tareasGuardadas = normalizarPlanesCalendario(planes);
   } catch {
-    cargarTareasLocalStorage();
+    tareasGuardadas = [];
   }
 }
 
@@ -32,11 +31,10 @@ function normalizarPlanesCalendario(planes) {
   const entradas = [];
   (Array.isArray(planes) ? planes : []).forEach(plan => {
     const actividades = Array.isArray(plan.actividades) ? plan.actividades : [];
-    const completadaLocal = estaTareaCompletada(plan.id);
-    const fechas = actividades.filter(actividad => actividad.fecha).map(actividad => ({ ...actividad, plan_id: plan.id, titulo: actividad.titulo || plan.nombre, fechaCalendario: actividad.fecha, completadaLocal }));
+    const fechas = actividades.filter(actividad => actividad.fecha).map(actividad => ({ ...actividad, plan_id: plan.id, titulo: actividad.titulo || plan.nombre, fechaCalendario: actividad.fecha, completada: actividad.tareas?.some(tarea => tarea.completada) }));
     const fechaPlan = plan.fecha_entrega || plan.fecha_fin || plan.fecha;
     if (fechaPlan && !fechas.some(actividad => String(actividad.fechaCalendario).split('T')[0] === String(fechaPlan).split('T')[0])) {
-      fechas.push({ ...plan, titulo: plan.nombre || plan.titulo, plan_id: plan.id, fechaCalendario: fechaPlan, completadaLocal });
+      fechas.push({ ...plan, titulo: plan.nombre || plan.titulo, plan_id: plan.id, fechaCalendario: fechaPlan, completada: Boolean(plan.completada) });
     }
     entradas.push(...fechas);
   });
@@ -71,15 +69,6 @@ function inicializarCalendario() {
   configurarBotonesNavegacion();
   renderizarCalendario();
   renderizarTimelineDia(fechaSeleccionada);
-}
-
-function cargarTareasLocalStorage() {
-  try {
-    const data = localStorage.getItem('lumi_tareas') || localStorage.getItem('tareas') || '[]';
-    tareasGuardadas = JSON.parse(data);
-  } catch (e) {
-    tareasGuardadas = [];
-  }
 }
 
 function configurarBotonesNavegacion() {
@@ -222,6 +211,7 @@ function generarPuntosCategorias(tareas, esDiaEstudioPerfil) {
 
 function renderizarTimelineDia(fecha) {
   const tituloDia = document.getElementById('titulo-dia-seleccionado');
+  const badgeFecha = document.getElementById('fecha-actual-badge');
   const contenedorTimeline = document.getElementById('contenedor-timeline');
   const cantTareas = document.getElementById('resumen-cant-tareas');
   const resumenTiempo = document.getElementById('resumen-tiempo');
@@ -234,6 +224,10 @@ function renderizarTimelineDia(fecha) {
 
   const fechaTexto = fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
   tituloDia.textContent = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
+  if (badgeFecha) {
+    const fechaBadge = fecha.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+    badgeFecha.textContent = fechaBadge.charAt(0).toUpperCase() + fechaBadge.slice(1);
+  }
 
   // Filtrar tareas correspondientes al timeline del día seleccionado
   const tareasDelDia = tareasGuardadas.filter(t => tareaCorrespondeADia(t, anio, mes, diaNum));
@@ -255,7 +249,7 @@ function renderizarTimelineDia(fecha) {
     const hora = tarea.hora || '09:00 AM';
 
     return `
-      <div class="timeline-item ${String(tarea.estado || '').toLowerCase()} ${tarea.completadaLocal ? 'completada' : ''}" data-plan-id="${tarea.plan_id || tarea.id || ''}">
+      <div class="timeline-item ${tarea.completada ? 'completada' : ''}" data-plan-id="${tarea.plan_id || tarea.id || ''}">
         <div class="hora-col">
           <span>${hora}</span>
         </div>

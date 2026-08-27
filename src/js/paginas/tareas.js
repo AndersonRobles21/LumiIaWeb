@@ -4,12 +4,13 @@
  */
 
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { obtenerTareasDelUsuario, actualizarEstadoTarea } from '../servicios/tareas.service.js';
-import { registrarTareaEstadistica } from '../servicios/estadisticas.service.js';
+import { obtenerTareasDelUsuario } from '../servicios/tareas.service.js';
+import { eliminarPlanEstudioBD, eliminarPlanPorActividadBD, obtenerPlanesUsuarioBD } from '../servicios/planes.service.js?v=todas-eliminar';
+import { eliminarProgresoPlan, obtenerProgresoTareas } from '../utilidades/progreso-tareas.js';
 
 let tareas = [];
 let filtroActual = 'todas';
-const actualizacionesEnCurso = new Set();
+const eliminacionesEnCurso = new Set();
 
 document.addEventListener('DOMContentLoaded', async () => {
   await cargarTareas();
@@ -21,7 +22,20 @@ async function cargarTareas() {
   try {
     const usuario = await obtenerUsuarioActual();
     if (!usuario?.id) throw new Error('La sesión no está autenticada.');
-    tareas = await obtenerTareasDelUsuario(usuario.id);
+    const [tareasBackend, respuestaPlanes] = await Promise.all([obtenerTareasDelUsuario(usuario.id), obtenerPlanesUsuarioBD(usuario.id)]);
+    const planes = Array.isArray(respuestaPlanes) ? respuestaPlanes : [];
+    const actividadesConTarea = new Set(tareasBackend.map(tarea => String(tarea.actividad_id)).filter(Boolean));
+    const progreso = obtenerProgresoTareas();
+    const tareasDePlanes = planes.flatMap(plan => (plan.actividades || []).filter(actividad => !actividadesConTarea.has(String(actividad.id))).map(actividad => ({
+      id: `plan-${plan.id}`,
+      planId: plan.id,
+      esPlan: true,
+      titulo: actividad.titulo || plan.nombre || 'Tarea de estudio',
+      descripcion: actividad.descripcion || plan.descripcion || '',
+      fecha: actividad.fecha || plan.fecha_entrega || '',
+      completada: Boolean(plan.completada || plan.estado === 'COMPLETADO' || progreso[String(plan.id)]?.completada),
+    })));
+    tareas = [...tareasBackend.map(tarea => ({ ...tarea, esPlan: false })), ...tareasDePlanes];
   } catch (error) {
     alert(`No se pudieron cargar las tareas: ${error.message}`);
     tareas = [];
@@ -68,48 +82,49 @@ function renderizarTareas() {
 
   // Renderizar tarjetas
   contenedor.innerHTML = tareasFiltradas.map(tarea => {
-    const prioridadClass = tarea.prioridad ? `prioridad-${tarea.prioridad}` : '';
     const completadaClass = tarea.completada ? 'completada' : '';
 
     return `
       <div class="tarea-card ${completadaClass}" data-id="${tarea.id}">
-        <div class="tarea-check">
-          <input class="tarea-check-input" type="checkbox" ${tarea.completada ? 'checked' : ''} aria-label="${tarea.completada ? 'Tarea completada' : 'Marcar tarea como completada'}" onchange="toggleCompletada(${JSON.stringify(tarea.id)})">
+        <div class="tarea-ilustracion">
+          <img src="../assets/tarea.png" alt="">
         </div>
         <div class="tarea-contenido">
-          <h3 class="tarea-titulo">${tarea.nombre}</h3>
-          ${tarea.descripcion ? `<p class="tarea-descripcion">${tarea.descripcion}</p>` : ''}
+          <h3 class="tarea-titulo">${escapar(tarea.titulo)}</h3>
+          ${tarea.descripcion ? `<p class="tarea-descripcion">${escapar(tarea.descripcion)}</p>` : ''}
           <div class="tarea-meta">
-            <span class="tarea-prioridad ${prioridadClass}">${tarea.prioridad || ''}</span>
-            ${tarea.fecha_entrega ? `<span class="tarea-fecha">📅 ${tarea.fecha_entrega}</span>` : ''}
-            ${tarea.metodo ? `<span class="tarea-metodo">🎯 ${tarea.metodo}</span>` : ''}
+            ${tarea.actividad?.fecha || tarea.fecha ? `<span class="tarea-fecha">${tarea.actividad?.fecha || tarea.fecha}</span>` : ''}
           </div>
         </div>
+        <button type="button" class="btn-eliminar-tarea" data-id="${escapar(tarea.id)}" aria-label="Eliminar tarea" title="Eliminar tarea">Eliminar</button>
       </div>
     `;
   }).join('');
+  contenedor.querySelectorAll('.btn-eliminar-tarea').forEach(boton => boton.addEventListener('click', async () => {
+    const id = boton.dataset.id;
+    const tarea = tareas.find(item => String(item.id) === id);
+    if (!tarea || eliminacionesEnCurso.has(id) || !confirm(`¿Eliminar "${tarea.titulo}"?`)) return;
+    eliminacionesEnCurso.add(id);
+    boton.disabled = true;
+    try {
+      if (tarea.esPlan) {
+        await eliminarPlanEstudioBD(tarea.planId);
+        eliminarProgresoPlan(tarea.planId);
+      } else {
+        const planId = await eliminarPlanPorActividadBD(tarea.actividad_id);
+        eliminarProgresoPlan(planId);
+      }
+      await cargarTareas();
+      renderizarTareas();
+    } catch (error) {
+      boton.disabled = false;
+      alert(`No se pudo eliminar la tarea: ${error.message}`);
+    } finally {
+      eliminacionesEnCurso.delete(id);
+    }
+  }));
 }
 
-// Función global para el checkbox
-window.toggleCompletada = async function(id) {
-  const index = tareas.findIndex(t => t.id === id);
-  if (index === -1 || actualizacionesEnCurso.has(id)) return;
-
-  const estadoAnterior = tareas[index].completada;
-  actualizacionesEnCurso.add(id);
-  try {
-    const estadoNuevo = !estadoAnterior;
-    const respuesta = await actualizarEstadoTarea(id, estadoNuevo);
-    if (estadoNuevo && !respuesta?.estadisticas && !respuesta?.stats && !respuesta?.progreso) {
-      const usuario = await obtenerUsuarioActual();
-      await registrarTareaEstadistica(usuario.id);
-    }
-    tareas[index].completada = estadoNuevo;
-    renderizarTareas();
-  } catch (error) {
-    alert(`No se pudo actualizar la tarea: ${error.message}`);
-    renderizarTareas();
-  } finally {
-    actualizacionesEnCurso.delete(id);
-  }
-};
+function escapar(valor) {
+  return String(valor ?? '').replace(/[&<>"']/g, caracter => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[caracter]);
+}
