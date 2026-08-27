@@ -120,6 +120,8 @@ export async function eliminarPlanEstudioBD(planId) {
 }
 
 export async function eliminarPlanPorActividadBD(actividadId) {
+  if (!actividadId) throw new Error('La tarea no tiene una actividad asociada válida.');
+
   const { data: actividad, error } = await supabase
     .from('actividades')
     .select('plan_id')

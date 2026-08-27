@@ -13,7 +13,7 @@ export async function crearNavbar() {
   }
 
   let nombre = '';
-  let fotoPerfil = localStorage.getItem('lumi_foto_perfil') || '';
+  let fotoPerfil = normalizarFoto(localStorage.getItem('lumi_foto_perfil') || '');
   try {
     const usuario = await obtenerUsuarioActual();
     if (usuario?.id) {
@@ -21,11 +21,13 @@ export async function crearNavbar() {
       const envoltura = respuesta?.data || respuesta || {};
       const datos = { ...usuario, ...(envoltura.usuario || envoltura.user || envoltura), ...(envoltura.perfil || envoltura.perfil_estudio || {}) };
       nombre = [datos?.nombre, datos?.apellido].filter(Boolean).join(' ') || datos?.user_metadata?.full_name || '';
-      fotoPerfil = fotoPerfil || datos?.foto_perfil || '';
+      fotoPerfil = fotoPerfil || normalizarFoto(datos?.foto_perfil || '');
     }
   } catch (error) {
     console.warn('No se pudo cargar el usuario del navbar:', error.message);
   }
+
+  const fotoUrl = obtenerUrlFoto(fotoPerfil);
 
  contenedor.innerHTML = `
     <div class="navbar">
@@ -33,8 +35,8 @@ export async function crearNavbar() {
         <a class="navbar-btn" href="informacion.html" title="Ayuda" aria-label="Abrir ayuda">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.9 1.9c-1 .7-1.6 1.1-1.6 2.6M12 17h.01"/></svg>
         </a>
-        <a class="navbar-avatar${fotoPerfil ? ' navbar-avatar-con-foto' : ''}" href="perfil.html" title="Abrir perfil${nombre ? ` de ${nombre}` : ''}" aria-label="Abrir perfil"${fotoPerfil ? ` style="background-image: url('${fotoPerfil.replace(/'/g, '%27')}')"` : ''}>
-          ${fotoPerfil ? '' : (nombre ? nombre.charAt(0).toUpperCase() : '')}
+        <a class="navbar-avatar${fotoUrl ? ' navbar-avatar-con-foto' : ''}" href="perfil.html" title="Abrir perfil${nombre ? ` de ${nombre}` : ''}" aria-label="Abrir perfil"${fotoUrl ? ` style="background-image: url('${fotoUrl.replace(/'/g, '%27')}')"` : ''}>
+          ${fotoUrl ? '' : (nombre ? nombre.charAt(0).toUpperCase() : '')}
         </a>
       </div>
     </div>
@@ -48,4 +50,18 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', crearNavbar);
 } else {
   crearNavbar();
+}
+
+function obtenerUrlFoto(valor) {
+  const foto = String(valor || '').trim();
+  if (!foto) return '';
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(foto)) return '';
+  if (foto.startsWith('data:image/') || foto.startsWith('http://') || foto.startsWith('https://')) return foto;
+  return `data:image/jpeg;base64,${foto.replace(/\s/g, '')}`;
+}
+
+function normalizarFoto(valor) {
+  const foto = String(valor || '').trim();
+  if (!foto || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(foto)) return '';
+  return foto.replace(/\s/g, '');
 }

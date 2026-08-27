@@ -15,6 +15,7 @@ const MAPA_INDICES_DIAS = {
 
 let usuarioActual = null;
 let horariosLocales = [];
+let fotoPerfilBase64 = '';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await cargarDatosPerfil();
@@ -41,6 +42,8 @@ async function cargarDatosPerfil() {
       datosHorarios = datosRespuesta?.horarios ||
                       datosPerfil?.horarios ||
                       datosPerfil?.horario || [];
+
+      fotoPerfilBase64 = normalizarBase64(datosPerfil?.foto_perfil || datosRespuesta?.foto_perfil || '');
 
       document.getElementById('perfil-nombre').value = datosUsuario?.nombre || usuarioActual.nombre || '';
       document.getElementById('perfil-apellido').value = datosUsuario?.apellido || usuarioActual.apellido || '';
@@ -69,7 +72,7 @@ async function cargarDatosPerfil() {
     }
 
     renderizarSemana();
-    cargarFotoPerfil();
+    cargarFotoPerfil(fotoPerfilBase64);
   } catch (error) {
     console.error('Error al cargar datos del perfil:', error);
     // En caso de fallo de red, intentar rescatar lo que haya en localStorage
@@ -80,6 +83,7 @@ async function cargarDatosPerfil() {
     } catch (e) {
       horariosLocales = [];
     }
+    cargarFotoPerfil();
     mostrarErrorHorario('No se pudieron recuperar los datos completos del servidor (usando modo local).');
   }
 }
@@ -108,29 +112,72 @@ function actualizarNivelProcrastinacion() {
   if (input && salida) salida.value = input.value;
 }
 
-function cargarFotoPerfil() {
-  const foto = localStorage.getItem('lumi_foto_perfil');
-  if (foto) mostrarFotoPerfil(foto);
+function cargarFotoPerfil(fotoServidor = '') {
+  const fotoLocal = normalizarBase64(localStorage.getItem('lumi_foto_perfil') || '');
+  fotoPerfilBase64 = fotoServidor || fotoLocal;
+  if (fotoPerfilBase64) {
+    mostrarFotoPerfil(fotoPerfilBase64);
+  }
 }
 
-function previsualizarFotoPerfil(evento) {
+async function previsualizarFotoPerfil(evento) {
   const archivo = evento.target.files?.[0];
   if (!archivo) return;
-  if (!archivo.type.startsWith('image/')) return;
-  const lector = new FileReader();
-  lector.addEventListener('load', () => {
-    const foto = String(lector.result);
-    localStorage.setItem('lumi_foto_perfil', foto);
-    mostrarFotoPerfil(foto);
-  });
-  lector.readAsDataURL(archivo);
+  if (!archivo.type.startsWith('image/')) {
+    alert('Selecciona una imagen válida.');
+    return;
+  }
+
+  try {
+    const imagen = await cargarImagen(archivo);
+    const escala = Math.min(1, 250 / imagen.width, 250 / imagen.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(imagen.width * escala));
+    canvas.height = Math.max(1, Math.round(imagen.height * escala));
+    canvas.getContext('2d').drawImage(imagen, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.4);
+    fotoPerfilBase64 = normalizarBase64(dataUrl);
+    localStorage.setItem('lumi_foto_perfil', fotoPerfilBase64);
+    mostrarFotoPerfil(fotoPerfilBase64);
+  } catch (error) {
+    console.error('No se pudo procesar la imagen:', error);
+    alert('No se pudo acceder a la imagen seleccionada.');
+  }
 }
 
 function mostrarFotoPerfil(foto) {
   const avatar = document.getElementById('perfil-avatar');
   const preview = document.getElementById('perfil-foto-preview');
-  if (avatar) { avatar.textContent = ''; avatar.style.backgroundImage = `url("${foto}")`; avatar.classList.add('avatar-con-foto'); }
-  if (preview) { preview.src = foto; preview.hidden = false; }
+  const dataUrl = obtenerUrlFoto(foto);
+  if (!dataUrl) return;
+  if (avatar) { avatar.textContent = ''; avatar.style.backgroundImage = `url("${dataUrl}")`; avatar.classList.add('avatar-con-foto'); }
+  if (preview) { preview.src = dataUrl; preview.hidden = false; }
+}
+
+function cargarImagen(archivo) {
+  return new Promise((resolver, rechazar) => {
+    const url = URL.createObjectURL(archivo);
+    const imagen = new Image();
+    imagen.onload = () => { URL.revokeObjectURL(url); resolver(imagen); };
+    imagen.onerror = () => { URL.revokeObjectURL(url); rechazar(new Error('Imagen inválida.')); };
+    imagen.src = url;
+  });
+}
+
+function normalizarBase64(valor) {
+  const foto = String(valor || '').trim();
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(foto)) return '';
+  return foto.replace(/^data:image\/[^;]+;base64,/, '').replace(/\s/g, '');
+}
+
+function obtenerUrlFoto(valor) {
+  const foto = String(valor || '').trim();
+  if (!foto) return '';
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//i.test(foto)) return '';
+  return foto.startsWith('data:image/') || foto.startsWith('http://') || foto.startsWith('https://')
+    ? foto
+    : `data:image/jpeg;base64,${normalizarBase64(foto)}`;
 }
 
 function alternarEditorNombre(visible) {
@@ -311,6 +358,7 @@ async function guardarPerfil(e) {
       objetivo,
       nivel_procrastinacion,
       horas_disponibles,
+      foto_perfil: fotoPerfilBase64,
       horario: horariosPayload
     });
 
@@ -356,6 +404,7 @@ function aplicarDatosPerfil(respuestaApi) {
   const datosUsuario = datosRespuesta?.usuario || datosRespuesta?.user || datosRespuesta;
   const datosPerfil = datosRespuesta?.perfil_estudio || datosRespuesta?.perfil || {};
   const datosHorarios = datosRespuesta?.horarios || datosPerfil?.horarios || datosPerfil?.horario || [];
+  const foto = normalizarBase64(datosPerfil?.foto_perfil || datosRespuesta?.foto_perfil || '');
 
   document.getElementById('perfil-nombre').value = datosUsuario?.nombre || '';
   document.getElementById('perfil-apellido').value = datosUsuario?.apellido || '';
@@ -371,5 +420,9 @@ function aplicarDatosPerfil(respuestaApi) {
   document.getElementById('perfil-avatar').textContent = (nombre || 'U').charAt(0).toUpperCase();
   document.getElementById('nombre-usuario-visible').textContent = nombre || 'No disponible';
   document.getElementById('apellido-usuario-visible').textContent = datosUsuario?.apellido || 'No disponible';
+  if (foto) {
+    fotoPerfilBase64 = foto;
+    mostrarFotoPerfil(foto);
+  }
   renderizarSemana();
 }

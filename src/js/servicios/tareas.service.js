@@ -41,6 +41,7 @@ export async function obtenerTareasDelUsuario(usuarioId) {
   const tareas = respuesta?.tareas || [];
   return tareas.map(tarea => ({
     ...tarea,
+    actividad_id: tarea.actividad_id ?? tarea.actividadId ?? tarea.actividad?.id,
     titulo: tarea.titulo ?? tarea.nombre ?? '',
     nombre: tarea.titulo ?? tarea.nombre ?? '',
     descripcion: tarea.descripcion ?? '',
@@ -60,6 +61,7 @@ export function obtenerDetalleTarea(tareaId) {
 }
 
 export function eliminarTarea(tareaId) {
+  if (!tareaId) throw new Error('La tarea no tiene un ID válido.');
   return apiDelete(`/tareas/${tareaId}`);
 }
 

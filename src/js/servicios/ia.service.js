@@ -24,6 +24,12 @@ export function generarPlanIA(datos) {
 	return apiPost('/ia/generar', {
 		usuario_id: datos.usuarioId ?? datos.usuario_id,
 		plan_id: datos.planId ?? datos.plan_id,
+			nombre: contexto.titulo,
+			fecha_entrega: contexto.fechaEntrega,
+			metodo_estudio: contexto.metodoEstudio,
+			horas_disponibles: contexto.horasDisponibles,
+			dias_disponibles: contexto.diasRestantes,
+			minutos_disponibles: contexto.minutosDisponibles,
 		...contexto,
 		prompt: construirPromptPlan(contexto),
 	});

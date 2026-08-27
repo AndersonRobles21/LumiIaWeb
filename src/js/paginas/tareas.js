@@ -4,7 +4,7 @@
  */
 
 import { obtenerUsuarioActual } from '../servicios/autenticacion.service.js';
-import { obtenerTareasDelUsuario } from '../servicios/tareas.service.js';
+import { eliminarTarea, obtenerTareasDelUsuario } from '../servicios/tareas.service.js';
 import { eliminarPlanEstudioBD, eliminarPlanPorActividadBD, obtenerPlanesUsuarioBD } from '../servicios/planes.service.js?v=todas-eliminar';
 import { eliminarProgresoPlan, obtenerProgresoTareas } from '../utilidades/progreso-tareas.js';
 
@@ -111,8 +111,13 @@ function renderizarTareas() {
         await eliminarPlanEstudioBD(tarea.planId);
         eliminarProgresoPlan(tarea.planId);
       } else {
-        const planId = await eliminarPlanPorActividadBD(tarea.actividad_id);
-        eliminarProgresoPlan(planId);
+        const actividadId = tarea.actividad_id ?? tarea.actividadId ?? tarea.actividad?.id;
+        if (actividadId) {
+          const planId = await eliminarPlanPorActividadBD(actividadId);
+          eliminarProgresoPlan(planId);
+        } else {
+          await eliminarTarea(tarea.id);
+        }
       }
       await cargarTareas();
       renderizarTareas();
